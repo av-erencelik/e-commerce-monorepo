@@ -14,7 +14,12 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
-    "paths": {}
+    "paths": {
+      "@e-commerce-monorepo/configs": ["libs/configs/src/index.ts"],
+      "@e-commerce-monorepo/errors": ["libs/errors/src/index.ts"],
+      "@e-commerce-monorepo/middlewares": ["libs/middlewares/src/index.ts"],
+      "@e-commerce-monorepo/utils": ["libs/utils/src/index.ts"]
+    }
   },
   "exclude": ["node_modules", "tmp"]
 }

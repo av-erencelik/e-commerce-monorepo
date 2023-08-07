@@ -1,0 +1,17 @@
+apiVersion: skaffold/v4beta3
+kind: Config
+manifests:
+  rawYaml:
+    - ./infra/k8s/*
+build:
+  local:
+    push: false
+  artifacts:
+    - image: erenmemo/auth
+      context: ./
+      docker:
+        dockerfile: apps/auth/Dockerfile
+      sync:
+        manual:
+          - src: apps/auth
+            dest: .
