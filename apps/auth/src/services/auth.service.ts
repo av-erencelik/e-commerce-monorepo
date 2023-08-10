@@ -2,20 +2,37 @@ import { logger } from '@e-commerce-monorepo/configs';
 import authRepository from '../repository/auth.repository';
 import { ApiError } from '@e-commerce-monorepo/errors';
 import httpStatus from 'http-status';
-
-const loginUserWithEmailAndPassword = async (
-  email: string,
-  password: string
-) => {
-  logger.info(`Login attempt with email: ${email}`);
-  logger.info(`Login attempt with password: ${password}`);
-  const user = await authRepository.getUser(email);
-  if (user.length === 0) {
-    throw new ApiError(httpStatus.UNAUTHORIZED, 'Invalid email or password');
+import { createTokens, hashPassword } from '@e-commerce-monorepo/utils';
+import { NewUser } from '../interfaces/user';
+import { nanoid } from 'nanoid';
+const signupWithEmailAndPassword = async (newUser: NewUser) => {
+  logger.info(`Signup attempt with email: ${newUser.email}`);
+  const existingUser = await authRepository.checkUserExists(
+    newUser.email,
+    newUser.phoneNumber
+  );
+  if (existingUser.length !== 0) {
+    throw new ApiError(
+      httpStatus.CONFLICT,
+      'Email or phone number already in use'
+    );
   }
-  return user;
+  const hashedPassword = await hashPassword(newUser.password);
+
+  const user = await authRepository.createUser({
+    ...newUser,
+    password: hashedPassword,
+    userId: nanoid(12),
+  });
+  const { accessToken, refreshToken } = createTokens(user);
+  logger.info(`Signup successful with email: ${newUser.email}`);
+  return {
+    accessToken,
+    refreshToken,
+    user,
+  };
 };
 
 export default Object.freeze({
-  loginUserWithEmailAndPassword,
+  signupWithEmailAndPassword,
 });

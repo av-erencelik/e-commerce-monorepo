@@ -8,21 +8,26 @@ const notFoundHandler = (req, res, next) => {
   return next(err);
 };
 
-const errorConverter = (err, req, res, next) => {
+const errorConverterMiddleware = (err: ApiError | Error, req, res, next) => {
+  const error = errorConverter(err);
+  next(error);
+};
+
+const errorConverter = (err: ApiError | Error) => {
   let error = err;
   if (!(error instanceof ApiError)) {
     const statusCode =
-      error.statusCode || error instanceof DrizzleError
+      error instanceof DrizzleError
         ? httpStatus.BAD_REQUEST
         : httpStatus.INTERNAL_SERVER_ERROR;
     const message = error.message || httpStatus[statusCode];
     error = new ApiError(statusCode, message, [], false, err.stack);
   }
-  next(error);
+  return error as ApiError;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const errorHandler = (err, req, res, next) => {
+const errorHandler = (err: ApiError, req, res, next) => {
   let { statusCode, message } = err;
   if (config.env === 'production' && !err.isOperational) {
     statusCode = httpStatus.INTERNAL_SERVER_ERROR;
@@ -30,8 +35,6 @@ const errorHandler = (err, req, res, next) => {
   }
 
   logger.info(err);
-
-  res.locals.errorMessage = err.message;
 
   const response = {
     code: statusCode,
@@ -48,4 +51,9 @@ const errorHandler = (err, req, res, next) => {
   res.status(statusCode).send(response);
 };
 
-export { errorConverter, errorHandler, notFoundHandler };
+export {
+  errorConverter,
+  errorHandler,
+  notFoundHandler,
+  errorConverterMiddleware,
+};
