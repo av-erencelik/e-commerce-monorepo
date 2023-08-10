@@ -1,13 +1,8 @@
-import { drizzle } from 'drizzle-orm/planetscale-serverless';
-import { connect } from '@planetscale/database';
-import { drizzle as drizzleTest } from 'drizzle-orm/mysql2';
+import { drizzle } from 'drizzle-orm/mysql2';
 import * as mysql from 'mysql2/promise';
 import { config } from '@e-commerce-monorepo/configs';
-const connection = connect({
-  host: config.db.host,
-  username: config.db.username,
-  password: config.db.password,
-});
+
+const connection = mysql.createPool(config.db.url);
 
 const connectionTest = mysql.createPool({
   host: 'localhost',
@@ -16,11 +11,8 @@ const connectionTest = mysql.createPool({
   password: 'test',
 });
 
-const db =
-  config.env == 'test'
-    ? drizzleTest(connectionTest)
-    : drizzle(connection, {
-        logger: config.env !== 'production' ? true : false,
-      });
+const db = drizzle(config.env === 'test' ? connectionTest : connection, {
+  logger: config.env !== 'production' ? true : false,
+});
 
 export default db;

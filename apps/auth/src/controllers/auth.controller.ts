@@ -10,6 +10,7 @@ const signup = async (
   res: Response
 ) => {
   const { email, password, phoneNumber, fullName, countryCode } = req.body;
+  logger.info(`Signup attempt with email: ${email}`);
   const newUser: NewUser = {
     email,
     password,
@@ -30,7 +31,7 @@ const signup = async (
     secure: config.env === 'production',
     maxAge: config.jwt.expiresIn, // ten minutes
   });
-  logger.info(user);
+  logger.info(`Signup successful with email: ${user.email}`);
   res.status(httpStatus.CREATED).send(user);
 };
 
