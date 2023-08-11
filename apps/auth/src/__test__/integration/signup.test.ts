@@ -3,8 +3,8 @@ import request from 'supertest';
 import app from '../../app';
 import httpStatus from 'http-status';
 import { validate } from 'uuid';
-import { config } from '@e-commerce-monorepo/configs';
 import { AccessTokenPayload } from '@e-commerce-monorepo/utils';
+import config from '../../config/config';
 describe('signup Route', () => {
   const validData = {
     email: 'test@example.com',

@@ -1,5 +1,5 @@
 import { eq, or } from 'drizzle-orm';
-import db from '../database';
+import db from '../database/sql';
 import { users } from '../models/user';
 import { InserNewUser } from '../interfaces/user';
 

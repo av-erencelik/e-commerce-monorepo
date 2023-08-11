@@ -4,6 +4,7 @@ import httpStatus from 'http-status';
 import { createTokens, hashPassword } from '@e-commerce-monorepo/utils';
 import { NewUser } from '../interfaces/user';
 import { nanoid } from 'nanoid';
+import authRedis from '../repository/auth.redis';
 const signupWithEmailAndPassword = async (newUser: NewUser) => {
   const existingUser = await authRepository.checkUserExists(
     newUser.email,
@@ -23,6 +24,7 @@ const signupWithEmailAndPassword = async (newUser: NewUser) => {
     userId: nanoid(12),
   });
   const { accessToken, refreshToken } = createTokens(user);
+  authRedis.setRefreshToken(refreshToken, user);
   return {
     accessToken,
     refreshToken,

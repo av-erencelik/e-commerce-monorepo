@@ -1,11 +1,11 @@
 import morgan from 'morgan';
-import { config } from './config';
+import { baseConfig } from './config';
 import { logger } from './logger';
 
 morgan.token('message', (req, res) => res.statusMessage || '');
 
 const getIpFormat = () =>
-  config.env === 'production' ? ':remote-addr - ' : '';
+  baseConfig.env === 'production' ? ':remote-addr - ' : '';
 const successResponseFormat = `${getIpFormat()}:method :url :status - :response-time ms`;
 const errorResponseFormat = `${getIpFormat()}:method :url :status - :response-time ms - message: :message`;
 

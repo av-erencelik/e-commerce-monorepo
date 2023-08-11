@@ -1,7 +1,7 @@
 import httpStatus from 'http-status';
 import { ApiError } from './api-error';
 import { DrizzleError } from 'drizzle-orm';
-import { config, logger } from '@e-commerce-monorepo/configs';
+import { baseConfig, logger } from '@e-commerce-monorepo/configs';
 
 const notFoundHandler = (req, res, next) => {
   const err = new ApiError(httpStatus.NOT_FOUND, 'Not found');
@@ -29,7 +29,7 @@ const errorConverter = (err: ApiError | Error) => {
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const errorHandler = (err: ApiError, req, res, next) => {
   let { statusCode, message } = err;
-  if (config.env === 'production' && !err.isOperational) {
+  if (baseConfig.env === 'production' && !err.isOperational) {
     statusCode = httpStatus.INTERNAL_SERVER_ERROR;
     message = httpStatus[httpStatus.INTERNAL_SERVER_ERROR];
   }
@@ -39,12 +39,12 @@ const errorHandler = (err: ApiError, req, res, next) => {
   const response = {
     code: statusCode,
     message,
-    ...(config.env === 'development' && { stack: err.stack }),
+    ...(baseConfig.env === 'development' && { stack: err.stack }),
     ...(err.errors != undefined &&
       err.errors.length > 0 && { errors: err.errors }),
   };
 
-  if (config.env === 'development') {
+  if (baseConfig.env === 'development') {
     logger.error(err);
   }
 
