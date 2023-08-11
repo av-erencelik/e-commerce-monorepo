@@ -18,6 +18,10 @@ jobs:
       JWT_ISSUER: ${{ secrets.JWT_ISSUER }}
       JWT_EXPIRES_IN: ${{ secrets.JWT_EXPIRES_IN }}
       JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      REFRESH_TOKEN_EXPIRES_IN: ${{ secrets.REFRESH_TOKEN_EXPIRES_IN }}
+      REDIS_HOST: ${{ secrets.REDIS_HOST }}
+      REDIS_PORT: ${{ secrets.REDIS_PORT }}
+      REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}
     steps:
       - uses: actions/checkout@v2
       - run: npm install

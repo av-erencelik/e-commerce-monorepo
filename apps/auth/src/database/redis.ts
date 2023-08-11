@@ -7,7 +7,7 @@ let host: string;
 let port: number;
 let password: string;
 
-if (process.env.NODE_ENV === 'test') {
+if (config.env === 'test') {
   const redisServer = new RedisMemoryServer();
   redisServer.getHost().then((h) => (host = h));
   redisServer.getPort().then((p) => (port = p));
