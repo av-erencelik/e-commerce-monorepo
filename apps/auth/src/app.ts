@@ -5,13 +5,13 @@ import {
   notFoundHandler,
 } from '@e-commerce-monorepo/errors';
 import {
-  config,
   successHandler as successHandlerLogger,
   errorHandler as errorHandlerLogger,
 } from '@e-commerce-monorepo/configs';
 import { xssClean } from '@e-commerce-monorepo/middlewares';
 import router from './routes/routes';
 import cookieParser from 'cookie-parser';
+import config from './config/config';
 
 const app = express();
 

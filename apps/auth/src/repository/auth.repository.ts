@@ -1,5 +1,5 @@
 import { eq, or } from 'drizzle-orm';
-import db from '../database';
+import db from '../database/sql';
 import { users } from '../models/user';
 import { InserNewUser } from '../interfaces/user';
 
@@ -18,8 +18,6 @@ const createUser = async (newUser: InserNewUser) => {
     .values({ email, password, phoneNumber, fullName, countryCode, userId });
 
   const user = await db
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
     .select({ userId: users.userId, email: users.email })
     .from(users);
 

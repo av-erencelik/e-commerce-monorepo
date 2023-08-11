@@ -1,12 +1,11 @@
-import { logger } from '@e-commerce-monorepo/configs';
 import authRepository from '../repository/auth.repository';
 import { ApiError } from '@e-commerce-monorepo/errors';
 import httpStatus from 'http-status';
 import { createTokens, hashPassword } from '@e-commerce-monorepo/utils';
 import { NewUser } from '../interfaces/user';
 import { nanoid } from 'nanoid';
+import authRedis from '../repository/auth.redis';
 const signupWithEmailAndPassword = async (newUser: NewUser) => {
-  logger.info(`Signup attempt with email: ${newUser.email}`);
   const existingUser = await authRepository.checkUserExists(
     newUser.email,
     newUser.phoneNumber
@@ -25,7 +24,7 @@ const signupWithEmailAndPassword = async (newUser: NewUser) => {
     userId: nanoid(12),
   });
   const { accessToken, refreshToken } = createTokens(user);
-  logger.info(`Signup successful with email: ${newUser.email}`);
+  authRedis.setRefreshToken(refreshToken, user);
   return {
     accessToken,
     refreshToken,

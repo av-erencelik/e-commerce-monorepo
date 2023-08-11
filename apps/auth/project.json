@@ -11,7 +11,7 @@
       }
     },
     "test-db": {
-      "command": "set NODE_ENV=test&& bash ./apps/auth/src/scripts/run-integration.sh"
+      "command": "bash ./apps/auth/src/scripts/run-integration.sh"
     },
     "build": {
       "executor": "@nx/webpack:webpack",
