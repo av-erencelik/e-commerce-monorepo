@@ -24,7 +24,7 @@ const getUserByRefreshToken = async (refreshToken: string) => {
 };
 
 const deleteRefreshToken = async (refreshToken: string) => {
-  await redis.del(`refreshToken:${refreshToken}`);
+  return await redis.del(`refreshToken:${refreshToken}`);
 };
 
 export default Object.freeze({

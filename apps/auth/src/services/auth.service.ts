@@ -41,12 +41,14 @@ const loginWithEmailAndPassword = async (email: string, password: string) => {
   if (!user) {
     throw new ApiError(httpStatus.UNAUTHORIZED, 'Incorrect credentials');
   }
+
   const isPasswordMatch = await comparePassword(password, user.password);
   if (!isPasswordMatch) {
     throw new ApiError(httpStatus.UNAUTHORIZED, 'Incorrect credentials');
   }
   const { accessToken, refreshToken } = createTokens(user);
   authRedis.setRefreshToken(refreshToken, user);
+
   return {
     accessToken,
     refreshToken,
@@ -59,7 +61,21 @@ const loginWithEmailAndPassword = async (email: string, password: string) => {
   };
 };
 
+const logout = async (refreshToken: string) => {
+  if (refreshToken === undefined) {
+    throw new ApiError(
+      httpStatus.UNAUTHORIZED,
+      'You need to login before logging out'
+    );
+  }
+  const response = await authRedis.deleteRefreshToken(refreshToken);
+  if (response === 0) {
+    throw new ApiError(httpStatus.UNAUTHORIZED, 'Invalid refresh token');
+  }
+};
+
 export default Object.freeze({
   signupWithEmailAndPassword,
   loginWithEmailAndPassword,
+  logout,
 });

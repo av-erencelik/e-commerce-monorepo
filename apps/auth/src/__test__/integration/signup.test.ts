@@ -9,12 +9,6 @@ import authRedis from '../../repository/auth.redis';
 import db from '../../database/sql';
 import { users } from '../../models/user';
 
-beforeAll(async () => {
-  await db.delete(users);
-});
-
-jest.mock('../../database/redis');
-
 describe('signup Route', () => {
   const validData = {
     email: 'test@example.com',
@@ -24,6 +18,10 @@ describe('signup Route', () => {
     countryCode: 'US',
     phoneNumber: '6204978718',
   };
+
+  afterAll(async () => {
+    await db.delete(users);
+  });
   it('should return 403 if passwords do not match', async () => {
     const invalidData = {
       email: 'test@example.com',

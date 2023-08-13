@@ -59,7 +59,8 @@
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
         "jestConfig": "apps/auth/src/__test__/integration/jest.int.config.ts",
-        "passWithNoTests": true
+        "passWithNoTests": true,
+        "runInBand": true
       },
       "dependsOn": ["test-db"],
       "configurations": {

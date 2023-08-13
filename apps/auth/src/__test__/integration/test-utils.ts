@@ -1,7 +1,7 @@
 import request from 'supertest';
 import app from '../../app';
 
-const signIn = async () => {
+const signin = async () => {
   const validData = {
     email: 'test@example.com',
     fullName: 'John Doe',
@@ -29,4 +29,4 @@ const signIn = async () => {
   };
 };
 
-export { signIn };
+export { signin };

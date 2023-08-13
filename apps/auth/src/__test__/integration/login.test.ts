@@ -8,12 +8,6 @@ import authRedis from '../../repository/auth.redis';
 import { AccessTokenPayload } from '@e-commerce-monorepo/utils';
 import config from '../../config/config';
 
-beforeEach(async () => {
-  await db.delete(users);
-});
-
-jest.mock('../../database/redis');
-
 describe('login Route', () => {
   const validData = {
     email: 'test@example.com',
@@ -23,6 +17,11 @@ describe('login Route', () => {
     countryCode: 'US',
     phoneNumber: '6204978718',
   };
+
+  afterAll(async () => {
+    await db.delete(users);
+  });
+
   it('should return 401 if email is not found', async () => {
     const response = await request(app).post('/auth/login').send({
       email: 'test2@example.com',

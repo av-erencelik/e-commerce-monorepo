@@ -24,7 +24,7 @@ const signup = async (
   res.cookie('refreshToken', refreshToken, {
     httpOnly: true,
     secure: config.env === 'production',
-    path: '/auth/refreshtoken/',
+    path: '/auth',
     sameSite: 'none',
     maxAge: config.refreshToken.expiresIn, // two weeks
   });
@@ -51,22 +51,31 @@ const login = async (
     await authService.loginWithEmailAndPassword(email, password);
   res.cookie('refreshToken', refreshToken, {
     httpOnly: true,
-    secure: true,
-    path: '/auth/refreshtoken/',
-    sameSite: 'none',
+    secure: config.env === 'production',
+    path: '/auth',
     maxAge: config.refreshToken.expiresIn, // two weeks
   });
   res.cookie('accessToken', accessToken, {
     httpOnly: true,
-    secure: true,
-    sameSite: 'none',
+    secure: config.env === 'production',
     maxAge: config.jwt.expiresIn, // ten minutes
   });
   logger.info(`Login successful with email: ${user.email}`);
   res.send({ user });
 };
 
+const logout = async (req: Request, res: Response) => {
+  const refreshToken = req.cookies.refreshToken;
+  const cookies = req.cookies;
+  logger.info(`Cookies: ${JSON.stringify(cookies)}`);
+  await authService.logout(refreshToken);
+  res.clearCookie('refreshToken', { path: '/auth' });
+  res.clearCookie('accessToken');
+  res.status(httpStatus.OK).send({ message: 'Logout successful' });
+};
+
 export default Object.freeze({
   signup,
   login,
+  logout,
 });
