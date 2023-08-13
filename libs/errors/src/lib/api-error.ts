@@ -18,7 +18,7 @@ class ApiError extends Error {
       const validationErrors = errors.map((error) => {
         return {
           message: error.message,
-          path: error.path.pop(),
+          path: error.path.pop() || '',
         };
       });
       this.errors = validationErrors;

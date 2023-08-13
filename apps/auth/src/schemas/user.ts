@@ -3,7 +3,7 @@ import parsePhoneNumber, {
   CountryCode,
   isSupportedCountry,
 } from 'libphonenumber-js';
-export const signupSchema = z.object({
+const signupSchema = z.object({
   body: z
     .object({
       email: z.string().trim().email(),
@@ -56,13 +56,23 @@ export const signupSchema = z.object({
       }) => ({
         email,
         password,
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         phoneNumber: parsePhoneNumber(
           phoneNumber,
           countryCode as CountryCode
-        ).formatNational(),
+        )!.formatNational(),
         countryCode,
         fullName,
         passwordConfirmation,
       })
     ),
 });
+
+const loginSchema = z.object({
+  body: z.object({
+    email: z.string().trim().email(),
+    password: z.string().trim().min(8).max(64),
+  }),
+});
+
+export { signupSchema, loginSchema };

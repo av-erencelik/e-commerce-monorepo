@@ -1,13 +1,22 @@
 import { eq, or } from 'drizzle-orm';
 import db from '../database/sql';
 import { users } from '../models/user';
-import { InserNewUser } from '../interfaces/user';
+import { InserNewUser, User } from '../interfaces/user';
 
-const checkUserExists = async (email: string, phoneNumber: string) => {
-  return await db
+const checkUserExists = async (
+  email: string,
+  phoneNumber: string
+): Promise<User | null> => {
+  const user = await db
     .select()
     .from(users)
     .where(or(eq(users.email, email), eq(users.phoneNumber, phoneNumber)));
+  return user.length > 0 ? user[0] : null;
+};
+
+const getUserByEmail = async (email: string): Promise<User | null> => {
+  const user = await db.select().from(users).where(eq(users.email, email));
+  return user.length > 0 ? user[0] : null;
 };
 
 const createUser = async (newUser: InserNewUser) => {
@@ -18,7 +27,12 @@ const createUser = async (newUser: InserNewUser) => {
     .values({ email, password, phoneNumber, fullName, countryCode, userId });
 
   const user = await db
-    .select({ userId: users.userId, email: users.email })
+    .select({
+      userId: users.userId,
+      email: users.email,
+      verificated: users.verificated,
+      fullName: users.fullName,
+    })
     .from(users);
 
   return user[0];
@@ -33,4 +47,5 @@ export default Object.freeze({
   checkUserExists,
   createUser,
   getCurrentUser,
+  getUserByEmail,
 });

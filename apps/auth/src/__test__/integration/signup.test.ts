@@ -5,6 +5,16 @@ import httpStatus from 'http-status';
 import { validate } from 'uuid';
 import { AccessTokenPayload } from '@e-commerce-monorepo/utils';
 import config from '../../config/config';
+import authRedis from '../../repository/auth.redis';
+import db from '../../database/sql';
+import { users } from '../../models/user';
+
+beforeAll(async () => {
+  await db.delete(users);
+});
+
+jest.mock('../../database/redis');
+
 describe('signup Route', () => {
   const validData = {
     email: 'test@example.com',
@@ -94,7 +104,7 @@ describe('signup Route', () => {
     expect(response.body.errors[0].message).toBe('Invalid email');
   });
 
-  it('should return 200 with refresh and access tokens if credentials is valid', async () => {
+  it('should return 200 with refresh and access tokens and should store refreshToken on redis if credentials is valid', async () => {
     const response = await request(app)
       .post('/auth/signup')
       .send(validData)
@@ -112,8 +122,16 @@ describe('signup Route', () => {
 
     expect(refreshToken).toBeDefined();
     expect(accessToken).toBeDefined();
+    if (!refreshToken || !accessToken) {
+      throw new Error('Refresh token or access token is undefined');
+    }
     expect(validate(refreshToken)).toBe(true);
-
+    const userPayload = await authRedis.getUserByRefreshToken(refreshToken);
+    expect(userPayload).toBeDefined();
+    if (!userPayload) {
+      throw new Error('User payload is undefined');
+    }
+    expect(userPayload.email).toBe(validData.email);
     expect(accessToken).toBeDefined();
     const accessTokenPayload = jwt.verify(
       accessToken,
