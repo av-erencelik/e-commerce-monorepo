@@ -10,6 +10,7 @@
     "src/**/*.test.ts",
     "src/**/*.spec.ts",
     "src/**/*.d.ts",
-    "src/lib/types.ts"
+    "src/lib/types.ts",
+    "../middlewares/src/lib/types.d.ts"
   ]
 }
