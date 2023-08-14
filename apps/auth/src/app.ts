@@ -8,7 +8,7 @@ import {
   successHandler as successHandlerLogger,
   errorHandler as errorHandlerLogger,
 } from '@e-commerce-monorepo/configs';
-import { xssClean } from '@e-commerce-monorepo/middlewares';
+import { currentUser, xssClean } from '@e-commerce-monorepo/middlewares';
 import router from './routes/routes';
 import cookieParser from 'cookie-parser';
 import config from './config/config';
@@ -24,6 +24,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(xssClean);
+app.use(currentUser);
 
 app.use(router);
 

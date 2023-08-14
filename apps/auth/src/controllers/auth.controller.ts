@@ -66,16 +66,43 @@ const login = async (
 
 const logout = async (req: Request, res: Response) => {
   const refreshToken = req.cookies.refreshToken;
-  const cookies = req.cookies;
-  logger.info(`Cookies: ${JSON.stringify(cookies)}`);
   await authService.logout(refreshToken);
   res.clearCookie('refreshToken', { path: '/auth' });
   res.clearCookie('accessToken');
   res.status(httpStatus.OK).send({ message: 'Logout successful' });
 };
 
+const getCurrentUser = async (req: Request, res: Response) => {
+  const payload = req.user;
+  const user = authService.getCurrentUser(payload);
+  res.send({ user });
+};
+
+const refreshTokens = async (req: Request, res: Response) => {
+  const currentRefreshToken = req.cookies.refreshToken;
+  const { accessToken, refreshToken } = await authService.refreshTokens(
+    currentRefreshToken
+  );
+  res.cookie('refreshToken', refreshToken, {
+    httpOnly: true,
+    secure: config.env === 'production',
+    path: '/auth',
+    maxAge: config.refreshToken.expiresIn, // two weeks
+  });
+
+  res.cookie('accessToken', accessToken, {
+    httpOnly: true,
+    secure: config.env === 'production',
+    maxAge: config.jwt.expiresIn, // ten minutes
+  });
+
+  res.send({ message: 'Tokens refreshed successfully' });
+};
+
 export default Object.freeze({
   signup,
   login,
   logout,
+  getCurrentUser,
+  refreshTokens,
 });
