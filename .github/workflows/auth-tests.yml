@@ -22,6 +22,8 @@ jobs:
       REDIS_HOST: ${{ secrets.REDIS_HOST }}
       REDIS_PORT: ${{ secrets.REDIS_PORT }}
       REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}
+      AMQP_URL: ${{ secrets.AMQP_URL }}
+      CLIENT_URL: ${{ secrets.CLIENT_URL }}
     steps:
       - uses: actions/checkout@v2
       - run: npm install
