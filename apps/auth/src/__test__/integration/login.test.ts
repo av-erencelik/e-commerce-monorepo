@@ -8,6 +8,12 @@ import authRedis from '../../repository/auth.redis';
 import { AccessTokenPayload } from '@e-commerce-monorepo/utils';
 import config from '../../config/config';
 
+jest.mock('@e-commerce-monorepo/event-bus', () => ({
+  UserCreated: jest.fn().mockImplementation(() => ({
+    publish: jest.fn(),
+  })),
+}));
+
 describe('login Route', () => {
   const validData = {
     email: 'test@example.com',
@@ -20,6 +26,10 @@ describe('login Route', () => {
 
   afterAll(async () => {
     await db.delete(users);
+  });
+
+  beforeEach(() => {
+    jest.clearAllMocks();
   });
 
   it('should return 401 if email is not found', async () => {

@@ -5,8 +5,15 @@ import { users } from '../../models/user';
 import { signin } from './test-utils';
 import httpStatus from 'http-status';
 
+jest.mock('@e-commerce-monorepo/event-bus', () => ({
+  UserCreated: jest.fn().mockImplementation(() => ({
+    publish: jest.fn(),
+  })),
+}));
+
 describe('current-user Route', () => {
   beforeEach(async () => {
+    jest.clearAllMocks();
     await db.delete(users);
   });
   afterAll(async () => {

@@ -13,6 +13,7 @@ authRouter.post('/refresh-token', authController.refreshTokens);
 authRouter.get('/current-user', requireAuth, authController.getCurrentUser);
 authRouter.post(
   '/verify-email',
+  requireAuth,
   validate(verifyTokenSchema),
   authController.verifyEmail
 );

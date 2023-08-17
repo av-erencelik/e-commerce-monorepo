@@ -9,6 +9,12 @@ import authRedis from '../../repository/auth.redis';
 import db from '../../database/sql';
 import { users } from '../../models/user';
 
+jest.mock('@e-commerce-monorepo/event-bus', () => ({
+  UserCreated: jest.fn().mockImplementation(() => ({
+    publish: jest.fn(),
+  })),
+}));
+
 describe('signup Route', () => {
   const validData = {
     email: 'test@example.com',
@@ -18,6 +24,10 @@ describe('signup Route', () => {
     countryCode: 'US',
     phoneNumber: '6204978718',
   };
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
 
   afterAll(async () => {
     await db.delete(users);

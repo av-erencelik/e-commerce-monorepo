@@ -5,12 +5,22 @@ import { users } from '../../models/user';
 import { signin } from './test-utils';
 import httpStatus from 'http-status';
 
+jest.mock('@e-commerce-monorepo/event-bus', () => ({
+  UserCreated: jest.fn().mockImplementation(() => ({
+    publish: jest.fn(),
+  })),
+}));
+
 describe('current-user Route', () => {
   beforeEach(async () => {
     await db.delete(users);
   });
   afterAll(async () => {
     await db.delete(users);
+  });
+
+  beforeEach(() => {
+    jest.clearAllMocks();
   });
 
   it('should return 401 if no access token is provided', async () => {
