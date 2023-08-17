@@ -5,8 +5,15 @@ import request from 'supertest';
 import authRedis from '../../repository/auth.redis';
 import { signin } from './test-utils';
 
+jest.mock('@e-commerce-monorepo/event-bus', () => ({
+  UserCreated: jest.fn().mockImplementation(() => ({
+    publish: jest.fn(),
+  })),
+}));
+
 describe('logout Route', () => {
   beforeEach(async () => {
+    jest.clearAllMocks();
     await db.delete(users);
   });
   afterAll(async () => {

@@ -1,0 +1,68 @@
+{
+  "name": "sendmail",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/sendmail/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nx/webpack:webpack",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "target": "node",
+        "compiler": "tsc",
+        "outputPath": "dist/apps/sendmail",
+        "main": "apps/sendmail/src/main.ts",
+        "tsConfig": "apps/sendmail/tsconfig.app.json",
+        "isolatedConfig": true,
+        "generatePackageJson": true,
+        "webpackConfig": "apps/sendmail/webpack.config.js"
+      },
+      "configurations": {
+        "development": {},
+        "production": {}
+      }
+    },
+    "serve": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "sendmail:build"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "sendmail:build:development"
+        },
+        "production": {
+          "buildTarget": "sendmail:build:production"
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/sendmail/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "apps/sendmail/jest.config.ts",
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "codeCoverage": true
+        }
+      }
+    },
+    "docker-build": {
+      "dependsOn": ["build"],
+      "command": "docker build -f apps/sendmail/Dockerfile . -t erenmemo/sendmail"
+    }
+  },
+  "tags": []
+}

@@ -32,6 +32,7 @@ const createUser = async (newUser: InserNewUser) => {
       email: users.email,
       verificated: users.verificated,
       fullName: users.fullName,
+      version: users.version,
     })
     .from(users);
 
@@ -43,9 +44,17 @@ const getCurrentUser = async (id: string) => {
   return user[0];
 };
 
+const verifyUser = async (email: string) => {
+  await db
+    .update(users)
+    .set({ verificated: true })
+    .where(eq(users.email, email));
+};
+
 export default Object.freeze({
   checkUserExists,
   createUser,
   getCurrentUser,
   getUserByEmail,
+  verifyUser,
 });

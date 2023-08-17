@@ -27,8 +27,32 @@ const deleteRefreshToken = async (refreshToken: string) => {
   return await redis.del(`refreshToken:${refreshToken}`);
 };
 
+const setVerificationToken = async (token: string, email: string) => {
+  await redis.set(
+    `verificationToken:${token}`,
+    email,
+    'PX',
+    config.verificationToken.expiresIn
+  );
+};
+
+const getVerificationToken = async (token: string) => {
+  const response = await redis.get(`verificationToken:${token}`);
+  if (!response) {
+    return null;
+  }
+  return response;
+};
+
+const deleteVerificationToken = async (token: string) => {
+  return await redis.del(`verificationToken:${token}`);
+};
+
 export default Object.freeze({
   setRefreshToken,
   getUserByRefreshToken,
   deleteRefreshToken,
+  setVerificationToken,
+  getVerificationToken,
+  deleteVerificationToken,
 });
