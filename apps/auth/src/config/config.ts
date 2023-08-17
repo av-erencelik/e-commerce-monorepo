@@ -3,7 +3,7 @@ import { z } from 'zod';
 
 const envVarsSchema = z.object({
   JWT_SECRET: z.string().min(32).max(128).default('secret'),
-  JWT_EXPIRES_IN: z.string().describe('JWT expiration in seconds'),
+  JWT_EXPIRES_IN: z.string().describe('JWT expiration in miliseconds'),
   JWT_ISSUER: z.string().describe('JWT issuer'),
   REFRESH_TOKEN_EXPIRES_IN: z
     .string()
@@ -12,6 +12,9 @@ const envVarsSchema = z.object({
   REDIS_HOST: z.string().describe('Redis host'),
   REDIS_PORT: z.string().describe('Redis port'),
   REDIS_PASSWORD: z.string().describe('Redis password'),
+  VERIFICATION_TOKEN_EXPIRES_IN: z
+    .string()
+    .describe('Verification token expiration in milliseconds'),
 });
 
 const envVars = envVarsSchema.parse(process.env);
@@ -33,6 +36,9 @@ const config = {
     host: envVars.REDIS_HOST,
     port: parseInt(envVars.REDIS_PORT),
     password: envVars.REDIS_PASSWORD,
+  },
+  verificationToken: {
+    expiresIn: parseInt(envVars.VERIFICATION_TOKEN_EXPIRES_IN),
   },
 };
 

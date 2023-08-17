@@ -11,6 +11,8 @@ import { NewUser } from '../interfaces/user';
 import { nanoid } from 'nanoid';
 import authRedis from '../repository/auth.redis';
 import { logger } from '@e-commerce-monorepo/configs';
+import { UserCreated, UserVerified } from '@e-commerce-monorepo/event-bus';
+import { v4 as uuidv4 } from 'uuid';
 const signupWithEmailAndPassword = async (newUser: NewUser) => {
   const existingUser = await authRepository.checkUserExists(
     newUser.email,
@@ -31,6 +33,17 @@ const signupWithEmailAndPassword = async (newUser: NewUser) => {
   });
   const { accessToken, refreshToken } = createTokens(user);
   await authRedis.setRefreshToken(refreshToken, user);
+  const verificationToken = uuidv4();
+  await authRedis.setVerificationToken(verificationToken, user.email);
+  const userCreatedEvent = new UserCreated();
+  await userCreatedEvent.publish({
+    userId: user.userId,
+    email: user.email,
+    fullName: user.fullName,
+    verificated: user.verificated,
+    version: user.version,
+    verificationToken,
+  });
   return {
     accessToken,
     refreshToken,
@@ -105,10 +118,34 @@ const refreshTokens = async (refreshToken: string) => {
   };
 };
 
+const verifyEmail = async (token: string) => {
+  const email = await authRedis.getVerificationToken(token);
+  if (!email) {
+    throw new ApiError(httpStatus.UNAUTHORIZED, 'Invalid token');
+  }
+  const user = await authRepository.getUserByEmail(email);
+  if (!user) {
+    throw new ApiError(httpStatus.UNAUTHORIZED, 'Invalid token');
+  }
+  await authRepository.verifyUser(user.userId);
+  await authRedis.deleteVerificationToken(token);
+  const userVerifiedEvent = new UserVerified();
+  await userVerifiedEvent.publish({
+    userId: user.userId,
+    email: user.email,
+    fullName: user.fullName,
+    verificated: true,
+  });
+  return {
+    email,
+  };
+};
+
 export default Object.freeze({
   signupWithEmailAndPassword,
   loginWithEmailAndPassword,
   logout,
   getCurrentUser,
   refreshTokens,
+  verifyEmail,
 });

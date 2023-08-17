@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { ParamsDictionary } from 'express-serve-static-core';
 import authService from '../services/auth.service';
-import { Login, NewUser, Signup } from '../interfaces/user';
+import { Login, NewUser, Signup, Token } from '../interfaces/user';
 import { logger } from '@e-commerce-monorepo/configs';
 import httpStatus from 'http-status';
 import config from '../config/config';
@@ -35,7 +35,14 @@ const signup = async (
     maxAge: config.jwt.expiresIn, // ten minutes
   });
   logger.info(`Signup successful with email: ${user.email}`);
-  res.status(httpStatus.CREATED).send({ user });
+  res.status(httpStatus.CREATED).send({
+    user: {
+      userId: user.userId,
+      email: user.email,
+      verificated: user.verificated,
+      fullName: user.fullName,
+    },
+  });
 };
 
 const login = async (
@@ -99,10 +106,21 @@ const refreshTokens = async (req: Request, res: Response) => {
   res.send({ message: 'Tokens refreshed successfully' });
 };
 
+const verifyEmail = async (
+  req: Request<ParamsDictionary, unknown, unknown, Token>,
+  res: Response
+) => {
+  const token = req.query.token;
+  const email = await authService.verifyEmail(token);
+  logger.info(`Email verified: ${email}`);
+  res.send(email);
+};
+
 export default Object.freeze({
   signup,
   login,
   logout,
   getCurrentUser,
   refreshTokens,
+  verifyEmail,
 });

@@ -56,6 +56,21 @@ spec:
                 secretKeyRef:
                   name: redis-password
                   key: REDIS_PASSWORD
+            - name: AMQP_URL
+              valueFrom:
+                secretKeyRef:
+                  name: amqp-url
+                  key: AMQP_URL
+            - name: CLIENT_URL
+              valueFrom:
+                secretKeyRef:
+                  name: client-url
+                  key: CLIENT_URL
+            - name: VERIFICATION_TOKEN_EXPIRES_IN
+              valueFrom:
+                secretKeyRef:
+                  name: verification-token-expires-in
+                  key: VERIFICATION_TOKEN_EXPIRES_IN
             - name: NODE_ENV
               value: development
 ---

@@ -5,6 +5,7 @@ import {
   int,
   boolean,
   uniqueIndex,
+  smallint,
 } from 'drizzle-orm/mysql-core';
 
 export const mysqlTable = mysqlTableCreator((name) => `auth_${name}`);
@@ -20,6 +21,7 @@ export const users = mysqlTable(
     phoneNumber: varchar('phone_number', { length: 16 }).unique().notNull(),
     countryCode: char('country_code', { length: 2 }).notNull(),
     verificated: boolean('verificated').notNull().default(false),
+    version: smallint('version').notNull().default(0),
   },
   (table) => ({
     emailIdx: uniqueIndex('email_idx').on(table.email),

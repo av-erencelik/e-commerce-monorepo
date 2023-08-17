@@ -2,6 +2,7 @@ import { logger } from '@e-commerce-monorepo/configs';
 import app from './app';
 import config from './config/config';
 import { RMQConnect } from '@e-commerce-monorepo/event-bus';
+import { MailListener } from './event-bus/listeners/mail.listener';
 
 const port = config.port;
 const connectionData = {
@@ -17,6 +18,8 @@ const server = app.listen(port, async () => {
       RMQConnect.closeConnection(mqConnection);
       process.exit(0);
     });
+    const mailListener = new MailListener();
+    mailListener.consume();
   } catch (err) {
     logger.error(err);
   }

@@ -15,3 +15,11 @@ build:
         manual:
           - src: apps/auth
             dest: .
+    - image: erenmemo/sendmail
+      context: ./
+      docker:
+        dockerfile: apps/sendmail/Dockerfile
+      sync:
+        manual:
+          - src: apps/sendmail
+            dest: .
