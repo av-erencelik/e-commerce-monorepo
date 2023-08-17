@@ -25,7 +25,7 @@
     "libphonenumber-js": "^1.10.39",
     "morgan": "^1.10.0",
     "mysql2": "^3.5.2",
-    "nanoid": "^3.3.4",
+    "nanoid": "^3.3.6",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-email": "^1.9.4",
