@@ -24,6 +24,7 @@ jobs:
       REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}
       AMQP_URL: ${{ secrets.AMQP_URL }}
       CLIENT_URL: ${{ secrets.CLIENT_URL }}
+      VERIFICATION_TOKEN_EXPIRES_IN: ${{ secrets.VERIFICATION_TOKEN_EXPIRES_IN }}
     steps:
       - uses: actions/checkout@v2
       - run: npm install
