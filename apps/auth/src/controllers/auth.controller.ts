@@ -24,15 +24,14 @@ const signup = async (
   res.cookie('refreshToken', refreshToken, {
     httpOnly: true,
     secure: config.env === 'production',
-    path: '/auth',
-    sameSite: 'none',
-    maxAge: config.refreshToken.expiresIn, // two weeks
+    maxAge: config.refreshToken.expiresIn,
+    domain: '.posts.com', // two weeks
   });
   res.cookie('accessToken', accessToken, {
     httpOnly: true,
     secure: config.env === 'production',
-    sameSite: 'none',
     maxAge: config.jwt.expiresIn, // ten minutes
+    domain: '.posts.com',
   });
   logger.info(`Signup successful with email: ${user.email}`);
   res.status(httpStatus.CREATED).send({
@@ -59,13 +58,14 @@ const login = async (
   res.cookie('refreshToken', refreshToken, {
     httpOnly: true,
     secure: config.env === 'production',
-    path: '/auth',
     maxAge: config.refreshToken.expiresIn, // two weeks
+    domain: '.posts.com',
   });
   res.cookie('accessToken', accessToken, {
     httpOnly: true,
     secure: config.env === 'production',
     maxAge: config.jwt.expiresIn, // ten minutes
+    domain: '.posts.com',
   });
   logger.info(`Login successful with email: ${user.email}`);
   res.send({ user });
