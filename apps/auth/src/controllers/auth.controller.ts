@@ -93,14 +93,15 @@ const refreshTokens = async (req: Request, res: Response) => {
   res.cookie('refreshToken', refreshToken, {
     httpOnly: true,
     secure: config.env === 'production',
-    path: '/auth',
     maxAge: config.refreshToken.expiresIn, // two weeks
+    domain: '.posts.com',
   });
 
   res.cookie('accessToken', accessToken, {
     httpOnly: true,
     secure: config.env === 'production',
     maxAge: config.jwt.expiresIn, // ten minutes
+    domain: '.posts.com',
   });
 
   res.send({ message: 'Tokens refreshed successfully' });
