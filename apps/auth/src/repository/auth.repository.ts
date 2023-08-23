@@ -34,7 +34,8 @@ const createUser = async (newUser: InserNewUser) => {
       fullName: users.fullName,
       version: users.version,
     })
-    .from(users);
+    .from(users)
+    .where(eq(users.email, email));
 
   return user[0];
 };
