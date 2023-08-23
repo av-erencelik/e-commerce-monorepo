@@ -77,13 +77,13 @@ const logout = async (req: Request, res: Response) => {
   res.clearCookie('refreshToken', {
     httpOnly: true,
     secure: config.env === 'production',
-    maxAge: config.refreshToken.expiresIn, // two weeks
+    maxAge: 0, // two weeks
     domain: '.posts.com',
   });
   res.clearCookie('accessToken', {
     httpOnly: true,
     secure: config.env === 'production',
-    maxAge: config.jwt.expiresIn, // ten minutes
+    maxAge: 0, // ten minutes
     domain: '.posts.com',
   });
   res.status(httpStatus.OK).send({ message: 'Logout successful' });
