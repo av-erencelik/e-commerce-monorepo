@@ -74,8 +74,18 @@ const login = async (
 const logout = async (req: Request, res: Response) => {
   const refreshToken = req.cookies.refreshToken;
   await authService.logout(refreshToken);
-  res.clearCookie('refreshToken', { path: '/auth' });
-  res.clearCookie('accessToken');
+  res.clearCookie('refreshToken', {
+    httpOnly: true,
+    secure: config.env === 'production',
+    maxAge: config.refreshToken.expiresIn, // two weeks
+    domain: '.posts.com',
+  });
+  res.clearCookie('accessToken', {
+    httpOnly: true,
+    secure: config.env === 'production',
+    maxAge: config.jwt.expiresIn, // ten minutes
+    domain: '.posts.com',
+  });
   res.status(httpStatus.OK).send({ message: 'Logout successful' });
 };
 
