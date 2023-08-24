@@ -34,7 +34,7 @@ export const WelcomeEmail = ({ name, link }: WelcomeEmailProps) => {
               </span>
             </Heading>
             <Text className="text-black text-[14px] leading-[24px]">
-              Hello <strong className="text-[#31C48D]">{name}</strong>,
+              Hello <strong className="text-[#E0AC29]">{name}</strong>,
             </Text>
             <Text className="text-black text-[14px] leading-[24px]">
               Warm greetings from E-Commerce Monorepo! Your email verification
@@ -53,7 +53,7 @@ export const WelcomeEmail = ({ name, link }: WelcomeEmailProps) => {
               <Button
                 pX={50}
                 pY={15}
-                className="bg-[#31C48D] rounded text-white text-[14px] font-semibold no-underline text-center"
+                className="bg-[#E0AC29] rounded text-white text-[14px] font-semibold no-underline text-center"
                 href={link}
               >
                 Get Started

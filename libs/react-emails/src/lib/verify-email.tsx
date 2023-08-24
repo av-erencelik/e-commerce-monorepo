@@ -31,7 +31,7 @@ const VerifyEmail = ({ name, link }: UserEmailProps) => {
               Verify your email address
             </Heading>
             <Text className="text-black text-[14px] leading-[24px]">
-              Hello <strong className="text-[#31C48D]">{name}</strong>,
+              Hello <strong className="text-[#E0AC29]">{name}</strong>,
             </Text>
             <Text className="text-black text-[14px] leading-[24px]">
               Thanks for signing up for e-commerce-monorepo! We're excited to
@@ -42,7 +42,7 @@ const VerifyEmail = ({ name, link }: UserEmailProps) => {
               <Button
                 pX={20}
                 pY={12}
-                className="bg-[#31C48D] rounded text-white text-[14px] font-semibold no-underline text-center"
+                className="bg-[#E0AC29] rounded text-white text-[14px] font-semibold no-underline text-center"
                 href={link}
               >
                 Verify Your Email

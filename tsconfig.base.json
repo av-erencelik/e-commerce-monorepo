@@ -20,8 +20,11 @@
       "@e-commerce-monorepo/emails": ["libs/emails/src/index.ts"],
       "@e-commerce-monorepo/errors": ["libs/errors/src/index.ts"],
       "@e-commerce-monorepo/event-bus": ["libs/event-bus/src/index.ts"],
+      "@e-commerce-monorepo/global-types": ["libs/global-types/src/index.ts"],
       "@e-commerce-monorepo/middlewares": ["libs/middlewares/src/index.ts"],
       "@e-commerce-monorepo/react-emails": ["libs/react-emails/src/index.ts"],
+      "@e-commerce-monorepo/ui": ["libs/ui/src/index.ts"],
+      "@e-commerce-monorepo/ui/server": ["libs/ui/src/server.ts"],
       "@e-commerce-monorepo/utils": ["libs/utils/src/index.ts"]
     }
   },

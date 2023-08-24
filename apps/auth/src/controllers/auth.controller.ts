@@ -24,15 +24,14 @@ const signup = async (
   res.cookie('refreshToken', refreshToken, {
     httpOnly: true,
     secure: config.env === 'production',
-    path: '/auth',
-    sameSite: 'none',
-    maxAge: config.refreshToken.expiresIn, // two weeks
+    maxAge: config.refreshToken.expiresIn,
+    domain: '.posts.com', // two weeks
   });
   res.cookie('accessToken', accessToken, {
     httpOnly: true,
     secure: config.env === 'production',
-    sameSite: 'none',
     maxAge: config.jwt.expiresIn, // ten minutes
+    domain: '.posts.com',
   });
   logger.info(`Signup successful with email: ${user.email}`);
   res.status(httpStatus.CREATED).send({
@@ -59,13 +58,14 @@ const login = async (
   res.cookie('refreshToken', refreshToken, {
     httpOnly: true,
     secure: config.env === 'production',
-    path: '/auth',
     maxAge: config.refreshToken.expiresIn, // two weeks
+    domain: '.posts.com',
   });
   res.cookie('accessToken', accessToken, {
     httpOnly: true,
     secure: config.env === 'production',
     maxAge: config.jwt.expiresIn, // ten minutes
+    domain: '.posts.com',
   });
   logger.info(`Login successful with email: ${user.email}`);
   res.send({ user });
@@ -74,8 +74,18 @@ const login = async (
 const logout = async (req: Request, res: Response) => {
   const refreshToken = req.cookies.refreshToken;
   await authService.logout(refreshToken);
-  res.clearCookie('refreshToken', { path: '/auth' });
-  res.clearCookie('accessToken');
+  res.clearCookie('refreshToken', {
+    httpOnly: true,
+    secure: config.env === 'production',
+    maxAge: 0, // two weeks
+    domain: '.posts.com',
+  });
+  res.clearCookie('accessToken', {
+    httpOnly: true,
+    secure: config.env === 'production',
+    maxAge: 0, // ten minutes
+    domain: '.posts.com',
+  });
   res.status(httpStatus.OK).send({ message: 'Logout successful' });
 };
 
@@ -90,17 +100,18 @@ const refreshTokens = async (req: Request, res: Response) => {
   const { accessToken, refreshToken } = await authService.refreshTokens(
     currentRefreshToken
   );
-  res.cookie('refreshToken', refreshToken, {
-    httpOnly: true,
-    secure: config.env === 'production',
-    path: '/auth',
-    maxAge: config.refreshToken.expiresIn, // two weeks
-  });
-
   res.cookie('accessToken', accessToken, {
     httpOnly: true,
     secure: config.env === 'production',
     maxAge: config.jwt.expiresIn, // ten minutes
+    domain: '.posts.com',
+  });
+
+  res.cookie('refreshToken', refreshToken, {
+    httpOnly: true,
+    secure: config.env === 'production',
+    maxAge: config.refreshToken.expiresIn, // two weeks
+    domain: '.posts.com',
   });
 
   res.send({ message: 'Tokens refreshed successfully' });
@@ -110,10 +121,33 @@ const verifyEmail = async (
   req: Request<ParamsDictionary, unknown, unknown, Token>,
   res: Response
 ) => {
+  const currentRefreshToken = req.cookies.refreshToken;
   const token = req.query.token;
-  const email = await authService.verifyEmail(token);
-  logger.info(`Email verified: ${email}`);
-  res.send(email);
+  const { accessToken, refreshToken, updatedUser } =
+    await authService.verifyEmail(token, currentRefreshToken);
+  res.cookie('accessToken', accessToken, {
+    httpOnly: true,
+    secure: config.env === 'production',
+    maxAge: config.jwt.expiresIn, // ten minutes
+    domain: '.posts.com',
+  });
+
+  res.cookie('refreshToken', refreshToken, {
+    httpOnly: true,
+    secure: config.env === 'production',
+    maxAge: config.refreshToken.expiresIn, // two weeks
+    domain: '.posts.com',
+  });
+
+  logger.info(`Email verified: ${updatedUser.email}`);
+  res.send({ message: `${updatedUser.email} email verificated` });
+};
+
+const resendVerificationEmail = async (req: Request, res: Response) => {
+  const user = req.user;
+  const email = await authService.resendVerificationEmail(user);
+  logger.info(`Verification email sent to: ${email}`);
+  res.send({ message: `Verification email sent to ${email}` });
 };
 
 export default Object.freeze({
@@ -123,4 +157,5 @@ export default Object.freeze({
   getCurrentUser,
   refreshTokens,
   verifyEmail,
+  resendVerificationEmail,
 });

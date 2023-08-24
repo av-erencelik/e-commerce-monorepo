@@ -3,6 +3,7 @@ import {
   RMQMessage,
   Subjects,
   UserCreatedPayload,
+  UserResendPayload,
   UserVerifiedPayload,
 } from '@e-commerce-monorepo/event-bus';
 import { ConsumeMessage } from 'amqplib';
@@ -40,7 +41,7 @@ export class MailListener extends RMQListener {
           html: render(
             VerifyEmail({
               name: payload.fullName,
-              link: `${config.client.url}/verify-email?token=${payload.verificationToken}`,
+              link: `${config.client.url}verify-email?token=${payload.verificationToken}`,
             })
           ),
         });
@@ -60,7 +61,27 @@ export class MailListener extends RMQListener {
           html: render(
             WelcomeEmail({
               name: payload.fullName,
-              link: `${config.client.url}/login`,
+              link: `${config.client.url}login`,
+            })
+          ),
+        });
+      } else if (event === Subjects.userResend) {
+        const payload = messageReceived.payload() as UserResendPayload;
+        logger.info(`Sending verification email to ${payload.email}`);
+        await resend.emails.send({
+          to: payload.email,
+          from: config.email,
+          subject: 'Please verify your email',
+          tags: [
+            {
+              name: 'category',
+              value: 'confirm_email',
+            },
+          ],
+          html: render(
+            VerifyEmail({
+              name: payload.fullName,
+              link: `${config.client.url}verify-email?token=${payload.verificationToken}`,
             })
           ),
         });

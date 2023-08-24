@@ -11,7 +11,11 @@ import { NewUser } from '../interfaces/user';
 import { nanoid } from 'nanoid';
 import authRedis from '../repository/auth.redis';
 import { logger } from '@e-commerce-monorepo/configs';
-import { UserCreated, UserVerified } from '@e-commerce-monorepo/event-bus';
+import {
+  UserCreated,
+  UserResend,
+  UserVerified,
+} from '@e-commerce-monorepo/event-bus';
 import { v4 as uuidv4 } from 'uuid';
 const signupWithEmailAndPassword = async (newUser: NewUser) => {
   const existingUser = await authRepository.checkUserExists(
@@ -112,14 +116,16 @@ const refreshTokens = async (refreshToken: string) => {
   }
   const { accessToken, refreshToken: newRefreshToken } = createTokens(user);
   await authRedis.setRefreshToken(newRefreshToken, user);
+  await authRedis.deleteRefreshToken(refreshToken);
   return {
     accessToken,
     refreshToken: newRefreshToken,
   };
 };
 
-const verifyEmail = async (token: string) => {
+const verifyEmail = async (token: string, currentRefreshToken?: string) => {
   const email = await authRedis.getVerificationToken(token);
+  logger.info(`token: ${token}`);
   if (!email) {
     throw new ApiError(httpStatus.UNAUTHORIZED, 'Invalid token');
   }
@@ -127,18 +133,35 @@ const verifyEmail = async (token: string) => {
   if (!user) {
     throw new ApiError(httpStatus.UNAUTHORIZED, 'Invalid token');
   }
-  await authRepository.verifyUser(user.userId);
+  const updatedUser = await authRepository.verifyUser(user.email);
+  logger.info('updatedUser', updatedUser);
+  // delete token from redis and create tokens with updated user data
   await authRedis.deleteVerificationToken(token);
+  if (currentRefreshToken) {
+    await authRedis.deleteRefreshToken(currentRefreshToken);
+  }
+  const { accessToken, refreshToken } = createTokens(updatedUser);
+  await authRedis.setRefreshToken(refreshToken, updatedUser);
   const userVerifiedEvent = new UserVerified();
-  await userVerifiedEvent.publish({
+  await userVerifiedEvent.publish(updatedUser);
+  return { updatedUser, accessToken, refreshToken };
+};
+
+const resendVerificationEmail = async (user?: AccessTokenPayload) => {
+  if (!user) {
+    throw new ApiError(httpStatus.UNAUTHORIZED, 'Not authorized');
+  }
+  const verificationToken = uuidv4();
+  await authRedis.setVerificationToken(verificationToken, user.email);
+  const userResendEvent = new UserResend();
+  await userResendEvent.publish({
     userId: user.userId,
     email: user.email,
     fullName: user.fullName,
-    verificated: true,
+    verificated: user.verificated,
+    verificationToken,
   });
-  return {
-    email,
-  };
+  return user.email;
 };
 
 export default Object.freeze({
@@ -148,4 +171,5 @@ export default Object.freeze({
   getCurrentUser,
   refreshTokens,
   verifyEmail,
+  resendVerificationEmail,
 });

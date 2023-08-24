@@ -6,6 +6,7 @@ type UserVerifiedPayload = {
   email: string;
   fullName: string;
   verificated: boolean;
+  version: number;
 };
 
 class UserVerified extends RMQEvent {
