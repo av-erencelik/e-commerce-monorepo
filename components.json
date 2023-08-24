@@ -1,0 +1,15 @@
+{
+  "$schema": "https://ui.shadcn.com/schema.json",
+  "style": "new-york",
+  "rsc": true,
+  "tailwind": {
+    "config": "apps/client/tailwind.config.js",
+    "css": "apps/client/app/global.css",
+    "baseColor": "stone",
+    "cssVariables": true
+  },
+  "aliases": {
+    "components": "@e-commerce-monorepo/ui/components",
+    "utils": "@e-commerce-monorepo/ui/utils"
+  }
+}

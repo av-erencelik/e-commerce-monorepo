@@ -17,5 +17,10 @@ authRouter.post(
   validate(verifyTokenSchema),
   authController.verifyEmail
 );
+authRouter.put(
+  '/verify-email',
+  requireAuth,
+  authController.resendVerificationEmail
+);
 
 export default authRouter;

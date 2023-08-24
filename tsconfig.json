@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@e-commerce-monorepo/ui": ["libs/ui/src/index.ts"],
+      "@e-commerce-monorepo/ui/*": ["libs/ui/src/*"]
+    }
+  }
+}

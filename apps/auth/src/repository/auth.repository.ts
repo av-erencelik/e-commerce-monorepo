@@ -1,4 +1,4 @@
-import { eq, or } from 'drizzle-orm';
+import { eq, or, sql } from 'drizzle-orm';
 import db from '../database/sql';
 import { users } from '../models/user';
 import { InserNewUser, User } from '../interfaces/user';
@@ -48,8 +48,10 @@ const getCurrentUser = async (id: string) => {
 const verifyUser = async (email: string) => {
   await db
     .update(users)
-    .set({ verificated: true })
+    .set({ verificated: true, version: sql`${users.version} + 1` })
     .where(eq(users.email, email));
+  const user = await db.select().from(users).where(eq(users.email, email));
+  return user[0];
 };
 
 export default Object.freeze({

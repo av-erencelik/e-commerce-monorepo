@@ -121,10 +121,33 @@ const verifyEmail = async (
   req: Request<ParamsDictionary, unknown, unknown, Token>,
   res: Response
 ) => {
+  const currentRefreshToken = req.cookies.refreshToken;
   const token = req.query.token;
-  const email = await authService.verifyEmail(token);
-  logger.info(`Email verified: ${email}`);
-  res.send(email);
+  const { accessToken, refreshToken, updatedUser } =
+    await authService.verifyEmail(token, currentRefreshToken);
+  res.cookie('accessToken', accessToken, {
+    httpOnly: true,
+    secure: config.env === 'production',
+    maxAge: config.jwt.expiresIn, // ten minutes
+    domain: '.posts.com',
+  });
+
+  res.cookie('refreshToken', refreshToken, {
+    httpOnly: true,
+    secure: config.env === 'production',
+    maxAge: config.refreshToken.expiresIn, // two weeks
+    domain: '.posts.com',
+  });
+
+  logger.info(`Email verified: ${updatedUser.email}`);
+  res.send({ message: `${updatedUser.email} email verificated` });
+};
+
+const resendVerificationEmail = async (req: Request, res: Response) => {
+  const user = req.user;
+  const email = await authService.resendVerificationEmail(user);
+  logger.info(`Verification email sent to: ${email}`);
+  res.send({ message: `Verification email sent to ${email}` });
 };
 
 export default Object.freeze({
@@ -134,4 +157,5 @@ export default Object.freeze({
   getCurrentUser,
   refreshTokens,
   verifyEmail,
+  resendVerificationEmail,
 });
