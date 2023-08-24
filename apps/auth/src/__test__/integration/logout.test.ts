@@ -64,7 +64,8 @@ describe('logout Route', () => {
     const cookies = response.get('Set-Cookie');
     expect(cookies).toBeDefined();
     for (const cookie of cookies) {
-      expect(cookie).toContain('Expires=Thu, 01 Jan 1970');
+      const cookieArray = cookie.split('; ');
+      expect(cookieArray[1]).toContain('Max-Age=0');
     }
   });
 
