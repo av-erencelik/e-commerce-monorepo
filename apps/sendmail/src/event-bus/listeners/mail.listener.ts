@@ -5,6 +5,7 @@ import {
   UserCreatedPayload,
   UserResendPayload,
   UserVerifiedPayload,
+  UserResetPasswordPayload,
 } from '@e-commerce-monorepo/event-bus';
 import { ConsumeMessage } from 'amqplib';
 import queueName from '../queue-name';
@@ -12,11 +13,20 @@ import { logger } from '@e-commerce-monorepo/configs';
 import resend from '../../mail/resend';
 import config from '../../config/config';
 import { render } from '@react-email/components';
-import { VerifyEmail, WelcomeEmail } from '@e-commerce-monorepo/react-emails';
+import {
+  PasswordReset,
+  VerifyEmail,
+  WelcomeEmail,
+} from '@e-commerce-monorepo/react-emails';
 
 export class MailListener extends RMQListener {
   public queue = queueName;
-  public events = [Subjects.userCreated, Subjects.userVerified];
+  public events = [
+    Subjects.userCreated,
+    Subjects.userVerified,
+    Subjects.userResend,
+    Subjects.userResetPassword,
+  ];
 
   public async consume() {
     const channel = await this.getChannel();
@@ -82,6 +92,26 @@ export class MailListener extends RMQListener {
             VerifyEmail({
               name: payload.fullName,
               link: `${config.client.url}verify-email?token=${payload.verificationToken}`,
+            })
+          ),
+        });
+      } else if (event === Subjects.userResetPassword) {
+        const payload = messageReceived.payload() as UserResetPasswordPayload;
+        logger.info(`Sending reset password email to ${payload.email}`);
+        await resend.emails.send({
+          to: payload.email,
+          from: config.email,
+          subject: 'Reset password',
+          tags: [
+            {
+              name: 'category',
+              value: 'reset_password',
+            },
+          ],
+          html: render(
+            PasswordReset({
+              name: payload.fullName,
+              link: payload.url,
             })
           ),
         });

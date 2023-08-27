@@ -75,4 +75,31 @@ const loginSchema = z.object({
   }),
 });
 
-export { signupSchema, loginSchema };
+const forgotPasswordSchema = z.object({
+  body: z.object({
+    email: z.string().trim().email(),
+  }),
+});
+
+const resetPasswordSchema = z.object({
+  body: z
+    .object({
+      password: z.string().trim().min(8).max(64),
+      passwordConfirmation: z.string().trim().min(8).max(64),
+    })
+    .superRefine(({ password, passwordConfirmation }, ctx) => {
+      if (password !== passwordConfirmation) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Passwords do not match',
+          path: ['passwordConfirmation'],
+        });
+        return z.NEVER;
+      }
+    }),
+  query: z.object({
+    token: z.string().uuid(),
+  }),
+});
+
+export { signupSchema, loginSchema, forgotPasswordSchema, resetPasswordSchema };
