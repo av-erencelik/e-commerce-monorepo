@@ -2,6 +2,7 @@ import { eq, or, sql } from 'drizzle-orm';
 import db from '../database/sql';
 import { users } from '../models/user';
 import { InserNewUser, User } from '../interfaces/user';
+import { passwordReset } from '../models/password-reset';
 
 const checkUserExists = async (
   email: string,
@@ -54,10 +55,45 @@ const verifyUser = async (email: string) => {
   return user[0];
 };
 
+const setResetPasswordToken = async (
+  user: User,
+  token: string,
+  expiresAt: Date
+) => {
+  await db.insert(passwordReset).values({
+    userId: user.userId,
+    token,
+    expiresAt,
+  });
+};
+
+const getResetPasswordToken = async (token: string) => {
+  const passwordResetToken = await db
+    .select()
+    .from(passwordReset)
+    .where(eq(passwordReset.token, token));
+  return passwordResetToken[0];
+};
+
+const updatePassword = async (userId: string, password: string) => {
+  await db
+    .update(users)
+    .set({ password, version: sql`${users.version} + 1` })
+    .where(eq(users.userId, userId));
+};
+
+const deleteResetPasswordToken = async (token: string) => {
+  await db.delete(passwordReset).where(eq(passwordReset.token, token));
+};
+
 export default Object.freeze({
   checkUserExists,
   createUser,
   getCurrentUser,
   getUserByEmail,
   verifyUser,
+  setResetPasswordToken,
+  getResetPasswordToken,
+  updatePassword,
+  deleteResetPasswordToken,
 });

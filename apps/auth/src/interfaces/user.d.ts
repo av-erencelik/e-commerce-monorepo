@@ -1,5 +1,10 @@
 import { z } from 'zod';
-import { signupSchema, loginSchema } from '../schemas/user';
+import {
+  signupSchema,
+  loginSchema,
+  forgotPasswordSchema,
+  resetPasswordSchema,
+} from '../schemas/user';
 import { InferModel } from 'drizzle-orm';
 import { users } from '../models/user';
 import { verifyTokenSchema } from '../schemas/token';
@@ -21,4 +26,17 @@ interface InsertNewUser extends NewUser {
   userId: string;
 }
 
-export { Signup, NewUser, InserNewUser, Login, User, Token };
+type ForgotPassword = z.infer<typeof forgotPasswordSchema>['body'];
+
+type ResetPassword = z.infer<typeof resetPasswordSchema>['body'];
+
+export {
+  Signup,
+  NewUser,
+  InserNewUser,
+  Login,
+  User,
+  Token,
+  ForgotPassword,
+  ResetPassword,
+};

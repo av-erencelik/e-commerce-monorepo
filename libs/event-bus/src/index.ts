@@ -7,3 +7,4 @@ export * from './lib/subjects';
 export * from './lib/events/user.created';
 export * from './lib/events/user.verified';
 export * from './lib/events/user.resend';
+export * from './lib/events/user.resetpassword';

@@ -1,5 +1,10 @@
 import { Router } from 'express';
-import { loginSchema, signupSchema } from '../schemas/user';
+import {
+  forgotPasswordSchema,
+  loginSchema,
+  resetPasswordSchema,
+  signupSchema,
+} from '../schemas/user';
 import { requireAuth, validate } from '@e-commerce-monorepo/middlewares';
 import authController from '../controllers/auth.controller';
 import { verifyTokenSchema } from '../schemas/token';
@@ -21,6 +26,17 @@ authRouter.put(
   '/verify-email',
   requireAuth,
   authController.resendVerificationEmail
+);
+authRouter.post(
+  '/forgot-password',
+  validate(forgotPasswordSchema),
+  authController.forgotPassword
+);
+
+authRouter.put(
+  '/reset-password',
+  validate(resetPasswordSchema),
+  authController.resetPassword
 );
 
 export default authRouter;
