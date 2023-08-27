@@ -1,0 +1,16 @@
+name: client-test
+
+on:
+  pull_request:
+    paths:
+      - 'apps/client/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      NODE_ENV: 'test'
+    steps:
+      - uses: actions/checkout@v2
+      - run: npm install
+      - run: npx nx test client
