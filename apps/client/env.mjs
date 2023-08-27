@@ -6,8 +6,6 @@ export const env = createEnv({
     NX_CLIENT_URL: z.string().url(),
     NX_API_URL: z.string().url(),
     NODE_ENV: z.enum(['development', 'production', 'test']),
-    NX_JWT_SECRET: z.string(),
-    NX_JWT_ISSUER: z.string(),
   },
   client: {
     NEXT_PUBLIC_NX_API_URL: z.string().url(),
@@ -19,7 +17,5 @@ export const env = createEnv({
     NODE_ENV: process.env.NODE_ENV,
     NX_API_URL: process.env.NX_API_URL,
     NX_CLIENT_URL: process.env.NX_CLIENT_URL,
-    NX_JWT_SECRET: process.env.NX_JWT_SECRET,
-    NX_JWT_ISSUER: process.env.NX_JWT_ISSUER,
   },
 });
