@@ -1,7 +1,14 @@
 import { Request, Response } from 'express';
 import { ParamsDictionary } from 'express-serve-static-core';
 import authService from '../services/auth.service';
-import { Login, NewUser, Signup, Token } from '../interfaces/user';
+import {
+  Login,
+  NewUser,
+  Signup,
+  Token,
+  ForgotPassword,
+  ResetPassword,
+} from '../interfaces/user';
 import { logger } from '@e-commerce-monorepo/configs';
 import httpStatus from 'http-status';
 import config from '../config/config';
@@ -150,6 +157,27 @@ const resendVerificationEmail = async (req: Request, res: Response) => {
   res.send({ message: `Verification email sent to ${email}` });
 };
 
+const forgotPassword = async (
+  req: Request<ParamsDictionary, unknown, ForgotPassword>,
+  res: Response
+) => {
+  const { email } = req.body;
+  await authService.forgotPassword(email);
+  logger.info(`Password reset email sent to: ${email}`);
+  res.send({ message: `Password reset email sent to ${email}` });
+};
+
+const resetPassword = async (
+  req: Request<ParamsDictionary, unknown, ResetPassword, Token>,
+  res: Response
+) => {
+  const token = req.query.token;
+  const { password } = req.body;
+  const userId = await authService.resetPassword(token, password);
+  logger.info(`Password reset successfully for user: ${userId}`);
+  res.send({ message: `Password reset successfully` });
+};
+
 export default Object.freeze({
   signup,
   login,
@@ -158,4 +186,6 @@ export default Object.freeze({
   refreshTokens,
   verifyEmail,
   resendVerificationEmail,
+  forgotPassword,
+  resetPassword,
 });

@@ -10,7 +10,7 @@ type UserResendPayload = {
 };
 
 class UserResend extends RMQEvent {
-  public event = Subjects.userCreated;
+  public event = Subjects.userResend;
 
   public async publish(message: UserResendPayload): Promise<void> {
     return this.send(message);

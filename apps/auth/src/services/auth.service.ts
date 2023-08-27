@@ -14,6 +14,7 @@ import { logger } from '@e-commerce-monorepo/configs';
 import {
   UserCreated,
   UserResend,
+  UserResetPassword,
   UserVerified,
 } from '@e-commerce-monorepo/event-bus';
 import { v4 as uuidv4 } from 'uuid';
@@ -164,6 +165,39 @@ const resendVerificationEmail = async (user?: AccessTokenPayload) => {
   return user.email;
 };
 
+const forgotPassword = async (email: string) => {
+  const user = await authRepository.getUserByEmail(email);
+  if (!user) {
+    return;
+  }
+  const resetPasswordToken = uuidv4();
+  // Date.now() + 1000 * 60 * 60 => 1 hour
+  const expiresAt = new Date(Date.now() + 1000 * 60 * 60);
+  const hashedToken = await hashPassword(resetPasswordToken);
+  await authRepository.setResetPasswordToken(user, hashedToken, expiresAt);
+  const userResetPasswordEvent = new UserResetPassword();
+  await userResetPasswordEvent.publish({
+    email: user.email,
+    url: `${process.env.CLIENT_URL}login/reset-password/${resetPasswordToken}`,
+    fullName: user.fullName,
+  });
+};
+
+const resetPassword = async (token: string, password: string) => {
+  const hashedToken = await hashPassword(token);
+  const passwordReset = await authRepository.getResetPasswordToken(hashedToken);
+  if (!passwordReset) {
+    throw new ApiError(httpStatus.UNAUTHORIZED, 'Invalid token');
+  }
+  if (passwordReset.expiresAt < new Date()) {
+    throw new ApiError(httpStatus.FORBIDDEN, 'Token expired');
+  }
+  const hashedPassword = await hashPassword(password);
+  await authRepository.updatePassword(passwordReset.userId, hashedPassword);
+  await authRepository.deleteResetPasswordToken(hashedToken);
+  return passwordReset.userId;
+};
+
 export default Object.freeze({
   signupWithEmailAndPassword,
   loginWithEmailAndPassword,
@@ -172,4 +206,6 @@ export default Object.freeze({
   refreshTokens,
   verifyEmail,
   resendVerificationEmail,
+  forgotPassword,
+  resetPassword,
 });

@@ -1,3 +1,4 @@
 import { VerifyEmail } from './lib/verify-email';
 import { WelcomeEmail } from './lib/welcome';
-export { VerifyEmail, WelcomeEmail };
+import { PasswordReset } from './lib/reset-password';
+export { VerifyEmail, WelcomeEmail, PasswordReset };
