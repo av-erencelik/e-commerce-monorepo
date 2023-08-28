@@ -1,5 +1,10 @@
 import { GenericResponse, ILoginResponse } from '../../types/api';
-import { LoginData, SignupData } from '../../types';
+import {
+  ForgotPasswordData,
+  LoginData,
+  ResetPasswordData,
+  SignupData,
+} from '../../types';
 import authApi from './auth-api';
 
 export const logoutUserFn = async () => {
@@ -25,6 +30,30 @@ export const resendVerificationEmailFn = async () => {
 export const verifyEmailFn = async (token: string) => {
   const response = await authApi.post<GenericResponse>(
     `/auth/verify-email?token=${token}`
+  );
+  return response.data;
+};
+
+export const forgotPasswordFn = async (data: ForgotPasswordData) => {
+  const response = await authApi.post<GenericResponse>(
+    '/auth/forgot-password',
+    data
+  );
+  return response.data;
+};
+
+export const resetPasswordFn = async ({
+  data,
+  token,
+  userId,
+}: {
+  data: ResetPasswordData;
+  token: string;
+  userId: string;
+}) => {
+  const response = await authApi.put<GenericResponse>(
+    `/auth/reset-password?token=${token}&id=${userId}`,
+    data
   );
   return response.data;
 };

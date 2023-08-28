@@ -35,11 +35,11 @@ const LoginPage = () => {
               </Link>
             </div>
             <Link
-              aria-label="Reset password"
-              href="/signin/reset-password"
+              aria-label="Forgot password"
+              href="/login/forgot-password"
               className="text-sm text-primary underline-offset-4 transition-colors hover:underline"
             >
-              Reset password
+              Forgot your password?
             </Link>
           </div>
         </div>
