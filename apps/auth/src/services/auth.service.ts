@@ -13,6 +13,7 @@ import authRedis from '../repository/auth.redis';
 import { logger } from '@e-commerce-monorepo/configs';
 import {
   UserCreated,
+  UserPasswordChange,
   UserResend,
   UserResetPassword,
   UserVerified,
@@ -170,6 +171,10 @@ const forgotPassword = async (email: string) => {
   if (!user) {
     return;
   }
+  const passwordReset = await authRepository.getResetPasswordToken(user.userId);
+  if (passwordReset) {
+    await authRepository.deleteResetPasswordToken(user.userId);
+  }
   const resetPasswordToken = uuidv4();
   // Date.now() + 1000 * 60 * 60 => 1 hour
   const expiresAt = new Date(Date.now() + 1000 * 60 * 60);
@@ -178,23 +183,38 @@ const forgotPassword = async (email: string) => {
   const userResetPasswordEvent = new UserResetPassword();
   await userResetPasswordEvent.publish({
     email: user.email,
-    url: `${process.env.CLIENT_URL}login/reset-password/${resetPasswordToken}`,
+    url: `${process.env.CLIENT_URL}login/reset-password/${resetPasswordToken}?id=${user.userId}`,
     fullName: user.fullName,
   });
 };
 
-const resetPassword = async (token: string, password: string) => {
-  const hashedToken = await hashPassword(token);
-  const passwordReset = await authRepository.getResetPasswordToken(hashedToken);
+const resetPassword = async (
+  token: string,
+  password: string,
+  userId: string
+) => {
+  const passwordReset = await authRepository.getResetPasswordToken(userId);
   if (!passwordReset) {
     throw new ApiError(httpStatus.UNAUTHORIZED, 'Invalid token');
   }
   if (passwordReset.expiresAt < new Date()) {
+    await authRepository.deleteResetPasswordToken(passwordReset.userId);
     throw new ApiError(httpStatus.FORBIDDEN, 'Token expired');
+  }
+  const isTokenMatch = await comparePassword(token, passwordReset.token);
+  if (!isTokenMatch) {
+    throw new ApiError(httpStatus.UNAUTHORIZED, 'Invalid token');
   }
   const hashedPassword = await hashPassword(password);
   await authRepository.updatePassword(passwordReset.userId, hashedPassword);
-  await authRepository.deleteResetPasswordToken(hashedToken);
+  const user = await authRepository.deleteResetPasswordToken(
+    passwordReset.userId
+  );
+  const userPasswordChangedEvent = new UserPasswordChange();
+  await userPasswordChangedEvent.publish({
+    email: user.email,
+    fullName: user.fullName,
+  });
   return passwordReset.userId;
 };
 

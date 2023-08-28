@@ -6,6 +6,7 @@ import {
   UserResendPayload,
   UserVerifiedPayload,
   UserResetPasswordPayload,
+  UserPassowrdChangePayload,
 } from '@e-commerce-monorepo/event-bus';
 import { ConsumeMessage } from 'amqplib';
 import queueName from '../queue-name';
@@ -14,6 +15,7 @@ import resend from '../../mail/resend';
 import config from '../../config/config';
 import { render } from '@react-email/components';
 import {
+  PasswordChanged,
   PasswordReset,
   VerifyEmail,
   WelcomeEmail,
@@ -26,6 +28,7 @@ export class MailListener extends RMQListener {
     Subjects.userVerified,
     Subjects.userResend,
     Subjects.userResetPassword,
+    Subjects.userPasswordChange,
   ];
 
   public async consume() {
@@ -112,6 +115,25 @@ export class MailListener extends RMQListener {
             PasswordReset({
               name: payload.fullName,
               link: payload.url,
+            })
+          ),
+        });
+      } else if (event === Subjects.userPasswordChange) {
+        const payload = messageReceived.payload() as UserPassowrdChangePayload;
+        logger.info(`Sending password changed email to ${payload.email}`);
+        await resend.emails.send({
+          to: payload.email,
+          from: config.email,
+          subject: 'Password changed',
+          tags: [
+            {
+              name: 'category',
+              value: 'password_change',
+            },
+          ],
+          html: render(
+            PasswordChanged({
+              name: payload.fullName,
             })
           ),
         });

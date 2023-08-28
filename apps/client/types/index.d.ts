@@ -1,4 +1,9 @@
-import { loginSchema, signupSchema } from '@e-commerce-monorepo/global-types';
+import {
+  forgotPasswordSchema,
+  loginSchema,
+  resetPasswordSchema,
+  signupSchema,
+} from '@e-commerce-monorepo/global-types';
 
 export type SiteConfig = {
   name: string;
@@ -31,3 +36,5 @@ export type Image = {
 
 export type LoginData = z.infer<typeof loginSchema>;
 export type SignupData = Z.infer<typeof signupSchema>;
+export type ForgotPasswordData = z.infer<typeof forgotPasswordSchema>;
+export type ResetPasswordData = z.infer<typeof resetPasswordSchema>;

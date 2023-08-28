@@ -94,3 +94,30 @@ export const loginSchema = z.object({
     .min(8, 'Password must contain at least 8 letters')
     .max(64, "Password can't be longer than 64 letters"),
 });
+
+export const forgotPasswordSchema = z.object({
+  email: z.string().trim().email('Please enter a valid email address.'),
+});
+
+export const resetPasswordSchema = z
+  .object({
+    password: z
+      .string()
+      .trim()
+      .min(8, 'Password must contain at least 8 letters')
+      .max(64, "Password can't be longer than 64 letters"),
+    passwordConfirmation: z
+      .string()
+      .min(8, 'Password must contain at least 8 letters')
+      .max(64, "Password can't be longer than 64 letters"),
+  })
+  .superRefine(({ password, passwordConfirmation }, ctx) => {
+    if (password !== passwordConfirmation) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Passwords do not match',
+        path: ['passwordConfirmation'],
+      });
+      return z.NEVER;
+    }
+  });

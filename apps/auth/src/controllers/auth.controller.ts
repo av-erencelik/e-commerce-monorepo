@@ -168,12 +168,17 @@ const forgotPassword = async (
 };
 
 const resetPassword = async (
-  req: Request<ParamsDictionary, unknown, ResetPassword, Token>,
+  req: Request<
+    ParamsDictionary,
+    unknown,
+    ResetPassword,
+    Token & { id: string }
+  >,
   res: Response
 ) => {
-  const token = req.query.token;
+  const { token, id } = req.query;
   const { password } = req.body;
-  const userId = await authService.resetPassword(token, password);
+  const userId = await authService.resetPassword(token, password, id);
   logger.info(`Password reset successfully for user: ${userId}`);
   res.send({ message: `Password reset successfully` });
 };

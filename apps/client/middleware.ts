@@ -17,7 +17,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/', request.nextUrl));
   }
   // if the user is signed in give them access to the page
-  if (accessToken && refreshToken) {
+  if (accessToken && refreshToken && accessToken.value !== '') {
     // if the user is signed but not verified and tries to access a page that requires verification, redirect to the verification page
     if (
       request.nextUrl.pathname !== '/verify-email' &&

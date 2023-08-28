@@ -16,6 +16,9 @@ jest.mock('@e-commerce-monorepo/event-bus', () => ({
   UserVerified: jest.fn().mockImplementation(() => ({
     publish: jest.fn(),
   })),
+  UserPasswordChange: jest.fn().mockImplementation(() => ({
+    publish: jest.fn(),
+  })),
 }));
 
 describe('forgot-password workflow', () => {
