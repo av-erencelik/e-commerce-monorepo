@@ -67,23 +67,28 @@ const setResetPasswordToken = async (
   });
 };
 
-const getResetPasswordToken = async (token: string) => {
+const getResetPasswordToken = async (id: string) => {
   const passwordResetToken = await db
     .select()
     .from(passwordReset)
-    .where(eq(passwordReset.token, token));
+    .where(eq(passwordReset.userId, id));
+  if (passwordResetToken.length === 0) {
+    return null;
+  }
   return passwordResetToken[0];
 };
 
 const updatePassword = async (userId: string, password: string) => {
-  await db
-    .update(users)
-    .set({ password, version: sql`${users.version} + 1` })
-    .where(eq(users.userId, userId));
+  await db.update(users).set({ password }).where(eq(users.userId, userId));
 };
 
-const deleteResetPasswordToken = async (token: string) => {
-  await db.delete(passwordReset).where(eq(passwordReset.token, token));
+const deleteResetPasswordToken = async (userId: string) => {
+  await db.delete(passwordReset).where(eq(passwordReset.userId, userId));
+  const user = await db
+    .select({ email: users.email, fullName: users.fullName })
+    .from(users)
+    .where(eq(users.userId, userId));
+  return user[0];
 };
 
 export default Object.freeze({

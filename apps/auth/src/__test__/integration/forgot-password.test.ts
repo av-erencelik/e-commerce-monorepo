@@ -16,6 +16,9 @@ jest.mock('@e-commerce-monorepo/event-bus', () => ({
   UserVerified: jest.fn().mockImplementation(() => ({
     publish: jest.fn(),
   })),
+  UserPasswordChange: jest.fn().mockImplementation(() => ({
+    publish: jest.fn(),
+  })),
 }));
 
 describe('forgot-password workflow', () => {
@@ -60,7 +63,7 @@ describe('forgot-password workflow', () => {
   it('should return 401 if token is invalid', async () => {
     const uuid = randomUUID();
     const response = await request(app)
-      .put(`/auth/reset-password?token=${uuid}`)
+      .put(`/auth/reset-password?token=${uuid}&id=123`)
       .send({
         password: 'password',
         passwordConfirmation: 'password',

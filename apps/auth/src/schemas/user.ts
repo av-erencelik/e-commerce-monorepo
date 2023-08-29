@@ -99,6 +99,7 @@ const resetPasswordSchema = z.object({
     }),
   query: z.object({
     token: z.string().uuid(),
+    id: z.string(),
   }),
 });
 

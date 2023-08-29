@@ -1,5 +1,4 @@
 'use client';
-import { loginSchema } from '@e-commerce-monorepo/global-types';
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -14,35 +13,26 @@ import {
   FormMessage,
 } from '@e-commerce-monorepo/ui';
 import { Button } from '@e-commerce-monorepo/ui/server';
-import { PasswordInput } from '../password-input';
 import { useMutation } from '@tanstack/react-query';
-import { loginUserFn } from '../../lib/api/auth';
-import { useRouter } from 'next/navigation';
+import { forgotPasswordFn } from '../../lib/api/auth';
 import axios from 'axios';
-import { useAuthStore } from '../../stores/auth-state';
 import { Loader2 } from 'lucide-react';
+import { forgotPasswordSchema } from '@e-commerce-monorepo/global-types';
 
-const LoginForm = () => {
-  const { login } = useAuthStore();
-  const router = useRouter();
-  const { isError, error, isLoading, mutate } = useMutation(loginUserFn, {
-    onSuccess(data) {
-      login(data.user);
-      router.push('/');
-      router.refresh();
-    },
-  });
-  const form = useForm<z.infer<typeof loginSchema>>({
-    resolver: zodResolver(loginSchema),
+const ForgotPasswordForm = () => {
+  const { isError, error, isLoading, mutate, isSuccess } =
+    useMutation(forgotPasswordFn);
+  const form = useForm<z.infer<typeof forgotPasswordSchema>>({
+    resolver: zodResolver(forgotPasswordSchema),
     defaultValues: {
       email: '',
-      password: '',
     },
   });
 
-  function onSubmit(values: z.infer<typeof loginSchema>) {
+  function onSubmit(values: z.infer<typeof forgotPasswordSchema>) {
     mutate(values);
   }
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -59,22 +49,9 @@ const LoginForm = () => {
             </FormItem>
           )}
         />
-        <FormField
-          control={form.control}
-          name="password"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Password</FormLabel>
-              <FormControl>
-                <PasswordInput placeholder="**********" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
         <Button type="submit" className="w-full" disabled={isLoading}>
           {isLoading && <Loader2 className="w-5 h-5 animate-spin mr-2" />}
-          Login
+          Reset Password
         </Button>
         {isError && (
           <p className="text-destructive text-xs text-center">
@@ -83,9 +60,15 @@ const LoginForm = () => {
               : 'An error occurred'}
           </p>
         )}
+        {isSuccess && (
+          <p className="text-success text-xs text-center">
+            Check your email for a link to reset your password. If it doesn’t
+            appear within a few minutes, check your spam folder.
+          </p>
+        )}
       </form>
     </Form>
   );
 };
 
-export default LoginForm;
+export default ForgotPasswordForm;
