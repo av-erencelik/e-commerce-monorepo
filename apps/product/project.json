@@ -4,6 +4,12 @@
   "sourceRoot": "apps/product/src",
   "projectType": "application",
   "targets": {
+    "push": {
+      "executor": "nx:run-script",
+      "options": {
+        "script": "push:product"
+      }
+    },
     "build": {
       "executor": "@nx/webpack:webpack",
       "outputs": ["{options.outputPath}"],
@@ -14,8 +20,8 @@
         "outputPath": "dist/apps/product",
         "main": "apps/product/src/main.ts",
         "tsConfig": "apps/product/tsconfig.app.json",
-        "assets": ["apps/product/src/assets"],
         "isolatedConfig": true,
+        "generatePackageJson": true,
         "webpackConfig": "apps/product/webpack.config.js"
       },
       "configurations": {

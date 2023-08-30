@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "push:auth": "drizzle-kit push:mysql --config=apps/auth/drizzle.config.ts"
+    "push:auth": "drizzle-kit push:mysql --config=apps/auth/drizzle.config.ts",
+    "push:product": "drizzle-kit push:mysql --config=apps/product/drizzle.config.ts"
   },
   "private": true,
   "dependencies": {
