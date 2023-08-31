@@ -7,7 +7,7 @@ import { AccessTokenPayload } from '@e-commerce-monorepo/utils';
 import config from '../../config/config';
 import authRedis from '../../repository/auth.redis';
 import db from '../../database/sql';
-import { users } from '../../models/user';
+import { users } from '../../models/schema';
 
 jest.mock('@e-commerce-monorepo/event-bus', () => ({
   UserCreated: jest.fn().mockImplementation(() => ({

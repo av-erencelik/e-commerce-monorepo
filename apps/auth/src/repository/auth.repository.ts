@@ -1,8 +1,7 @@
 import { eq, or, sql } from 'drizzle-orm';
 import db from '../database/sql';
-import { users } from '../models/user';
+import { users, passwordReset } from '../models/schema';
 import { InserNewUser, User } from '../interfaces/user';
-import { passwordReset } from '../models/password-reset';
 
 const checkUserExists = async (
   email: string,
@@ -67,14 +66,22 @@ const setResetPasswordToken = async (
   });
 };
 
+const getResetPasswordTokenWithUser = async (id: string) => {
+  const passwordResetToken = await db.query.users.findFirst({
+    where: eq(users.userId, id),
+    with: {
+      passwordReset: true,
+    },
+  });
+
+  return passwordResetToken;
+};
+
 const getResetPasswordToken = async (id: string) => {
   const passwordResetToken = await db
     .select()
     .from(passwordReset)
     .where(eq(passwordReset.userId, id));
-  if (passwordResetToken.length === 0) {
-    return null;
-  }
   return passwordResetToken[0];
 };
 
@@ -84,11 +91,6 @@ const updatePassword = async (userId: string, password: string) => {
 
 const deleteResetPasswordToken = async (userId: string) => {
   await db.delete(passwordReset).where(eq(passwordReset.userId, userId));
-  const user = await db
-    .select({ email: users.email, fullName: users.fullName })
-    .from(users)
-    .where(eq(users.userId, userId));
-  return user[0];
 };
 
 export default Object.freeze({
@@ -101,4 +103,5 @@ export default Object.freeze({
   getResetPasswordToken,
   updatePassword,
   deleteResetPasswordToken,
+  getResetPasswordTokenWithUser,
 });

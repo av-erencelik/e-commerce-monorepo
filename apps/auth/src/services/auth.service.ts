@@ -193,10 +193,13 @@ const resetPassword = async (
   password: string,
   userId: string
 ) => {
-  const passwordReset = await authRepository.getResetPasswordToken(userId);
-  if (!passwordReset) {
+  const userWithPasswordToken =
+    await authRepository.getResetPasswordTokenWithUser(userId);
+
+  if (!userWithPasswordToken) {
     throw new ApiError(httpStatus.UNAUTHORIZED, 'Invalid token');
   }
+  const { passwordReset, ...user } = userWithPasswordToken;
   if (passwordReset.expiresAt < new Date()) {
     await authRepository.deleteResetPasswordToken(passwordReset.userId);
     throw new ApiError(httpStatus.FORBIDDEN, 'Token expired');
@@ -207,9 +210,7 @@ const resetPassword = async (
   }
   const hashedPassword = await hashPassword(password);
   await authRepository.updatePassword(passwordReset.userId, hashedPassword);
-  const user = await authRepository.deleteResetPasswordToken(
-    passwordReset.userId
-  );
+  await authRepository.deleteResetPasswordToken(passwordReset.userId);
   const userPasswordChangedEvent = new UserPasswordChange();
   await userPasswordChangedEvent.publish({
     email: user.email,

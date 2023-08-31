@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import db from '../../database/sql';
-import { users } from '../../models/user';
+import { users } from '../../models/schema';
 import app from '../../app';
 import request from 'supertest';
 import { validate } from 'uuid';

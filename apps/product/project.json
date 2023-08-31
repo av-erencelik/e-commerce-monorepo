@@ -51,11 +51,27 @@
         "lintFilePatterns": ["apps/product/**/*.ts"]
       }
     },
-    "test": {
+    "test-int": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "apps/product/jest.config.ts",
+        "jestConfig": "apps/product/src/__test__/integration/jest.int.config.ts",
+        "passWithNoTests": true,
+        "runInBand": true
+      },
+      "dependsOn": ["test-db"],
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "codeCoverage": true
+        }
+      }
+    },
+    "test-unit": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "apps/product/src/__test__/unit/jest.unit.config.ts",
         "passWithNoTests": true
       },
       "configurations": {
@@ -64,6 +80,10 @@
           "codeCoverage": true
         }
       }
+    },
+    "docker-build": {
+      "dependsOn": ["build"],
+      "command": "docker build -f apps/product/Dockerfile . -t erenmemo/product"
     }
   },
   "tags": []

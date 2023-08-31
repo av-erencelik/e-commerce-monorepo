@@ -6,7 +6,7 @@ import {
   resetPasswordSchema,
 } from '../schemas/user';
 import { InferModel } from 'drizzle-orm';
-import { users } from '../models/user';
+import { users } from '../models/schema';
 import { verifyTokenSchema } from '../schemas/token';
 
 type Signup = z.infer<typeof signupSchema>['body'];

@@ -2,7 +2,7 @@ import type { Config } from 'drizzle-kit';
 import 'dotenv/config';
 
 export default {
-  schema: './apps/product/src/models/*',
+  schema: './apps/product/src/models/schema.ts',
   out: './apps/product/src/drizzle',
   driver: 'mysql2',
   tablesFilter: ['product_*'],
