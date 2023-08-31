@@ -55,7 +55,6 @@ const RegisterForm = () => {
   });
   const countries = countryCodes;
   function onSubmit(values: z.infer<typeof signupSchema>) {
-    console.log(values);
     mutate(values);
   }
   return (

@@ -20,7 +20,6 @@ authApi.interceptors.response.use(
   async (error) => {
     console.log(error);
     const originalRequest = error.config;
-    console.log(originalRequest);
     const errMessage = error.response?.data.message as string;
     if (errMessage.includes('Not authorized') && !originalRequest._retry) {
       const { data } = await refreshAccessTokenFn();

@@ -78,6 +78,7 @@ const loginWithEmailAndPassword = async (email: string, password: string) => {
       userId: user.userId,
       verificated: user.verificated,
       fullName: user.fullName,
+      isAdmin: user.isAdmin,
     },
   };
 };
@@ -105,6 +106,7 @@ const getCurrentUser = (payload?: AccessTokenPayload) => {
     userId: payload.userId,
     verificated: payload.verificated,
     fullName: payload.fullName,
+    isAdmin: payload.isAdmin,
   };
 };
 

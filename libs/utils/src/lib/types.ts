@@ -3,4 +3,5 @@ export type AccessTokenPayload = {
   email: string;
   verificated: boolean;
   fullName: string;
+  isAdmin: boolean;
 };

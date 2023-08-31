@@ -68,7 +68,6 @@ describe('forgot-password workflow', () => {
         password: 'password',
         passwordConfirmation: 'password',
       });
-    console.log(response.body);
     expect(response.status).toBe(httpStatus.UNAUTHORIZED);
     expect(response.body.message).toBe('Invalid token');
   });

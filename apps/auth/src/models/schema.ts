@@ -23,6 +23,7 @@ export const users = mysqlTable(
     countryCode: char('country_code', { length: 2 }).notNull(),
     verificated: boolean('verificated').notNull().default(false),
     version: smallint('version').notNull().default(0),
+    isAdmin: boolean('is_admin').notNull().default(false),
   },
   (table) => ({
     emailIdx: uniqueIndex('email_idx').on(table.email),
