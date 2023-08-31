@@ -33,6 +33,7 @@ const createUser = async (newUser: InserNewUser) => {
       verificated: users.verificated,
       fullName: users.fullName,
       version: users.version,
+      isAdmin: users.isAdmin,
     })
     .from(users)
     .where(eq(users.email, email));

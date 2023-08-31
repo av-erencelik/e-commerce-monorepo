@@ -15,6 +15,7 @@ const createTokens = (user: AccessTokenPayload) => {
       email: user.email,
       verificated: user.verificated,
       fullName: user.fullName,
+      isAdmin: user.isAdmin,
     },
     process.env.JWT_SECRET,
     {

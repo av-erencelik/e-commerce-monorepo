@@ -9,6 +9,7 @@ export type UserPayload = {
   email: string;
   verificated: boolean;
   fullName: string;
+  isAdmin: boolean;
 };
 
 export const signupSchema = z
