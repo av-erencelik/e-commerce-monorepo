@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: product-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: product
+  template:
+    metadata:
+      labels:
+        app: product
+    spec:
+      containers:
+        - name: product
+          image: erenmemo/product
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: database-url
+                  key: DATABASE_URL
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secret
+                  key: JWT_SECRET
+            - name: JWT_ISSUER
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-issuer
+                  key: JWT_ISSUER
+            - name: AMQP_URL
+              valueFrom:
+                secretKeyRef:
+                  name: amqp-url
+                  key: AMQP_URL
+            - name: CLIENT_URL
+              valueFrom:
+                secretKeyRef:
+                  name: client-url
+                  key: CLIENT_URL
+            - name: NODE_ENV
+              value: development
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: product-srv
+spec:
+  selector:
+    app: product
+  ports:
+    - name: product
+      protocol: TCP
+      port: 3000
+      targetPort: 3000

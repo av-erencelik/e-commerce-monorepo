@@ -1,7 +1,7 @@
 import app from '../../app';
 import request from 'supertest';
 import db from '../../database/sql';
-import { users } from '../../models/user';
+import { users } from '../../models/schema';
 import { signin } from './test-utils';
 import httpStatus from 'http-status';
 

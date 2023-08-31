@@ -25,7 +25,8 @@
       "@e-commerce-monorepo/react-emails": ["libs/react-emails/src/index.ts"],
       "@e-commerce-monorepo/ui": ["libs/ui/src/index.ts"],
       "@e-commerce-monorepo/ui/server": ["libs/ui/src/server.ts"],
-      "@e-commerce-monorepo/utils": ["libs/utils/src/index.ts"]
+      "@e-commerce-monorepo/utils": ["libs/utils/src/index.ts"],
+      "client/*": ["apps/client/*"]
     }
   },
   "exclude": ["node_modules", "tmp"]

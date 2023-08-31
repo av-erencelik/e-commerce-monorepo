@@ -3,8 +3,8 @@ import { useMutation } from '@tanstack/react-query';
 import { logoutUserFn } from '../../../lib/api/auth';
 import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuthStore } from '../../../stores/auth-state';
 import { Loader2 } from 'lucide-react';
+import { useAuthStore } from 'client/stores/auth-state';
 const LogoutPage = () => {
   const { logout } = useAuthStore();
   const router = useRouter();

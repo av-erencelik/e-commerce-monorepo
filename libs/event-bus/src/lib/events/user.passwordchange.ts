@@ -1,7 +1,7 @@
 import { RMQEvent } from '../base.event';
 import { Subjects } from '../subjects';
 
-type UserPassowrdChangePayload = {
+type UserPasswordChangePayload = {
   email: string;
   fullName: string;
 };
@@ -9,9 +9,9 @@ type UserPassowrdChangePayload = {
 class UserPasswordChange extends RMQEvent {
   public event = Subjects.userPasswordChange;
 
-  public async publish(message: UserPassowrdChangePayload): Promise<void> {
+  public async publish(message: UserPasswordChangePayload): Promise<void> {
     return this.send(message);
   }
 }
 
-export { UserPasswordChange, UserPassowrdChangePayload };
+export { UserPasswordChange, UserPasswordChangePayload };

@@ -2,10 +2,10 @@ import type { Config } from 'drizzle-kit';
 import 'dotenv/config';
 
 export default {
-  schema: './apps/auth/src/models/schema.ts',
-  out: './apps/auth/src/drizzle',
+  schema: './apps/product/src/models/schema.ts',
+  out: './apps/product/src/drizzle',
   driver: 'mysql2',
-  tablesFilter: ['auth_*'],
+  tablesFilter: ['product_*'],
   dbCredentials: {
     connectionString:
       process.env.NODE_ENV == 'test'

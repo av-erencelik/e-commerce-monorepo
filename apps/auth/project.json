@@ -11,7 +11,7 @@
       }
     },
     "test-db": {
-      "command": "bash ./apps/auth/src/scripts/run-integration.sh"
+      "command": "bash ./scripts/run-integration.sh"
     },
     "build": {
       "executor": "@nx/webpack:webpack",

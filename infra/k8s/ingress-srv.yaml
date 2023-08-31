@@ -16,6 +16,13 @@ spec:
     - host: api.posts.com
       http:
         paths:
+          - path: /product/?(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: product-srv
+                port:
+                  number: 3000
           - path: /?(.*)
             pathType: Prefix
             backend:
