@@ -6,6 +6,7 @@ declare global {
         email: string;
         verificated: boolean;
         fullName: string;
+        isAdmin: boolean;
       };
     }
   }

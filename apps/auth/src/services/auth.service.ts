@@ -118,7 +118,9 @@ const refreshTokens = async (refreshToken: string) => {
   if (!user) {
     throw new ApiError(httpStatus.UNAUTHORIZED, 'Invalid refresh token');
   }
-  const { accessToken, refreshToken: newRefreshToken } = createTokens(user);
+  const updatedUser = await authRepository.getCurrentUser(user.userId);
+  const { accessToken, refreshToken: newRefreshToken } =
+    createTokens(updatedUser);
   await authRedis.setRefreshToken(newRefreshToken, user);
   await authRedis.deleteRefreshToken(refreshToken);
   return {

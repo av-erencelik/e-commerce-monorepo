@@ -13,7 +13,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@e-commerce-monorepo/ui';
-import { ExitIcon, PersonIcon } from '@radix-ui/react-icons';
+import { ExitIcon, GearIcon, PersonIcon } from '@radix-ui/react-icons';
 
 const IconNav = () => {
   const { user } = useAuthStore();
@@ -52,6 +52,14 @@ const IconNav = () => {
                 Account
               </Link>
             </DropdownMenuItem>
+            {user.isAdmin && (
+              <DropdownMenuItem asChild>
+                <Link href="/admin" className="cursor-pointer">
+                  <GearIcon className="mr-2 h-4 w-4" aria-hidden="true" />
+                  Admin
+                </Link>
+              </DropdownMenuItem>
+            )}
             <DropdownMenuItem asChild>
               <Link href="/logout" className="cursor-pointer">
                 <ExitIcon className="mr-2 h-4 w-4" aria-hidden="true" />

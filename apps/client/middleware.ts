@@ -4,7 +4,13 @@ import { applySetCookie } from './lib/server-utils';
 import { checkIfPathStartsWith } from './lib/utils';
 
 // list of paths that require the user to be signed in
-const signedInPaths = ['/account', '/checkout', '/logout', '/verify-email'];
+const signedInPaths = [
+  '/account',
+  '/checkout',
+  '/logout',
+  '/verify-email',
+  '/admin',
+];
 // list of paths that require the user to be signed out
 const signedOutPaths = ['/login', '/register', '/forgot-password'];
 
@@ -38,6 +44,10 @@ export async function middleware(request: NextRequest) {
       const { user } = await response.json();
       if (user.verificated === false) {
         return NextResponse.redirect(new URL('/verify-email', request.nextUrl));
+      }
+      // if the user is not an admin and tries to access the admin page, redirect to home page
+      if (request.nextUrl.pathname.startsWith('/admin') && !user.isAdmin) {
+        return NextResponse.redirect(new URL('/', request.nextUrl));
       }
     }
 

@@ -41,6 +41,26 @@ spec:
                 secretKeyRef:
                   name: client-url
                   key: CLIENT_URL
+            - name: PUBLIC_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: public-access-key
+                  key: PUBLIC_ACCESS_KEY
+            - name: SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: secret-access-key
+                  key: SECRET_ACCESS_KEY
+            - name: REGION
+              valueFrom:
+                secretKeyRef:
+                  name: region
+                  key: REGION
+            - name: BUCKET
+              valueFrom:
+                secretKeyRef:
+                  name: bucket
+                  key: BUCKET
             - name: NODE_ENV
               value: development
 ---
