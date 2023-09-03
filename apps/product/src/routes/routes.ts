@@ -6,7 +6,7 @@ const router = Router();
 
 const routes = [
   {
-    path: '/auth',
+    path: '/product',
     router: productRouter,
   },
 ];

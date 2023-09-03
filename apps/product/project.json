@@ -10,6 +10,9 @@
         "script": "push:product"
       }
     },
+    "test-db": {
+      "command": "bash ./scripts/run-integration.sh"
+    },
     "build": {
       "executor": "@nx/webpack:webpack",
       "outputs": ["{options.outputPath}"],
