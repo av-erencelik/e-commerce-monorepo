@@ -26,5 +26,5 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: npm install
-      - run: npx nx test-unit auth
-      - run: npx nx test-int auth
+      - run: npx nx test-unit product
+      - run: npx nx test-int product
