@@ -24,7 +24,9 @@ export const product = mysqlTable(
     version: smallint('version').notNull().default(0),
     stock: smallint('stock').notNull().default(0),
     weight: smallint('weight'),
-    createdAt: datetime('created_at').default(sql`CURRENT_TIMESTAMP`),
+    createdAt: datetime('created_at')
+      .notNull()
+      .default(sql`CURRENT_TIMESTAMP`),
     categoryId: int('category_id').notNull(),
   },
   (table) => ({
@@ -38,10 +40,13 @@ export const productPrice = mysqlTable(
     id: int('id').primaryKey().autoincrement(),
     productId: int('product_id').notNull(),
     price: decimal('price', { precision: 10, scale: 2 }).notNull(),
-    originalPrice: decimal('price', { precision: 10, scale: 2 }).notNull(),
+    originalPrice: decimal('original_price', {
+      precision: 10,
+      scale: 2,
+    }).notNull(),
     version: smallint('version').notNull().default(0),
-    startDate: datetime('start_date').unique().notNull(),
-    endDate: datetime('end_date').unique().notNull(),
+    startDate: datetime('start_date').notNull(),
+    endDate: datetime('end_date').notNull(),
   },
   (table) => ({
     productIdIdx: index('product_id_idx').on(table.productId),
@@ -79,11 +84,12 @@ export const image = mysqlTable(
   {
     id: int('id').primaryKey().autoincrement(),
     productId: int('product_id').notNull(),
-    imageName: varchar('image_name', { length: 64 }).unique().notNull(),
+    key: varchar('key', { length: 255 }).unique().notNull(),
     createdAt: datetime('created_at').default(sql`CURRENT_TIMESTAMP`),
     isFeatured: boolean('is_featured').notNull().default(false),
   },
   (table) => ({
     isBooleanIdx: index('is_featured_idx').on(table.isFeatured),
+    keyIdx: index('key_idx').on(table.key),
   })
 );

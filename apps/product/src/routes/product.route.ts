@@ -1,6 +1,6 @@
 import { requireAdmin, validate } from '@e-commerce-monorepo/middlewares';
 import { Router } from 'express';
-import { preSignedUrlSchema } from '../schemas/product';
+import { addProductSchema, preSignedUrlSchema } from '../schemas/product';
 import productController from '../controllers/product.controller';
 
 const productRouter = Router();
@@ -10,6 +10,13 @@ productRouter.post(
   validate(preSignedUrlSchema),
   requireAdmin,
   productController.getPreSignedUrl
+);
+
+productRouter.post(
+  '/create',
+  validate(addProductSchema),
+  requireAdmin,
+  productController.addProduct
 );
 
 export default productRouter;
