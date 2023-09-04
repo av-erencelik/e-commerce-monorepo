@@ -8,9 +8,9 @@ import {
   index,
   smallint,
   datetime,
-  decimal,
   text,
   unique,
+  double,
 } from 'drizzle-orm/mysql-core';
 
 export const mysqlTable = mysqlTableCreator((name) => `product_${name}`);
@@ -39,8 +39,8 @@ export const productPrice = mysqlTable(
   {
     id: int('id').primaryKey().autoincrement(),
     productId: int('product_id').notNull(),
-    price: decimal('price', { precision: 10, scale: 2 }).notNull(),
-    originalPrice: decimal('original_price', {
+    price: double('price', { precision: 10, scale: 2 }).notNull(),
+    originalPrice: double('original_price', {
       precision: 10,
       scale: 2,
     }).notNull(),
