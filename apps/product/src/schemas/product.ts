@@ -1,4 +1,6 @@
 import { z } from 'zod';
+import { createInsertSchema } from 'drizzle-zod';
+import { category } from '../models/schema';
 
 const preSignedUrlSchema = z.object({
   body: z.object({
@@ -28,4 +30,6 @@ const addProductSchema = z.object({
   }),
 });
 
-export { preSignedUrlSchema, addProductSchema };
+const addCategorySchema = createInsertSchema(category);
+
+export { preSignedUrlSchema, addProductSchema, addCategorySchema };

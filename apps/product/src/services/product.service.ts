@@ -1,5 +1,9 @@
 import { ApiError } from '@e-commerce-monorepo/errors';
-import { AddProduct, PreSignedUrlImage } from '../interfaces/product';
+import {
+  AddCategory,
+  AddProduct,
+  PreSignedUrlImage,
+} from '../interfaces/product';
 import { checkImageExists, createPresignedUrl } from '../lib/s3';
 import httpStatus from 'http-status';
 import productRepository from '../repository/product.repository';
@@ -36,12 +40,25 @@ const addProduct = async (product: AddProduct) => {
       'Featured image must be only one'
     );
   }
+  // check if category exists
+  const categoryExists = await productRepository.checkCategoryExists(
+    product.categoryId
+  );
+  if (!categoryExists) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Category does not exist');
+  }
   // add product to db
   const addedProduct = await productRepository.addProduct(product);
   return addedProduct;
 };
 
+const addCategory = async (category: AddCategory) => {
+  const addedCategory = await productRepository.addCategory(category);
+  return addedCategory;
+};
+
 export default Object.freeze({
   getPreSignedUrl,
   addProduct,
+  addCategory,
 });
