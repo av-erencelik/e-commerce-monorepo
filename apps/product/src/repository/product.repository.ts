@@ -1,7 +1,7 @@
 import { eq } from 'drizzle-orm';
 import db from '../database/sql';
-import { product, image, productPrice } from '../models/schema';
-import { AddProduct } from '../interfaces/product';
+import { product, image, productPrice, category } from '../models/schema';
+import { AddCategory, AddProduct } from '../interfaces/product';
 
 const addProduct = async (newProduct: AddProduct) => {
   const { images } = newProduct;
@@ -38,6 +38,31 @@ const addProduct = async (newProduct: AddProduct) => {
   return addedProduct[0];
 };
 
+const addCategory = async (newCategory: AddCategory) => {
+  await db.insert(category).values({
+    name: newCategory.name,
+    description: newCategory.description,
+  });
+
+  const addedCategory = await db
+    .select()
+    .from(product)
+    .where(eq(product.name, category.name));
+
+  return addedCategory[0];
+};
+
+const checkCategoryExists = async (categoryId: number) => {
+  // check if category exists
+  const response = await db
+    .select()
+    .from(category)
+    .where(eq(category.id, categoryId));
+  return response.length > 0;
+};
+
 export default Object.freeze({
   addProduct,
+  addCategory,
+  checkCategoryExists,
 });

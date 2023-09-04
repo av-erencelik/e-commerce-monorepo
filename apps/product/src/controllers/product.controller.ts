@@ -1,4 +1,4 @@
-import { AddProduct, PreSignedUrl } from '../interfaces/product';
+import { AddCategory, AddProduct, PreSignedUrl } from '../interfaces/product';
 import { Request, Response } from 'express';
 import { ParamsDictionary } from 'express-serve-static-core';
 import productService from '../services/product.service';
@@ -21,7 +21,17 @@ const addProduct = async (
   res.status(200).json({ product: addedProduct });
 };
 
+const addCategory = async (
+  req: Request<ParamsDictionary, never, AddCategory>,
+  res: Response
+) => {
+  const category = req.body;
+  const addedCategory = await productService.addCategory(category);
+  res.status(200).json({ category: addedCategory });
+};
+
 export default Object.freeze({
   getPreSignedUrl,
   addProduct,
+  addCategory,
 });

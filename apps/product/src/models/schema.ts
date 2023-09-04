@@ -57,8 +57,8 @@ export const productPrice = mysqlTable(
 
 export const category = mysqlTable('category', {
   id: int('id').primaryKey().autoincrement(),
-  name: varchar('name', { length: 256 }).unique().notNull(),
-  description: varchar('description', { length: 256 }).notNull(),
+  name: varchar('name', { length: 255 }).unique().notNull(),
+  description: varchar('description', { length: 255 }).notNull(),
 });
 
 export const review = mysqlTable(
@@ -68,7 +68,7 @@ export const review = mysqlTable(
     productId: int('product_id').notNull(),
     userId: char('user_id', { length: 12 }).notNull(),
     rating: smallint('rating').notNull(),
-    comment: varchar('comment', { length: 256 }).notNull(),
+    comment: varchar('comment', { length: 255 }).notNull(),
     createdAt: datetime('created_at').default(sql`CURRENT_TIMESTAMP`),
   },
   (table) => ({
