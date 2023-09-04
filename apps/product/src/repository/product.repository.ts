@@ -8,9 +8,9 @@ const addProduct = async (newProduct: AddProduct) => {
   await db.insert(product).values({
     name: newProduct.name,
     description: newProduct.description,
-    categoryId: parseInt(newProduct.categoryId),
-    stock: newProduct.stock as number,
-    weight: newProduct.weight ? (newProduct.weight as number) : null,
+    categoryId: newProduct.categoryId,
+    stock: newProduct.stock,
+    weight: newProduct.weight ? newProduct.weight : null,
     version: 0,
   });
 
@@ -27,8 +27,8 @@ const addProduct = async (newProduct: AddProduct) => {
   await db.insert(image).values(editedImages);
 
   await db.insert(productPrice).values({
-    price: newProduct.price as string,
-    originalPrice: newProduct.price as string,
+    price: newProduct.price,
+    originalPrice: newProduct.price,
     productId: addedProduct[0].id,
     startDate: new Date(),
     endDate: new Date('9999-12-31'),

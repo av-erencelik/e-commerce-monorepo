@@ -15,7 +15,12 @@ const getPreSignedUrl = async (images: PreSignedUrlImage[]) => {
 
 const addProduct = async (product: AddProduct) => {
   const { images } = product;
+  let featuredImageNumber = 0;
   for (const image of images) {
+    // check image featured
+    if (image.isFeatured) {
+      featuredImageNumber++;
+    }
     // check if image exists
     if (!(await checkImageExists(image.key))) {
       throw new ApiError(
@@ -23,6 +28,13 @@ const addProduct = async (product: AddProduct) => {
         'Some images are not uploaded'
       );
     }
+  }
+  // check if featured image is more than one
+  if (featuredImageNumber > 1) {
+    throw new ApiError(
+      httpStatus.BAD_REQUEST,
+      'Featured image must be only one'
+    );
   }
   // add product to db
   const addedProduct = await productRepository.addProduct(product);
