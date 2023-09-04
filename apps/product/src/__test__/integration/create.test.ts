@@ -42,13 +42,13 @@ describe('Create product route', () => {
       .set('Cookie', [`accessToken=${accessToken}`])
       .send(validData);
     expect(response.status).toBe(200);
-    expect(response.body.name).toBe(validData.name);
-    expect(response.body.description).toBe(validData.description);
-    expect(response.body.stock).toBe(validData.stock);
-    expect(response.body.price).toBe(validData.price);
-    expect(response.body.categoryId).toBe(validData.categoryId);
-    expect(response.body.weight).toBe(validData.weight);
-    expect(response.body.images).toEqual(validData.images);
+    expect(response.body.product.name).toBe(validData.name);
+    expect(response.body.product.description).toBe(validData.description);
+    expect(response.body.product.stock).toBe(validData.stock);
+    expect(response.body.product.price).toBe(validData.price);
+    expect(response.body.product.categoryId).toBe(validData.categoryId);
+    expect(response.body.product.weight).toBe(validData.weight);
+    expect(response.body.product.images).toEqual(validData.images);
   });
 
   it('should return 400 if provided category id is not valid', async () => {
