@@ -1,32 +1,17 @@
-import request from 'supertest';
-import app from '../../app';
+import { AccessTokenPayload, createTokens } from '@e-commerce-monorepo/utils';
 
-const signin = async () => {
+const signin = () => {
   const validData = {
     email: 'test@example.com',
     fullName: 'John Doe',
-    password: 'password',
-    passwordConfirmation: 'password',
-    countryCode: 'US',
-    phoneNumber: '6204978718',
-  };
+    isAdmin: true,
+    userId: '1234567890',
+    verificated: true,
+  } as AccessTokenPayload;
 
-  const response = await request(app).post('/auth/signup').send(validData);
-  const cookies = response.get('Set-Cookie');
-  let refreshToken: string | undefined;
-  let accessToken: string | undefined;
-  for (const cookie of cookies) {
-    if (cookie.startsWith('refreshToken=')) {
-      refreshToken = cookie.split(';')[0].split('=')[1];
-    } else {
-      accessToken = cookie.split(';')[0].split('=')[1];
-    }
-  }
+  const { accessToken } = createTokens(validData);
 
-  return {
-    refreshToken,
-    accessToken,
-  };
+  return accessToken;
 };
 
 export { signin };
