@@ -9,8 +9,12 @@ import { category, image, product, productPrice } from '../../models/schema';
 describe('Image routes', () => {
   let key = '';
   beforeAll(async () => {
+    await db.delete(product);
+    await db.delete(productPrice);
+    await db.delete(image);
+    await db.delete(category);
     const token = signin();
-    await request(app)
+    const categoryResponse = await request(app)
       .post('/product/category')
       .set('Cookie', [`accessToken=${token}`])
       .send({
@@ -56,7 +60,7 @@ describe('Image routes', () => {
             isFeatured: false,
           },
         ],
-        categoryId: 1,
+        categoryId: categoryResponse.body.category.id,
       });
   });
 
