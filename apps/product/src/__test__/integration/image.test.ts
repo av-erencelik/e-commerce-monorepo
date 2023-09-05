@@ -3,6 +3,8 @@ import request from 'supertest';
 import axios from 'axios';
 import { signin } from './test-utils';
 import fs from 'fs';
+import db from '../../database/sql';
+import { category, image, product, productPrice } from '../../models/schema';
 
 describe('Image routes', () => {
   let key = '';
@@ -39,8 +41,8 @@ describe('Image routes', () => {
       .post('/product/create')
       .set('Cookie', [`accessToken=${token}`])
       .send({
-        name: 'test',
-        description: 'test',
+        name: 'testing',
+        description: 'testing',
         price: 10,
         weight: 10,
         stock: 10,
@@ -56,6 +58,13 @@ describe('Image routes', () => {
         ],
         categoryId: 1,
       });
+  });
+
+  afterAll(async () => {
+    await db.delete(product);
+    await db.delete(productPrice);
+    await db.delete(image);
+    await db.delete(category);
   });
 
   it('should update image data', async () => {
