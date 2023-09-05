@@ -61,6 +61,21 @@ spec:
                 secretKeyRef:
                   name: bucket
                   key: BUCKET
+            - name: REDIS_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: redis-host
+                  key: REDIS_HOST
+            - name: REDIS_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: redis-port
+                  key: REDIS_PORT
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: redis-password
+                  key: REDIS_PASSWORD
             - name: NODE_ENV
               value: development
 ---

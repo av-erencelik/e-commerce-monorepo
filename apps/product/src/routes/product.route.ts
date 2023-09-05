@@ -3,7 +3,16 @@ import { Router } from 'express';
 import {
   addCategorySchema,
   addProductSchema,
+  addSaleSchema,
+  categorySchema,
+  deleteImageSchema,
+  deleteProductSchema,
+  deleteSaleSchema,
+  getAllProductsSchema,
+  getProductSchema,
   preSignedUrlSchema,
+  updateCategorySchema,
+  updateProductSchema,
 } from '../schemas/product';
 import productController from '../controllers/product.controller';
 
@@ -24,10 +33,78 @@ productRouter.post(
 );
 
 productRouter.post(
-  '/create/category',
+  '/category',
   validate(addCategorySchema),
   requireAdmin,
   productController.addCategory
+);
+
+productRouter.delete(
+  '/category/:categoryId',
+  validate(categorySchema),
+  requireAdmin,
+  productController.deleteCategory
+);
+
+productRouter.patch(
+  '/category/:categoryId',
+  validate(updateCategorySchema),
+  requireAdmin,
+  productController.updateCategory
+);
+
+productRouter.patch(
+  '/update/:productId',
+  validate(updateProductSchema),
+  requireAdmin,
+  productController.updateProduct
+);
+
+productRouter.post(
+  '/sale/:productId',
+  validate(addSaleSchema),
+  requireAdmin,
+  productController.addSale
+);
+
+productRouter.delete(
+  '/sale/:productId',
+  validate(deleteSaleSchema),
+  requireAdmin,
+  productController.deleteSale
+);
+
+productRouter.delete(
+  '/:productId',
+  validate(deleteProductSchema),
+  requireAdmin,
+  productController.deleteProduct
+);
+
+productRouter.delete(
+  '/image/:key',
+  validate(deleteImageSchema),
+  requireAdmin,
+  productController.deleteImage
+);
+
+productRouter.patch(
+  '/image/:key',
+  validate(deleteImageSchema),
+  requireAdmin,
+  productController.setFeaturedImage
+);
+
+productRouter.get(
+  '/',
+  validate(getAllProductsSchema),
+  productController.getAllProducts
+);
+
+productRouter.get(
+  '/:productId',
+  validate(getProductSchema),
+  productController.getProduct
 );
 
 export default productRouter;

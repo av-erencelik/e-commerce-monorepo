@@ -23,6 +23,7 @@ export const product = mysqlTable(
     description: text('description').notNull(),
     version: smallint('version').notNull().default(0),
     stock: smallint('stock').notNull().default(0),
+    dailySales: smallint('daily_sales').notNull().default(0),
     weight: smallint('weight'),
     createdAt: datetime('created_at')
       .notNull()

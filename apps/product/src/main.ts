@@ -2,6 +2,7 @@ import { logger } from '@e-commerce-monorepo/configs';
 import app from './app';
 import config from './config/config';
 import { RMQConnect } from '@e-commerce-monorepo/event-bus';
+import restock from './lib/restock';
 
 const port = config.port;
 const connectionData = {
@@ -17,6 +18,8 @@ const server = app.listen(port, async () => {
       RMQConnect.closeConnection(mqConnection);
       process.exit(0);
     });
+
+    restock.restockOnEvery24Hours;
   } catch (err) {
     logger.error(err);
   }
