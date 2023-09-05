@@ -24,6 +24,9 @@ jobs:
       SECRET_ACCESS_KEY: ${{ secrets.SECRET_ACCESS_KEY }}
       REGION: ${{ secrets.REGION }}
       BUCKET: ${{ secrets.BUCKET }}
+      REDIS_HOST: ${{ secrets.REDIS_HOST }}
+      REDIS_PORT: ${{ secrets.REDIS_PORT }}
+      REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}
     steps:
       - uses: actions/checkout@v2
       - run: npm install
