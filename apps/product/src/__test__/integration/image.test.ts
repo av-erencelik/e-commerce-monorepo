@@ -10,7 +10,7 @@ describe('Image routes', () => {
   let key = '';
   beforeAll(async () => {
     const token = signin();
-    await request(app)
+    const category = await request(app)
       .post('/product/category')
       .set('Cookie', [`accessToken=${token}`])
       .send({
@@ -56,7 +56,7 @@ describe('Image routes', () => {
             isFeatured: false,
           },
         ],
-        categoryId: 1,
+        categoryId: category.body.category.id,
       });
   });
 
