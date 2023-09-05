@@ -2,6 +2,7 @@ import {
   PutObjectCommand,
   S3Client,
   HeadObjectCommand,
+  DeleteObjectCommand,
 } from '@aws-sdk/client-s3';
 import config from '../config/config';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
@@ -50,4 +51,18 @@ const checkImageExists = async (key: string) => {
   }
 };
 
-export { s3, createPresignedUrl, checkImageExists };
+const deleteImageFromS3 = async (key: string) => {
+  const command = new DeleteObjectCommand({
+    Bucket: config.s3.bucket,
+    Key: key,
+  });
+  try {
+    await s3.send(command);
+    return true;
+  } catch (e) {
+    logger.error(e);
+    return false;
+  }
+};
+
+export { s3, createPresignedUrl, checkImageExists, deleteImageFromS3 };

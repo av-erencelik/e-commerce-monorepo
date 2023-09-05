@@ -8,7 +8,11 @@ import {
   UpdateCategory,
   UpdateProduct,
 } from '../interfaces/product';
-import { checkImageExists, createPresignedUrl } from '../lib/s3';
+import {
+  checkImageExists,
+  createPresignedUrl,
+  deleteImageFromS3,
+} from '../lib/s3';
 import httpStatus from 'http-status';
 import productRepository from '../repository/product.repository';
 import productRedis from '../repository/product.redis';
@@ -229,6 +233,13 @@ const deleteImage = async (key: string) => {
     throw new ApiError(
       httpStatus.BAD_REQUEST,
       'Cannot delete featured image, please set another image as featured first'
+    );
+  }
+  const response = await deleteImageFromS3(key);
+  if (!response) {
+    throw new ApiError(
+      httpStatus.INTERNAL_SERVER_ERROR,
+      'Failed to delete image'
     );
   }
   await productRepository.deleteImage(key);
