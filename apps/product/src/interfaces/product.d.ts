@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import {
+  addImageSchema,
   addProductSchema,
   addSaleSchema,
   deleteCategorySchema,
@@ -30,6 +31,8 @@ type GetProductParams = z.infer<typeof getProductSchema>['params'];
 type DeleteCategoryParams = z.infer<typeof deleteCategorySchema>['params'];
 type UpdateCategoryParams = z.infer<typeof updateCategorySchema>['params'];
 type UpdateCategory = z.infer<typeof updateCategorySchema>['body'];
+type AddImageParams = z.infer<typeof addImageSchema>['params'];
+type AddImage = z.infer<typeof addImageSchema>['body'];
 
 type PreSignedUrlImage = PreSignedUrl['images'][number];
 
@@ -64,4 +67,6 @@ export {
   DeleteCategoryParams,
   UpdateCategoryParams,
   UpdateCategory,
+  AddImageParams,
+  AddImage,
 };

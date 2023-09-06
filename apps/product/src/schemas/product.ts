@@ -91,6 +91,16 @@ const deleteProductSchema = z.object({
   }),
 });
 
+const addImageSchema = z.object({
+  body: z.object({
+    key: z.string(),
+    isFeatured: z.boolean().default(false),
+  }),
+  params: z.object({
+    productId: z.string().transform(Number),
+  }),
+});
+
 const deleteImageSchema = z.object({
   params: z.object({
     key: z.string(),
@@ -132,4 +142,5 @@ export {
   getProductSchema,
   categorySchema,
   updateCategorySchema,
+  addImageSchema,
 };

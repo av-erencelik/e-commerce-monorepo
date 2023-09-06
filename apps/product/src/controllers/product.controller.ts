@@ -14,6 +14,8 @@ import {
   DeleteCategoryParams,
   UpdateCategoryParams,
   UpdateCategory,
+  AddImageParams,
+  AddImage,
 } from '../interfaces/product';
 import { Request, Response } from 'express';
 import { ParamsDictionary } from 'express-serve-static-core';
@@ -112,6 +114,18 @@ const deleteImage = async (
   res.status(httpStatus.NO_CONTENT).json({ message: 'Image deleted', key });
 };
 
+const addImage = async (
+  req: Request<ParamsDictionary & AddImageParams, unknown, AddImage>,
+  res: Response
+) => {
+  const { productId } = req.params;
+  const { key, isFeatured } = req.body;
+  await productService.addImage(productId, key, isFeatured);
+  res
+    .status(httpStatus.CREATED)
+    .json({ message: 'Image added', product: productId });
+};
+
 const setFeaturedImage = async (
   req: Request<ParamsDictionary & DeleteImageParams>,
   res: Response
@@ -171,4 +185,5 @@ export default Object.freeze({
   getProduct,
   deleteCategory,
   updateCategory,
+  addImage,
 });

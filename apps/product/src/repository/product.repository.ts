@@ -288,6 +288,14 @@ const deleteImage = async (key: string) => {
   await db.delete(image).where(and(eq(image.key, key)));
 };
 
+const addImage = async (productId: number, key: string) => {
+  await db.insert(image).values({
+    key: key,
+    productId: productId,
+    isFeatured: false,
+  });
+};
+
 const setFeaturedImage = async (key: string) => {
   const result = await db.select().from(image).where(eq(image.key, key));
   await db
@@ -349,4 +357,5 @@ export default Object.freeze({
   setFeaturedImage,
   deleteCategory,
   updateCategory,
+  addImage,
 });

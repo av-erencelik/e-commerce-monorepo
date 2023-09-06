@@ -2,6 +2,7 @@ import { requireAdmin, validate } from '@e-commerce-monorepo/middlewares';
 import { Router } from 'express';
 import {
   addCategorySchema,
+  addImageSchema,
   addProductSchema,
   addSaleSchema,
   categorySchema,
@@ -93,6 +94,13 @@ productRouter.patch(
   validate(deleteImageSchema),
   requireAdmin,
   productController.setFeaturedImage
+);
+
+productRouter.post(
+  '/image/:productId',
+  validate(addImageSchema),
+  requireAdmin,
+  productController.addImage
 );
 
 productRouter.get(
