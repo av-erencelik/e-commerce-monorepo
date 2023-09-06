@@ -8,6 +8,7 @@ import { category, image, product, productPrice } from '../../models/schema';
 
 describe('Image routes', () => {
   let key = '';
+  let productId = 0;
   beforeAll(async () => {
     await db.delete(product);
     await db.delete(productPrice);
@@ -41,7 +42,7 @@ describe('Image routes', () => {
     );
 
     await axios.put(response.body[0].url, imageBuffer);
-    await request(app)
+    const productResponse = await request(app)
       .post('/product/create')
       .set('Cookie', [`accessToken=${token}`])
       .send({
@@ -62,6 +63,8 @@ describe('Image routes', () => {
         ],
         categoryId: categoryResponse.body.category.id,
       });
+
+    productId = productResponse.body.product.id;
   });
 
   afterAll(async () => {
@@ -87,6 +90,43 @@ describe('Image routes', () => {
       .set('Cookie', [`accessToken=${token}`])
       .send();
     expect(response.status).toBe(204);
+  });
+
+  it('should create image and delete successfully', async () => {
+    const token = signin();
+    const signedUrlResponse = await request(app)
+      .post('/product/image')
+      .set('Cookie', [`accessToken=${token}`])
+      .send({
+        images: [
+          {
+            name: 'test',
+            type: 'image/png',
+          },
+        ],
+      });
+
+    const imageBuffer = fs.readFileSync(
+      './apps/product/src/__test__/integration/test.png'
+    );
+
+    await axios.put(signedUrlResponse.body[0].url, imageBuffer);
+
+    const response = await request(app)
+      .post(`/product/image/${productId}`)
+      .set('Cookie', [`accessToken=${token}`])
+      .send({
+        key: signedUrlResponse.body[0].key,
+        isFeatured: false,
+      });
+    expect(response.status).toBe(201);
+    // delete image after
+
+    const deleteResponse = await request(app)
+      .delete(`/product/image/${signedUrlResponse.body[0].key}`)
+      .set('Cookie', [`accessToken=${token}`])
+      .send();
+    expect(deleteResponse.status).toBe(204);
   });
 
   it('should return 404 if image is not found', async () => {

@@ -247,6 +247,26 @@ const deleteImage = async (key: string) => {
   await productRedis.invalidateProductDetailsCache(image.productId);
 };
 
+const addImage = async (
+  productId: number,
+  key: string,
+  isFeatured: boolean
+) => {
+  const product = await productRepository.getProduct(productId);
+  if (!product) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Product not found');
+  }
+  if (!(await checkImageExists(key))) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Image not uploaded');
+  }
+  await productRepository.addImage(productId, key);
+  if (isFeatured) {
+    await productRepository.setFeaturedImage(key);
+  }
+  await productRedis.invalidateProductsCache();
+  await productRedis.invalidateProductDetailsCache(productId);
+};
+
 const setFeaturedImage = async (key: string) => {
   const image = await productRepository.getImage(key);
   if (!image) {
@@ -295,4 +315,5 @@ export default Object.freeze({
   getProduct,
   deleteCategory,
   updateCategory,
+  addImage,
 });
