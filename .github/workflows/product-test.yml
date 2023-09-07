@@ -27,6 +27,9 @@ jobs:
       REDIS_HOST: ${{ secrets.REDIS_HOST }}
       REDIS_PORT: ${{ secrets.REDIS_PORT }}
       REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}
+      CLOUDFRONT_URL: ${{ secrets.CLOUDFRONT_URL }}
+      CLOUDFRONT_PRIVATE_KEY: ${{ secrets.CLOUDFRONT_PRIVATE_KEY }}
+      CLOUDFRONT_KEY_PAIR_ID: ${{ secrets.CLOUDFRONT_KEY_PAIR_ID }}
     steps:
       - uses: actions/checkout@v2
       - run: npm install
