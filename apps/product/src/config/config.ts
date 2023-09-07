@@ -12,6 +12,9 @@ const envVarsSchema = z.object({
   REDIS_HOST: z.string().describe('Redis host'),
   REDIS_PORT: z.string().describe('Redis port'),
   REDIS_PASSWORD: z.string().describe('Redis password'),
+  CLOUDFRONT_KEY_PAIR_ID: z.string().describe('Cloudfront key pair id'),
+  CLOUDFRONT_PRIVATE_KEY: z.string().describe('Cloudfront private key'),
+  CLOUDFRONT_URL: z.string().describe('Cloudfront url'),
 });
 
 const envVars = envVarsSchema.parse(process.env);
@@ -35,6 +38,11 @@ const config = {
     host: envVars.REDIS_HOST,
     port: parseInt(envVars.REDIS_PORT),
     password: envVars.REDIS_PASSWORD,
+  },
+  cdn: {
+    keyPairId: envVars.CLOUDFRONT_KEY_PAIR_ID,
+    privateKey: envVars.CLOUDFRONT_PRIVATE_KEY,
+    url: envVars.CLOUDFRONT_URL,
   },
 };
 
