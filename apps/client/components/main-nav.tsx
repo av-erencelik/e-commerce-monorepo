@@ -9,9 +9,10 @@ import { usePathname } from 'next/navigation';
 import NavigationDropdown from './navigation-dropdown';
 type MainNavProps = {
   navItems: Array<NavItem | ProductNavItem>;
+  isAdmin: boolean;
 };
 
-const MainNav = ({ navItems }: MainNavProps) => {
+const MainNav = ({ navItems, isAdmin }: MainNavProps) => {
   const pathname = usePathname();
   return (
     <div className="flex gap-6 md:gap-10">
@@ -24,7 +25,7 @@ const MainNav = ({ navItems }: MainNavProps) => {
           className="mt-[-5px]"
         />
         <span className="hidden font-bold sm:inline-block text-lg font-heading text-primary">
-          {siteConfig.name}
+          {isAdmin ? 'Admin' : siteConfig.name}
         </span>
       </Link>
       {navItems.length > 0 && (
@@ -39,7 +40,11 @@ const MainNav = ({ navItems }: MainNavProps) => {
                 key={index}
                 className={cn(
                   navigationMenuTriggerStyle(),
-                  pathname.startsWith(navItem.href)
+                  (
+                    navItem.title === 'Home'
+                      ? pathname === navItem.href
+                      : pathname.startsWith(navItem.href)
+                  )
                     ? 'text-primary bg-accent'
                     : 'text-foreground/80'
                 )}

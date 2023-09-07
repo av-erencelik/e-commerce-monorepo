@@ -10,6 +10,7 @@ import {
 } from '../interfaces/product';
 import {
   checkImageExists,
+  createImageUrl,
   createPresignedUrl,
   deleteImageFromS3,
 } from '../lib/s3';
@@ -85,6 +86,20 @@ const getAllProducts = async (page: number | undefined) => {
     products = cachedProducts;
   } else {
     products = (await productRepository.getAllProducts(page)) as Product[];
+    products = products.map((product) => {
+      const { images } = product;
+      const imagesWithSignedUrl = images.map((image) => {
+        const url = createImageUrl(image.key);
+        return {
+          ...image,
+          url,
+        };
+      });
+      return {
+        ...product,
+        images: imagesWithSignedUrl,
+      };
+    });
     await productRedis.setProductsCache(products, page);
   }
 
@@ -113,6 +128,17 @@ const getProduct = async (productId: number) => {
     if (!product) {
       throw new ApiError(httpStatus.NOT_FOUND, 'Product not found');
     }
+    const images = product.images.map((image) => {
+      const url = createImageUrl(image.key);
+      return {
+        ...image,
+        url,
+      };
+    });
+    product = {
+      ...product,
+      images,
+    };
     await productRedis.setProductDetailsCache(product);
   }
   return product;

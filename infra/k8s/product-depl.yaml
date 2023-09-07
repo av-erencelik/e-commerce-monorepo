@@ -76,6 +76,21 @@ spec:
                 secretKeyRef:
                   name: redis-password
                   key: REDIS_PASSWORD
+            - name: CLOUDFRONT_URL
+              valueFrom:
+                secretKeyRef:
+                  name: cloudfront-url
+                  key: CLOUDFRONT_URL
+            - name: CLOUDFRONT_KEY_PAIR_ID
+              valueFrom:
+                secretKeyRef:
+                  name: cloudfront-key-pair-id
+                  key: CLOUDFRONT_KEY_PAIR_ID
+            - name: CLOUDFRONT_PRIVATE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: cloudfront-private-key
+                  key: private-key.pem
             - name: NODE_ENV
               value: development
 ---

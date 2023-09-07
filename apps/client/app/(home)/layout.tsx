@@ -9,7 +9,7 @@ const HomeLayout = ({ children }: { children: React.ReactNode }) => {
       <header className="border-b">
         <div className="z-40 bg-background sm:container px-4">
           <div className="flex items-center justify-between py-4">
-            <MainNav navItems={mainNavigation} />
+            <MainNav navItems={mainNavigation} isAdmin={false} />
             <IconNav />
           </div>
         </div>

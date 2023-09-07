@@ -6,6 +6,7 @@ import {
 } from '@aws-sdk/client-s3';
 import config from '../config/config';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+import { getSignedUrl as cloudfrontGetSignedUrl } from '@aws-sdk/cloudfront-signer';
 import { v4 as uuidv4 } from 'uuid';
 import { logger } from '@e-commerce-monorepo/configs';
 
@@ -65,4 +66,22 @@ const deleteImageFromS3 = async (key: string) => {
   }
 };
 
-export { s3, createPresignedUrl, checkImageExists, deleteImageFromS3 };
+const createImageUrl = (key: string) => {
+  return cloudfrontGetSignedUrl({
+    url: `https://${config.cdn.url}/${key}`,
+    dateLessThan: new Date(Date.now() + 60 * 60 * 1000).toISOString(),
+    keyPairId: config.cdn.keyPairId,
+    privateKey:
+      config.env === 'test'
+        ? Buffer.from(config.cdn.privateKey, 'base64').toString('ascii')
+        : config.cdn.privateKey,
+  });
+};
+
+export {
+  s3,
+  createPresignedUrl,
+  checkImageExists,
+  deleteImageFromS3,
+  createImageUrl,
+};

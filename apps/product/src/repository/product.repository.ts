@@ -114,10 +114,12 @@ const getAllProducts = async (page = 1) => {
       category: true,
     },
   });
-  return products.map((product) => ({
-    ...product,
-    stock: product.stock - product.dailySales,
-  }));
+  return products.map((product) => {
+    return {
+      ...product,
+      stock: product.stock - product.dailySales,
+    };
+  });
 };
 
 const getProduct = async (productId: number) => {
