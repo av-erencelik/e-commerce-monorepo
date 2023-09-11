@@ -7,7 +7,7 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { signupSchema } from '@e-commerce-monorepo/global-types';
 import { useMutation } from '@tanstack/react-query';
-import { signupUserFn } from '../../lib/api/auth';
+import { signupUserFn } from '../../lib/api/auth-service';
 import {
   Form,
   FormControl,

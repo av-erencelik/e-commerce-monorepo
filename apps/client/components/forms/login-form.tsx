@@ -16,7 +16,7 @@ import {
 import { Button } from '@e-commerce-monorepo/ui/server';
 import { PasswordInput } from '../password-input';
 import { useMutation } from '@tanstack/react-query';
-import { loginUserFn } from '../../lib/api/auth';
+import { loginUserFn } from '../../lib/api/auth-service';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import { useAuthStore } from '../../stores/auth-state';

@@ -4,7 +4,7 @@ import TanstackQueryProvider from '../providers/TanstackQueryProvider';
 import AuthStoreInitializer from '../components/auth-store-initializer';
 import { headers } from 'next/headers';
 import { UserPayload } from '@e-commerce-monorepo/global-types';
-import { cn } from '@e-commerce-monorepo/ui';
+import { Toaster, cn } from '@e-commerce-monorepo/ui';
 import { TailwindIndicator } from '../components/tailwind-indicator';
 import { siteConfig } from '../config/site';
 import { env } from '../env.mjs';
@@ -63,6 +63,7 @@ export default async function RootLayout({
         <AuthStoreInitializer user={user} />
         <TanstackQueryProvider>{children}</TanstackQueryProvider>
         <TailwindIndicator />
+        <Toaster />
       </body>
     </html>
   );

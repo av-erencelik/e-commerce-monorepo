@@ -57,6 +57,13 @@ const addProduct = async (product: AddProduct) => {
   if (!categoryExists) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Category does not exist');
   }
+  // check if sub category exists
+  const subCategoryExists = await productRepository.checkSubCategoryExists(
+    product.subCategoryId
+  );
+  if (!subCategoryExists) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Sub category does not exist');
+  }
   // add product to db
   const addedProduct = await productRepository.addProduct(product);
   await productRedis.invalidateProductsCache();
@@ -64,28 +71,39 @@ const addProduct = async (product: AddProduct) => {
   return addedProduct;
 };
 
-const addCategory = async (category: AddCategory) => {
-  const categoryExists = await productRepository.checkCategoryExistWithSameName(
-    category.name
-  );
-  if (categoryExists) {
+const addSubCategory = async (category: AddCategory) => {
+  const categoryExists =
+    await productRepository.checkSubCategoryExistWithSameName(category.name);
+  if (categoryExists.exists) {
     throw new ApiError(
       httpStatus.BAD_REQUEST,
       'Category with same name already exists'
     );
   }
-  const addedCategory = await productRepository.addCategory(category);
+  const addedCategory = await productRepository.addSubCategory(category);
+  await productRedis.invalidateSubCategoriesCache();
+  await productRedis.invalidateCategoriesCache();
+  await productRedis.invalidateProductsCache();
   return addedCategory;
 };
 
-const getAllProducts = async (page: number | undefined) => {
+const getAllProducts = async (
+  page: number | undefined,
+  subcategory_id: number | undefined
+) => {
   let products: Product[];
   let totalCount: number;
-  const cachedProducts = await productRedis.getProductsCache(page);
+  const cachedProducts = await productRedis.getProductsCache(
+    page,
+    subcategory_id
+  );
   if (cachedProducts) {
     products = cachedProducts;
   } else {
-    products = (await productRepository.getAllProducts(page)) as Product[];
+    products = (await productRepository.getAllProducts(
+      page,
+      subcategory_id
+    )) as Product[];
     products = products.map((product) => {
       const { images } = product;
       const imagesWithSignedUrl = images.map((image) => {
@@ -100,7 +118,7 @@ const getAllProducts = async (page: number | undefined) => {
         images: imagesWithSignedUrl,
       };
     });
-    await productRedis.setProductsCache(products, page);
+    await productRedis.setProductsCache(products, page, subcategory_id);
   }
 
   const cachedTotalCount = await productRedis.getTotalProductCountCache();
@@ -185,6 +203,13 @@ const updateProduct = async (
   if (!categoryExists) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Category does not exist');
   }
+  // check if sub category exists
+  const subCategoryExists = await productRepository.checkSubCategoryExists(
+    product.subCategoryId
+  );
+  if (!subCategoryExists) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Sub category does not exist');
+  }
   // update product
   const result = await productRepository.updateProduct(
     productId,
@@ -233,6 +258,16 @@ const deleteSale = async (productId: number, saleId: number) => {
   const product = await productRepository.getProduct(productId);
   if (!product) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Product not found');
+  }
+  const sale = await productRepository.getSale(saleId);
+  if (!sale) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Sale not found');
+  }
+  if (sale.endDate < new Date()) {
+    throw new ApiError(
+      httpStatus.BAD_REQUEST,
+      'Cannot delete sale that has already ended'
+    );
   }
   await productRepository.deleteSale(productId, saleId);
   await productRedis.invalidateProductsCache();
@@ -303,33 +338,96 @@ const setFeaturedImage = async (key: string) => {
   await productRedis.invalidateProductDetailsCache(image.productId);
 };
 
-const deleteCategory = async (categoryId: number) => {
-  const categoryExists = await productRepository.checkCategoryExists(
+const deleteSubCategory = async (categoryId: number) => {
+  const categoryExists = await productRepository.checkSubCategoryExists(
     categoryId
   );
   if (!categoryExists) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Category not found');
   }
-  await productRepository.deleteCategory(categoryId);
+  await productRepository.deleteSubCategory(categoryId);
+  await productRedis.invalidateSubCategoriesCache();
+  await productRedis.invalidateCategoriesCache();
+  await productRedis.invalidateProductsCache();
 };
 
-const updateCategory = async (
+const updateSubCategory = async (
   categoryId: number,
   updatedCategory: UpdateCategory
 ) => {
+  const subcategoryExists = await productRepository.checkSubCategoryExists(
+    categoryId
+  );
+  if (!subcategoryExists) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Category not found');
+  }
   const categoryExists = await productRepository.checkCategoryExists(
+    updatedCategory.categoryId
+  );
+  if (!categoryExists) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Category does not exist');
+  }
+  const categoryWithSameName =
+    await productRepository.checkSubCategoryExistWithSameName(
+      updatedCategory.name
+    );
+  if (categoryWithSameName.exists && categoryWithSameName.id !== categoryId) {
+    throw new ApiError(
+      httpStatus.BAD_REQUEST,
+      'Category with same name already exists'
+    );
+  }
+  await productRepository.updateSubCategory(categoryId, updatedCategory);
+  await productRedis.invalidateSubCategoriesCache();
+  await productRedis.invalidateCategoriesCache();
+  await productRedis.invalidateProductsCache();
+};
+
+const getCategories = async () => {
+  const cachedCategories = await productRedis.getCategoriesCache();
+  if (cachedCategories) {
+    return cachedCategories;
+  }
+  const categories = await productRepository.getCategories();
+  await productRedis.setCategoriesCache(categories);
+  return categories;
+};
+
+const getSubCategories = async () => {
+  const cachedSubCategories = await productRedis.getSubCategoriesCache();
+  if (cachedSubCategories) {
+    return cachedSubCategories;
+  }
+  const subCategories = await productRepository.getSubCategories();
+  await productRedis.setSubCategoriesCache(subCategories);
+  return subCategories;
+};
+
+const getSubcategory = async (categoryId: number) => {
+  const categoryExists = await productRepository.checkSubCategoryExists(
     categoryId
   );
   if (!categoryExists) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Category not found');
   }
-  await productRepository.updateCategory(categoryId, updatedCategory);
+  const subCategory = await productRepository.getSubcategory(categoryId);
+  return subCategory;
+};
+
+const getSales = async () => {
+  const sales = await productRepository.getSales();
+  return sales;
+};
+
+const getAllProductsIds = async () => {
+  const products = await productRepository.getAllProductsIds();
+  return products;
 };
 
 export default Object.freeze({
   getPreSignedUrl,
   addProduct,
-  addCategory,
+  addSubCategory,
   getAllProducts,
   restockOnEvery24Hours,
   updateProduct,
@@ -339,7 +437,12 @@ export default Object.freeze({
   deleteImage,
   setFeaturedImage,
   getProduct,
-  deleteCategory,
-  updateCategory,
+  deleteSubCategory,
+  updateSubCategory,
   addImage,
+  getCategories,
+  getSubCategories,
+  getSubcategory,
+  getSales,
+  getAllProductsIds,
 });

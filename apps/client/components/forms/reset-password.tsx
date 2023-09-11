@@ -13,7 +13,7 @@ import {
 } from '@e-commerce-monorepo/ui';
 import { Button } from '@e-commerce-monorepo/ui/server';
 import { useMutation } from '@tanstack/react-query';
-import { resetPasswordFn } from '../../lib/api/auth';
+import { resetPasswordFn } from '../../lib/api/auth-service';
 import axios from 'axios';
 import { Loader2 } from 'lucide-react';
 import { resetPasswordSchema } from '@e-commerce-monorepo/global-types';

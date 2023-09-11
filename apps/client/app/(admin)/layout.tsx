@@ -11,7 +11,9 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
           </nav>
         </header>
       </div>
-      <main className="flex-1 bg-background sm:container">{children}</main>
+      <main className="flex-1 bg-background container flex flex-col gap-6">
+        {children}
+      </main>
     </div>
   );
 };

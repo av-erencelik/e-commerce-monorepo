@@ -18,6 +18,7 @@ const addProductSchema = z.object({
     stock: z.number().int().positive(),
     weight: z.number().int().positive().optional(),
     categoryId: z.number().int().positive(),
+    subCategoryId: z.number().int().positive(),
     price: z.number().positive(),
     images: z.array(
       z.object({
@@ -35,6 +36,7 @@ const updateProductSchema = z.object({
     stock: z.number().int().positive().optional(),
     weight: z.number().int().positive().optional(),
     categoryId: z.number().int().positive().optional(),
+    subCategoryId: z.number().int().positive().optional(),
     price: z.number().positive().optional(),
     images: z.array(
       z.object({
@@ -48,11 +50,12 @@ const updateProductSchema = z.object({
   }),
 });
 
-const addCategorySchema = z.object({
+const addSubCategorySchema = z.object({
   body: z.object({
     name: z.string().trim().min(1).max(256),
     description: z.string().trim().min(1).max(256),
     id: z.number().int().positive().optional(),
+    categoryId: z.number().int().positive(),
   }),
 });
 
@@ -60,20 +63,37 @@ const getAllProductsSchema = z.object({
   query: z
     .object({
       page: z.string().regex(/^\d+$/).transform(Number).optional(),
+      subcategory_id: z.string().regex(/^\d+$/).transform(Number).optional(),
     })
     .strict(),
+});
+
+const getSubcategorySchema = z.object({
+  params: z.object({
+    subCategoryId: z.string().transform(Number),
+  }),
 });
 
 const addSaleSchema = z.object({
   params: z.object({
     productId: z.string().transform(Number),
   }),
-  body: z.object({
-    discountPrice: z.number().positive(),
-    startDate: z.string().transform(Date.parse),
-    endDate: z.string().transform(Date.parse),
-    originalPrice: z.number().positive(),
-  }),
+  body: z
+    .object({
+      discountPrice: z.number().positive(),
+      startDate: z.string().transform(Date.parse),
+      endDate: z.string().transform(Date.parse),
+      originalPrice: z.number().positive(),
+    })
+    .superRefine((val, ctx) => {
+      if (val.discountPrice >= val.originalPrice) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Discount price must be less than original price',
+          path: [],
+        });
+      }
+    }),
 });
 
 const deleteSaleSchema = z.object({
@@ -81,7 +101,7 @@ const deleteSaleSchema = z.object({
     productId: z.string().transform(Number),
   }),
   query: z.object({
-    saleId: z.string(),
+    sale_id: z.string(),
   }),
 });
 
@@ -113,26 +133,27 @@ const getProductSchema = z.object({
   }),
 });
 
-const categorySchema = z.object({
+const subCategorySchema = z.object({
   params: z.object({
-    categoryId: z.string().transform(Number),
+    subCategoryId: z.string().transform(Number),
   }),
 });
 
-const updateCategorySchema = z.object({
+const updateSubCategorySchema = z.object({
   params: z.object({
-    categoryId: z.string().transform(Number),
+    subCategoryId: z.string().transform(Number),
   }),
   body: z.object({
     name: z.string().trim().min(1).max(256),
     description: z.string().trim().min(1).max(256),
+    categoryId: z.number().int().positive(),
   }),
 });
 
 export {
   preSignedUrlSchema,
   addProductSchema,
-  addCategorySchema,
+  addSubCategorySchema,
   getAllProductsSchema,
   updateProductSchema,
   addSaleSchema,
@@ -140,7 +161,8 @@ export {
   deleteProductSchema,
   deleteImageSchema,
   getProductSchema,
-  categorySchema,
-  updateCategorySchema,
+  subCategorySchema,
+  updateSubCategorySchema,
   addImageSchema,
+  getSubcategorySchema,
 };

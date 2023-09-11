@@ -154,7 +154,7 @@ const DataTable = <TData, TValue>({
                   <p className="mb-2">{title}</p>
                   <Link
                     href={href}
-                    className="text-base font-semibold text-sky-600 hover:underline"
+                    className="text-base font-semibold text-gold-500 hover:underline"
                   >
                     {buttonText}
                   </Link>

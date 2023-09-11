@@ -2,7 +2,10 @@
 import { Button } from '@e-commerce-monorepo/ui/server';
 import { useMutation } from '@tanstack/react-query';
 import React, { useEffect } from 'react';
-import { resendVerificationEmailFn, verifyEmailFn } from '../lib/api/auth';
+import {
+  resendVerificationEmailFn,
+  verifyEmailFn,
+} from '../lib/api/auth-service';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
 import { useAuthStore } from '../stores/auth-state';

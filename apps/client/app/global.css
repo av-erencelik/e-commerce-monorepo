@@ -34,6 +34,9 @@
     --ring: 43 75% 80%;
 
     --radius: 0.5rem;
+
+    --success: 120 100% 27%;
+    --success-foreground: 210 40% 98%;
   }
 
   .dark {
@@ -67,6 +70,9 @@
     --ring: 216 34% 17%;
 
     --radius: 0.5rem;
+
+    --success: 120 100% 27%;
+    --success-foreground: 210 40% 98%;
   }
 }
 

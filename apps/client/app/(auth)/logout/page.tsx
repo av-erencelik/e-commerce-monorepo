@@ -1,10 +1,10 @@
 'use client';
 import { useMutation } from '@tanstack/react-query';
-import { logoutUserFn } from '../../../lib/api/auth';
+import { logoutUserFn } from '../../../lib/api/auth-service';
 import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
-import { useAuthStore } from 'client/stores/auth-state';
+import { useAuthStore } from '@client/stores/auth-state';
 const LogoutPage = () => {
   const { logout } = useAuthStore();
   const router = useRouter();
