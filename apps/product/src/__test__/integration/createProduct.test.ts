@@ -2,7 +2,13 @@ import app from '../../app';
 import request from 'supertest';
 import { signin } from './test-utils';
 import db from '../../database/sql';
-import { category, image, product, productPrice } from '../../models/schema';
+import {
+  category,
+  image,
+  product,
+  productPrice,
+  subCategory,
+} from '../../models/schema';
 
 describe('Create product route', () => {
   const validData = {
@@ -11,6 +17,7 @@ describe('Create product route', () => {
     stock: 10,
     price: 10.6,
     categoryId: 1,
+    subCategoryId: 1,
     weight: 850,
     images: [
       {
@@ -19,6 +26,14 @@ describe('Create product route', () => {
       },
     ],
   };
+
+  beforeAll(async () => {
+    await db.delete(category);
+    await db.delete(product);
+    await db.delete(productPrice);
+    await db.delete(image);
+    await db.delete(subCategory);
+  });
 
   beforeEach(async () => {
     await db.delete(product);
@@ -114,6 +129,12 @@ describe('Create product route', () => {
         name: 'test',
         description: 'test',
         id: 1,
+      });
+      await db.insert(subCategory).values({
+        name: 'test',
+        description: 'test',
+        id: 1,
+        categoryId: 1,
       });
     });
     it('should return 200 if user is admin and data is valid', async () => {

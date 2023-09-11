@@ -3,18 +3,24 @@ import {
   addImageSchema,
   addProductSchema,
   addSaleSchema,
-  deleteCategorySchema,
+  subCategorySchema,
   deleteImageSchema,
   deleteProductSchema,
   deleteSaleSchema,
   getAllProductsSchema,
   getProductSchema,
   preSignedUrlSchema,
-  updateCategorySchema,
+  updateSubCategorySchema,
   updateProductSchema,
 } from '../schemas/product';
 import { InferModel } from 'drizzle-orm';
-import { category, image, product, productPrice } from '../models/schema';
+import {
+  category,
+  image,
+  product,
+  productPrice,
+  subCategory,
+} from '../models/schema';
 
 type PreSignedUrl = z.infer<typeof preSignedUrlSchema>['body'];
 type AddProduct = z.infer<typeof addProductSchema>['body'];
@@ -28,24 +34,26 @@ type SaleId = z.infer<typeof deleteSaleSchema>['query'];
 type DeleteProductParams = z.infer<typeof deleteProductSchema>['params'];
 type DeleteImageParams = z.infer<typeof deleteImageSchema>['params'];
 type GetProductParams = z.infer<typeof getProductSchema>['params'];
-type DeleteCategoryParams = z.infer<typeof deleteCategorySchema>['params'];
-type UpdateCategoryParams = z.infer<typeof updateCategorySchema>['params'];
-type UpdateCategory = z.infer<typeof updateCategorySchema>['body'];
+type DeleteCategoryParams = z.infer<typeof subCategorySchema>['params'];
+type UpdateCategoryParams = z.infer<typeof updateSubCategorySchema>['params'];
+type UpdateCategory = z.infer<typeof updateSubCategorySchema>['body'];
 type AddImageParams = z.infer<typeof addImageSchema>['params'];
 type AddImage = z.infer<typeof addImageSchema>['body'];
 
 type PreSignedUrlImage = PreSignedUrl['images'][number];
 
-type AddCategory = InferModel<typeof category, 'insert'>;
+type AddCategory = InferModel<typeof subCategory, 'insert'>;
 type IndividualProduct = InferModel<typeof product, 'select'>;
 type Image = InferModel<typeof image, 'select'>;
 type ProductPrice = InferModel<typeof productPrice, 'select'>;
 type Category = InferModel<typeof category, 'select'>;
+type SubCategory = InferModel<typeof subCategory, 'select'>;
 
 type Product = IndividualProduct & {
   price: ProductPrice[];
   images: Image[];
   category: Category;
+  subCategory: SubCategory;
 };
 
 export {

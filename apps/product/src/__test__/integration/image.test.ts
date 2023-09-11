@@ -4,7 +4,13 @@ import axios from 'axios';
 import { signin } from './test-utils';
 import fs from 'fs';
 import db from '../../database/sql';
-import { category, image, product, productPrice } from '../../models/schema';
+import {
+  category,
+  image,
+  product,
+  productPrice,
+  subCategory,
+} from '../../models/schema';
 
 describe('Image routes', () => {
   let key = '';
@@ -14,15 +20,14 @@ describe('Image routes', () => {
     await db.delete(productPrice);
     await db.delete(image);
     await db.delete(category);
+    await db.delete(subCategory);
     const token = signin();
-    const categoryResponse = await request(app)
-      .post('/product/category')
-      .set('Cookie', [`accessToken=${token}`])
-      .send({
-        name: 'test',
-        description: 'test',
-      });
-
+    await db
+      .insert(category)
+      .values({ name: 'test', description: 'test', id: 1 });
+    await db
+      .insert(subCategory)
+      .values({ name: 'test', description: 'test', id: 1, categoryId: 1 });
     const response = await request(app)
       .post('/product/image')
       .set('Cookie', [`accessToken=${token}`])
@@ -35,13 +40,13 @@ describe('Image routes', () => {
         ],
       });
 
-    key = response.body[0].key;
+    key = response.body.images[0].key;
 
     const imageBuffer = fs.readFileSync(
       './apps/product/src/__test__/integration/test.png'
     );
 
-    await axios.put(response.body[0].url, imageBuffer);
+    await axios.put(response.body.images[0].url, imageBuffer);
     const productResponse = await request(app)
       .post('/product/create')
       .set('Cookie', [`accessToken=${token}`])
@@ -53,7 +58,7 @@ describe('Image routes', () => {
         stock: 10,
         images: [
           {
-            key: response.body[0].key,
+            key: response.body.images[0].key,
             isFeatured: true,
           },
           {
@@ -61,7 +66,8 @@ describe('Image routes', () => {
             isFeatured: false,
           },
         ],
-        categoryId: categoryResponse.body.category.id,
+        categoryId: 1,
+        subCategoryId: 1,
       });
 
     productId = productResponse.body.product.id;
@@ -72,6 +78,7 @@ describe('Image routes', () => {
     await db.delete(productPrice);
     await db.delete(image);
     await db.delete(category);
+    await db.delete(subCategory);
   });
 
   it('should update image data', async () => {
@@ -110,20 +117,20 @@ describe('Image routes', () => {
       './apps/product/src/__test__/integration/test.png'
     );
 
-    await axios.put(signedUrlResponse.body[0].url, imageBuffer);
+    await axios.put(signedUrlResponse.body.images[0].url, imageBuffer);
 
     const response = await request(app)
       .post(`/product/image/${productId}`)
       .set('Cookie', [`accessToken=${token}`])
       .send({
-        key: signedUrlResponse.body[0].key,
+        key: signedUrlResponse.body.images[0].key,
         isFeatured: false,
       });
     expect(response.status).toBe(201);
     // delete image after
 
     const deleteResponse = await request(app)
-      .delete(`/product/image/${signedUrlResponse.body[0].key}`)
+      .delete(`/product/image/${signedUrlResponse.body.images[0].key}`)
       .set('Cookie', [`accessToken=${token}`])
       .send();
     expect(deleteResponse.status).toBe(204);

@@ -19,22 +19,9 @@ module.exports = {
         '2xl': '1400px',
       },
     },
-    colors: {
-      gold: {
-        100: '#FCF8ED',
-        200: '#F2DCA6',
-        300: '#EBC870',
-        400: '#E6BA4C',
-        500: '#E0AC29',
-        600: '#D6A21F',
-        700: '#B38719',
-        800: '#8F6C14',
-        900: '#59440D',
-        950: '#362908',
-      },
-    },
     extend: {
       colors: {
+        transparent: 'transparent',
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
@@ -44,9 +31,25 @@ module.exports = {
           DEFAULT: 'hsl(var(--primary))',
           foreground: 'hsl(var(--primary-foreground))',
         },
+        gold: {
+          100: '#FCF8ED',
+          200: '#F2DCA6',
+          300: '#EBC870',
+          400: '#E6BA4C',
+          500: '#E0AC29',
+          600: '#D6A21F',
+          700: '#B38719',
+          800: '#8F6C14',
+          900: '#59440D',
+          950: '#362908',
+        },
         secondary: {
           DEFAULT: 'hsl(var(--secondary))',
           foreground: 'hsl(var(--secondary-foreground))',
+        },
+        success: {
+          DEFAULT: 'hsl(var(--success))',
+          foreground: 'hsl(var(--success-foreground))',
         },
         destructive: {
           DEFAULT: 'hsl(var(--destructive))',
@@ -68,6 +71,11 @@ module.exports = {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',
         },
+      },
+      flex: {
+        full: '0 0 100%',
+        half: '0 0 50%',
+        fourth: '0 0 25%',
       },
       borderRadius: {
         lg: `var(--radius)`,

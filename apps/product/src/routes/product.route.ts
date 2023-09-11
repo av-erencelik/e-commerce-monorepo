@@ -1,18 +1,18 @@
 import { requireAdmin, validate } from '@e-commerce-monorepo/middlewares';
 import { Router } from 'express';
 import {
-  addCategorySchema,
+  addSubCategorySchema,
   addImageSchema,
   addProductSchema,
   addSaleSchema,
-  categorySchema,
+  subCategorySchema,
   deleteImageSchema,
   deleteProductSchema,
   deleteSaleSchema,
   getAllProductsSchema,
   getProductSchema,
   preSignedUrlSchema,
-  updateCategorySchema,
+  updateSubCategorySchema,
   updateProductSchema,
 } from '../schemas/product';
 import productController from '../controllers/product.controller';
@@ -33,25 +33,35 @@ productRouter.post(
   productController.addProduct
 );
 
+productRouter.get('/categories', productController.getCategories);
+
+productRouter.get('/category', productController.getSubCategories);
+
+productRouter.get(
+  '/category/:subCategoryId',
+  validate(subCategorySchema),
+  productController.getSubcategory
+);
+
 productRouter.post(
   '/category',
-  validate(addCategorySchema),
+  validate(addSubCategorySchema),
   requireAdmin,
-  productController.addCategory
+  productController.addSubCategory
 );
 
 productRouter.delete(
-  '/category/:categoryId',
-  validate(categorySchema),
+  '/category/:subCategoryId',
+  validate(subCategorySchema),
   requireAdmin,
-  productController.deleteCategory
+  productController.deleteSubCategory
 );
 
 productRouter.patch(
-  '/category/:categoryId',
-  validate(updateCategorySchema),
+  '/category/:subCategoryId',
+  validate(updateSubCategorySchema),
   requireAdmin,
-  productController.updateCategory
+  productController.updateSubCategory
 );
 
 productRouter.patch(
@@ -74,6 +84,8 @@ productRouter.delete(
   requireAdmin,
   productController.deleteSale
 );
+
+productRouter.get('/sale', requireAdmin, productController.getSales);
 
 productRouter.delete(
   '/:productId',
@@ -103,16 +115,20 @@ productRouter.post(
   productController.addImage
 );
 
-productRouter.get(
-  '/',
-  validate(getAllProductsSchema),
-  productController.getAllProducts
-);
+// get products
+
+productRouter.get('/ids', requireAdmin, productController.getAllProductsIds);
 
 productRouter.get(
   '/:productId',
   validate(getProductSchema),
   productController.getProduct
+);
+
+productRouter.get(
+  '/',
+  validate(getAllProductsSchema),
+  productController.getAllProducts
 );
 
 export default productRouter;

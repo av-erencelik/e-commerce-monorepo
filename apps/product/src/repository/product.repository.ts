@@ -5,7 +5,7 @@ import {
   image,
   productPrice,
   category,
-  review,
+  subCategory,
 } from '../models/schema';
 import {
   AddCategory,
@@ -15,6 +15,8 @@ import {
   UpdateCategory,
   UpdateProduct,
 } from '../interfaces/product';
+import { deleteImageFromS3 } from '../lib/s3';
+import { logger } from '@e-commerce-monorepo/configs';
 
 const addProduct = async (newProduct: AddProduct) => {
   const { images } = newProduct;
@@ -22,6 +24,7 @@ const addProduct = async (newProduct: AddProduct) => {
     name: newProduct.name,
     description: newProduct.description,
     categoryId: newProduct.categoryId,
+    subCategoryId: newProduct.subCategoryId,
     stock: newProduct.stock,
     weight: newProduct.weight ? newProduct.weight : null,
     version: 0,
@@ -51,16 +54,17 @@ const addProduct = async (newProduct: AddProduct) => {
   return addedProduct[0];
 };
 
-const addCategory = async (newCategory: AddCategory) => {
-  await db.insert(category).values({
-    name: newCategory.name,
-    description: newCategory.description,
+const addSubCategory = async (newSubCategory: AddCategory) => {
+  await db.insert(subCategory).values({
+    name: newSubCategory.name,
+    description: newSubCategory.description,
+    categoryId: newSubCategory.categoryId,
   });
 
   const addedCategory = await db
     .select()
-    .from(category)
-    .where(eq(category.name, newCategory.name));
+    .from(subCategory)
+    .where(eq(subCategory.name, newSubCategory.name));
 
   return addedCategory[0];
 };
@@ -74,16 +78,28 @@ const checkCategoryExists = async (categoryId: number) => {
   return response.length > 0;
 };
 
-const checkCategoryExistWithSameName = async (name: string) => {
-  // check if category exists
+const checkSubCategoryExists = async (subCategoryId: number) => {
+  // check if sub category exists
   const response = await db
     .select()
-    .from(category)
-    .where(eq(category.name, name));
+    .from(subCategory)
+    .where(eq(subCategory.id, subCategoryId));
   return response.length > 0;
 };
 
-const getAllProducts = async (page = 1) => {
+const checkSubCategoryExistWithSameName = async (name: string) => {
+  // check if category exists
+  const response = await db
+    .select()
+    .from(subCategory)
+    .where(eq(subCategory.name, name));
+  return {
+    exists: response.length > 0,
+    id: response.length > 0 ? response[0].id : null,
+  };
+};
+
+const getAllProducts = async (page = 1, subcategory_id?: number) => {
   const products = await db.query.product.findMany({
     columns: {
       categoryId: true,
@@ -95,6 +111,10 @@ const getAllProducts = async (page = 1) => {
       stock: true,
       dailySales: true,
     },
+    where: (product, { eq }) =>
+      subcategory_id
+        ? eq(product.subCategoryId, subcategory_id)
+        : eq(product.subCategoryId, product.subCategoryId),
     limit: 12,
     offset: (page - 1) * 12,
     orderBy: (product, { desc }) => desc(product.createdAt),
@@ -112,6 +132,7 @@ const getAllProducts = async (page = 1) => {
         limit: 1,
       },
       category: true,
+      subCategory: true,
     },
   });
   return products.map((product) => {
@@ -136,6 +157,7 @@ const getProduct = async (productId: number) => {
         limit: 1,
       },
       category: true,
+      subCategory: true,
     },
   });
   if (!product) {
@@ -177,6 +199,9 @@ const updateProduct = async (
         categoryId: updatedProduct.categoryId
           ? updatedProduct.categoryId
           : currentProduct.categoryId,
+        subCategoryId: updatedProduct.subCategoryId
+          ? updatedProduct.subCategoryId
+          : currentProduct.subCategoryId,
         name: updatedProduct.name ? updatedProduct.name : currentProduct.name,
         description: updatedProduct.description
           ? updatedProduct.description
@@ -212,16 +237,37 @@ const updateProduct = async (
     }
 
     if (images.length > 0) {
-      const editedImages = images.map((image) => ({
-        ...image,
-        productId: productId,
-      }));
+      const editedImages = images.map((image) => {
+        return {
+          ...image,
+          productId: productId,
+        };
+      });
 
-      await db.delete(image).where(eq(image.productId, productId));
-      await db.insert(image).values(editedImages);
+      // take editedImages thare not in currentProduct images
+      const imagesToAdd = editedImages.filter(
+        (image) =>
+          !currentProduct.images.some(
+            (currentImage) => currentImage.key === image.key
+          )
+      );
+      if (imagesToAdd.length > 0) await db.insert(image).values(imagesToAdd);
+
+      // take currentProduct images that are not in updatedProduct images
+      const imagesToDelete = currentProduct.images.filter(
+        (image) =>
+          !images.some((updatedImage) => updatedImage.key === image.key)
+      );
+
+      // delete images that are not in updatedProduct images
+      for (const imageToDelete of imagesToDelete) {
+        await deleteImageFromS3(imageToDelete.key);
+        await db.delete(image).where(eq(image.key, imageToDelete.key));
+      }
     }
     return true;
   } catch (err) {
+    logger.error(err);
     return false;
   }
 };
@@ -274,11 +320,18 @@ const deleteSale = async (productId: number, saleId: number) => {
     );
 };
 
+const getSale = async (saleId: number) => {
+  const sale = await db
+    .select()
+    .from(productPrice)
+    .where(eq(productPrice.id, saleId));
+  return sale[0];
+};
+
 const deleteProduct = async (productId: number) => {
   await db.delete(product).where(eq(product.id, productId));
   await db.delete(image).where(eq(image.productId, productId));
   await db.delete(productPrice).where(eq(productPrice.productId, productId));
-  await db.delete(review).where(eq(review.productId, productId));
 };
 
 const getImage = async (key: string) => {
@@ -309,43 +362,106 @@ const setFeaturedImage = async (key: string) => {
   await db.update(image).set({ isFeatured: true }).where(eq(image.key, key));
 };
 
-const deleteCategory = async (categoryId: number) => {
+const deleteSubCategory = async (categoryId: number) => {
   await db.transaction(async (trx) => {
     const products = await trx
       .select()
       .from(product)
-      .where(eq(product.categoryId, categoryId));
+      .where(eq(product.subCategoryId, categoryId));
     for (const individualProduct of products) {
       await trx
         .delete(productPrice)
         .where(eq(productPrice.productId, individualProduct.id));
       await trx.delete(image).where(eq(image.productId, individualProduct.id));
-      await trx
-        .delete(review)
-        .where(eq(review.productId, individualProduct.id));
     }
-    await trx.delete(category).where(eq(category.id, categoryId));
+    await trx.delete(product).where(eq(product.subCategoryId, categoryId));
+    await trx.delete(subCategory).where(eq(subCategory.id, categoryId));
   });
 };
 
-const updateCategory = async (
+const updateSubCategory = async (
   categoryId: number,
   updatedCategory: UpdateCategory
 ) => {
   await db
-    .update(category)
+    .update(subCategory)
     .set({
       name: updatedCategory.name,
       description: updatedCategory.description,
+      categoryId: updatedCategory.categoryId,
     })
-    .where(eq(category.id, categoryId));
+    .where(eq(subCategory.id, categoryId));
+  await db
+    .update(product)
+    .set({ categoryId: updatedCategory.categoryId })
+    .where(eq(product.subCategoryId, categoryId));
+};
+
+const getCategories = async () => {
+  const categories = await db.query.category.findMany({
+    with: {
+      subCategories: true,
+    },
+  });
+  return categories;
+};
+
+const getSubCategories = async () => {
+  const subCategories = await db.query.subCategory.findMany({
+    with: {
+      category: true,
+    },
+  });
+  return subCategories;
+};
+
+const getSubcategory = async (subCategoryId: number) => {
+  const subCategory = await db.query.subCategory.findFirst({
+    where: (subCategory, { eq }) => eq(subCategory.id, subCategoryId),
+    with: {
+      category: true,
+    },
+  });
+  return subCategory;
+};
+
+const getSales = async () => {
+  const sales = await db.query.productPrice.findMany({
+    columns: {
+      endDate: true,
+      id: true,
+      originalPrice: true,
+      price: true,
+      productId: true,
+      startDate: true,
+    },
+    where: (price, { sql }) => sql`${price.originalPrice} > ${price.price}`,
+    orderBy: (price, { desc }) => desc(price.startDate),
+    with: {
+      product: {
+        columns: {
+          id: true,
+          name: true,
+        },
+      },
+    },
+  });
+  return sales;
+};
+
+const getAllProductsIds = async () => {
+  const products = await db
+    .select({ id: product.id, name: product.name })
+    .from(product);
+  return products;
 };
 
 export default Object.freeze({
   addProduct,
-  addCategory,
+  addSubCategory,
   checkCategoryExists,
-  checkCategoryExistWithSameName,
+  checkSubCategoryExists,
+  checkSubCategoryExistWithSameName,
   getAllProducts,
   getTotalProduct,
   restockAllProducts,
@@ -357,7 +473,13 @@ export default Object.freeze({
   getImage,
   deleteImage,
   setFeaturedImage,
-  deleteCategory,
-  updateCategory,
+  deleteSubCategory,
+  updateSubCategory,
   addImage,
+  getCategories,
+  getSubCategories,
+  getSubcategory,
+  getSales,
+  getAllProductsIds,
+  getSale,
 });

@@ -2,14 +2,12 @@ import { sql } from 'drizzle-orm';
 import {
   mysqlTableCreator,
   varchar,
-  char,
   int,
   boolean,
   index,
   smallint,
   datetime,
   text,
-  unique,
   double,
 } from 'drizzle-orm/mysql-core';
 
@@ -29,9 +27,12 @@ export const product = mysqlTable(
       .notNull()
       .default(sql`CURRENT_TIMESTAMP`),
     categoryId: int('category_id').notNull(),
+    subCategoryId: int('sub_category_id').notNull(),
   },
   (table) => ({
-    createdAt: index('created_at_idx').on(table.createdAt),
+    createdAtIdx: index('created_at_idx').on(table.createdAt),
+    categoryIdIdx: index('category_id_idx').on(table.categoryId),
+    subCategoryIdIdx: index('sub_category_id_idx').on(table.subCategoryId),
   })
 );
 
@@ -62,24 +63,18 @@ export const category = mysqlTable('category', {
   description: varchar('description', { length: 255 }).notNull(),
 });
 
-export const review = mysqlTable(
-  'review',
+export const subCategory = mysqlTable(
+  'sub_category',
   {
     id: int('id').primaryKey().autoincrement(),
-    productId: int('product_id').notNull(),
-    userId: char('user_id', { length: 12 }).notNull(),
-    rating: smallint('rating').notNull(),
-    comment: varchar('comment', { length: 255 }).notNull(),
-    createdAt: datetime('created_at').default(sql`CURRENT_TIMESTAMP`),
+    name: varchar('name', { length: 255 }).unique().notNull(),
+    description: varchar('description', { length: 255 }).notNull(),
+    categoryId: int('category_id').notNull(),
   },
   (table) => ({
-    productIdIdx: index('product_id_idx').on(table.productId),
-    userIdIdx: index('user_id_idx').on(table.userId),
-    createdAt: index('created_at_idx').on(table.createdAt),
-    unq: unique().on(table.productId, table.userId),
+    categoryIdIdx: index('category_id_idx').on(table.categoryId),
   })
 );
-
 export const image = mysqlTable(
   'image',
   {

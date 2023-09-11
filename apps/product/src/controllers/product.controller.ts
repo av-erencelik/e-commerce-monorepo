@@ -29,7 +29,7 @@ const getPreSignedUrl = async (
 ) => {
   const { images: imageData } = req.body;
   const images = await productService.getPreSignedUrl(imageData);
-  res.status(httpStatus.OK).json(images);
+  res.status(httpStatus.OK).json({ images });
 };
 
 const addProduct = async (
@@ -41,12 +41,12 @@ const addProduct = async (
   res.status(httpStatus.OK).json({ product: addedProduct });
 };
 
-const addCategory = async (
+const addSubCategory = async (
   req: Request<ParamsDictionary, never, AddCategory>,
   res: Response
 ) => {
   const category = req.body;
-  const addedCategory = await productService.addCategory(category);
+  const addedCategory = await productService.addSubCategory(category);
   res.status(httpStatus.OK).json({ category: addedCategory });
 };
 
@@ -54,9 +54,14 @@ const getAllProducts = async (
   req: Request<ParamsDictionary, unknown, unknown, Page>,
   res: Response
 ) => {
-  const { page } = req.query;
-  logger.info(`Get all products with page: ${page}`);
-  const { products, totalCount } = await productService.getAllProducts(page);
+  const { page, subcategory_id } = req.query;
+  logger.info(
+    `Get all products with page: ${page} and subcategory: ${subcategory_id}`
+  );
+  const { products, totalCount } = await productService.getAllProducts(
+    page,
+    subcategory_id
+  );
   res.status(httpStatus.OK).json({ products, totalCount });
 };
 
@@ -89,9 +94,9 @@ const deleteSale = async (
   res: Response
 ) => {
   const { productId } = req.params;
-  const { saleId } = req.query;
-  await productService.deleteSale(productId, parseInt(saleId));
-  res.status(httpStatus.NO_CONTENT).json({ message: 'Sale deleted', saleId });
+  const { sale_id } = req.query;
+  await productService.deleteSale(productId, parseInt(sale_id));
+  res.status(httpStatus.NO_CONTENT).json({ message: 'Sale deleted', sale_id });
 };
 
 const deleteProduct = async (
@@ -141,21 +146,21 @@ const getProduct = async (
 ) => {
   const { productId } = req.params;
   const product = await productService.getProduct(productId);
-  res.status(httpStatus.OK).json({ product });
+  res.status(httpStatus.OK).json(product);
 };
 
-const deleteCategory = async (
+const deleteSubCategory = async (
   req: Request<ParamsDictionary & DeleteCategoryParams>,
   res: Response
 ) => {
-  const { categoryId } = req.params;
-  await productService.deleteCategory(categoryId);
+  const { subCategoryId } = req.params;
+  await productService.deleteSubCategory(subCategoryId);
   res
     .status(httpStatus.NO_CONTENT)
-    .json({ message: 'Category deleted', categoryId });
+    .json({ message: 'Category deleted', subCategory: subCategoryId });
 };
 
-const updateCategory = async (
+const updateSubCategory = async (
   req: Request<
     ParamsDictionary & UpdateCategoryParams,
     unknown,
@@ -163,18 +168,51 @@ const updateCategory = async (
   >,
   res: Response
 ) => {
-  const { categoryId } = req.params;
+  const { subCategoryId } = req.params;
   const category = req.body;
-  await productService.updateCategory(categoryId, category);
+  await productService.updateSubCategory(subCategoryId, category);
   res
     .status(httpStatus.NO_CONTENT)
-    .json({ message: 'Category updated', category: categoryId });
+    .json({ message: 'Category updated', subCategory: subCategoryId });
+};
+
+const getCategories = async (req: Request, res: Response) => {
+  const categories = await productService.getCategories();
+  res.status(httpStatus.OK).json({ categories });
+};
+
+const getSubCategories = async (req: Request, res: Response) => {
+  const subCategories = await productService.getSubCategories();
+  res.status(httpStatus.OK).json({ subCategories });
+};
+
+const getSubcategory = async (
+  req: Request<
+    ParamsDictionary & UpdateCategoryParams,
+    unknown,
+    UpdateCategory
+  >,
+  res: Response
+) => {
+  const { subCategoryId } = req.params;
+  const subCategory = await productService.getSubcategory(subCategoryId);
+  res.status(httpStatus.OK).json({ subcategory: subCategory });
+};
+
+const getSales = async (req: Request, res: Response) => {
+  const sales = await productService.getSales();
+  res.status(httpStatus.OK).json({ sales });
+};
+
+const getAllProductsIds = async (req: Request, res: Response) => {
+  const products = await productService.getAllProductsIds();
+  res.status(httpStatus.OK).json({ products });
 };
 
 export default Object.freeze({
   getPreSignedUrl,
   addProduct,
-  addCategory,
+  addSubCategory,
   getAllProducts,
   updateProduct,
   addSale,
@@ -183,7 +221,12 @@ export default Object.freeze({
   deleteImage,
   setFeaturedImage,
   getProduct,
-  deleteCategory,
-  updateCategory,
+  deleteSubCategory,
+  updateSubCategory,
   addImage,
+  getCategories,
+  getSubCategories,
+  getSubcategory,
+  getSales,
+  getAllProductsIds,
 });

@@ -13,4 +13,8 @@ export const adminNavigation: Array<NavItem | ProductNavItem> = [
     title: 'Categories',
     href: '/admin/categories',
   },
+  {
+    title: 'Sales',
+    href: '/admin/sales',
+  },
 ];

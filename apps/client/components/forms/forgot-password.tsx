@@ -14,7 +14,7 @@ import {
 } from '@e-commerce-monorepo/ui';
 import { Button } from '@e-commerce-monorepo/ui/server';
 import { useMutation } from '@tanstack/react-query';
-import { forgotPasswordFn } from '../../lib/api/auth';
+import { forgotPasswordFn } from '../../lib/api/auth-service';
 import axios from 'axios';
 import { Loader2 } from 'lucide-react';
 import { forgotPasswordSchema } from '@e-commerce-monorepo/global-types';

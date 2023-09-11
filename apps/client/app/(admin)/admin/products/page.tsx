@@ -22,7 +22,7 @@ const AdminProductsPage = async () => {
             Manage your products and their variants
           </p>
         </div>
-        <Link href="/products/new" className={buttonVariants()}>
+        <Link href="products/new" className={buttonVariants()}>
           Add New Product
         </Link>
       </div>
