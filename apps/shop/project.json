@@ -1,0 +1,93 @@
+{
+  "name": "shop",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/shop/src",
+  "projectType": "application",
+  "targets": {
+    "push": {
+      "executor": "nx:run-script",
+      "options": {
+        "script": "push:shop"
+      }
+    },
+    "test-db": {
+      "command": "bash ./scripts/run-integration.sh"
+    },
+    "build": {
+      "executor": "@nx/webpack:webpack",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "target": "node",
+        "compiler": "tsc",
+        "outputPath": "dist/apps/shop",
+        "main": "apps/shop/src/main.ts",
+        "tsConfig": "apps/shop/tsconfig.app.json",
+        "isolatedConfig": true,
+        "generatePackageJson": true,
+        "webpackConfig": "apps/shop/webpack.config.js"
+      },
+      "configurations": {
+        "development": {},
+        "production": {}
+      }
+    },
+    "serve": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "shop:build"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "shop:build:development"
+        },
+        "production": {
+          "buildTarget": "shop:build:production"
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/shop/**/*.ts"]
+      }
+    },
+    "test-int": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "apps/shop/src/__test__/integration/jest.int.config.ts",
+        "passWithNoTests": true,
+        "runInBand": true
+      },
+      "dependsOn": ["test-db"],
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "codeCoverage": true
+        }
+      }
+    },
+    "test-unit": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "apps/shop/src/__test__/unit/jest.unit.config.ts",
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "codeCoverage": true
+        }
+      }
+    },
+    "docker-build": {
+      "dependsOn": ["build"],
+      "command": "docker build -f apps/shop/Dockerfile . -t erenmemo/shop"
+    }
+  },
+  "tags": []
+}

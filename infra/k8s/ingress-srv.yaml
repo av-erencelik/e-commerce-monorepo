@@ -23,6 +23,13 @@ spec:
                 name: product-srv
                 port:
                   number: 3000
+          - path: /shop/?(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: shop-srv
+                port:
+                  number: 3000
           - path: /?(.*)
             pathType: Prefix
             backend:

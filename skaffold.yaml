@@ -31,3 +31,11 @@ build:
         manual:
           - src: apps/product
             dest: .
+    - image: erenmemo/shop
+      context: ./
+      docker:
+        dockerfile: apps/shop/Dockerfile
+      sync:
+        manual:
+          - src: apps/shop
+            dest: .

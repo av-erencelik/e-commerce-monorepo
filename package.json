@@ -4,7 +4,8 @@
   "license": "MIT",
   "scripts": {
     "push:auth": "drizzle-kit push:mysql --config=apps/auth/drizzle.config.ts",
-    "push:product": "drizzle-kit push:mysql --config=apps/product/drizzle.config.ts"
+    "push:product": "drizzle-kit push:mysql --config=apps/product/drizzle.config.ts",
+    "push:shop": "drizzle-kit push:mysql --config=apps/shop/drizzle.config.ts"
   },
   "private": true,
   "dependencies": {
