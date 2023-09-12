@@ -21,11 +21,6 @@ export interface NavItem {
   href: string;
 }
 
-export interface ProductNavItem extends NavItem {
-  isCategory: boolean;
-  categories: Category[];
-}
-
 export type Category = {
   title: string;
   href: string;
