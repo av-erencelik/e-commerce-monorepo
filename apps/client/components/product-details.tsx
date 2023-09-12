@@ -57,7 +57,7 @@ const ProductDetails = ({ product }: ProductDetailsProps) => {
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">
-            {product.weight + ' gr' || 'Not specified'}
+            {product.weight ? product.weight + ' gr' : 'Not specified'}
           </div>
         </CardContent>
       </Card>
