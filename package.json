@@ -14,7 +14,7 @@
     "@aws-sdk/s3-request-presigner": "^3.405.0",
     "@hookform/resolvers": "^3.3.0",
     "@internationalized/date": "^3.5.0",
-    "@planetscale/database": "^1.10.0",
+    "@planetscale/database": "^1.11.0",
     "@radix-ui/react-aspect-ratio": "^1.0.3",
     "@radix-ui/react-avatar": "^1.0.3",
     "@radix-ui/react-dropdown-menu": "^2.0.5",
