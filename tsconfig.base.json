@@ -16,6 +16,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@client/*": ["apps/client/*"],
       "@e-commerce-monorepo/configs": ["libs/configs/src/index.ts"],
       "@e-commerce-monorepo/emails": ["libs/emails/src/index.ts"],
       "@e-commerce-monorepo/errors": ["libs/errors/src/index.ts"],
@@ -25,8 +26,7 @@
       "@e-commerce-monorepo/react-emails": ["libs/react-emails/src/index.ts"],
       "@e-commerce-monorepo/ui": ["libs/ui/src/index.ts"],
       "@e-commerce-monorepo/ui/server": ["libs/ui/src/server.ts"],
-      "@e-commerce-monorepo/utils": ["libs/utils/src/index.ts"],
-      "@client/*": ["apps/client/*"]
+      "@e-commerce-monorepo/utils": ["libs/utils/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
