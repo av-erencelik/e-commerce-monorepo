@@ -10,7 +10,7 @@ import {
 } from './schema';
 
 export const cartRelations = relations(cart, ({ many }) => ({
-  cartItem: many(cartItem),
+  cartItems: many(cartItem),
 }));
 
 export const productRelations = relations(product, ({ many }) => ({
