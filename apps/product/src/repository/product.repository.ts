@@ -184,6 +184,12 @@ const restockAllProducts = async () => {
       dailySales: 0,
     });
   }
+  return allProducts.map((product) => {
+    return {
+      id: product.id,
+      stock: product.stock,
+    };
+  });
 };
 
 const updateProduct = async (

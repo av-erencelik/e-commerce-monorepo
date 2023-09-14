@@ -1,7 +1,13 @@
 import { and, eq } from 'drizzle-orm';
 import db from '../database/sql';
-import { cart, cartItem, product } from '../models/schema';
+import { cart, cartItem, product, productPrice } from '../models/schema';
 import { AccessTokenPayload } from '@e-commerce-monorepo/utils';
+import {
+  ProductCreatedPayload,
+  ProductPriceUpdatedPayload,
+  ProductStockUpdatedPayload,
+  ProductUpdatedPayload,
+} from '@e-commerce-monorepo/event-bus';
 
 const checkCartExistsBySession = async (cartSession: string) => {
   const shoppingCart = await db
@@ -128,6 +134,119 @@ const updateCart = async (
     .where(and(eq(cartItem.cartId, cartId), eq(cartItem.productId, productId)));
 };
 
+// product
+
+const createProduct = async (createdProduct: ProductCreatedPayload) => {
+  await db.insert(product).values({
+    id: createdProduct.id,
+    name: createdProduct.name,
+    image: createdProduct.image,
+    stock: createdProduct.stock,
+    version: createdProduct.version,
+  });
+
+  await db.insert(productPrice).values({
+    productId: createdProduct.id,
+    price: createdProduct.price,
+    startDate: new Date(createdProduct.startDate),
+    endDate: new Date(createdProduct.endDate),
+  });
+};
+
+const getProductById = async (productId: number) => {
+  const productItem = await db
+    .select()
+    .from(product)
+    .where(eq(product.id, productId));
+  return productItem.length > 0 ? productItem[0] : null;
+};
+
+const getProductPriceById = async (id: number) => {
+  const price = await db
+    .select()
+    .from(productPrice)
+    .where(eq(productPrice.id, id));
+
+  return price.length > 0 ? price[0] : null;
+};
+
+const updateProduct = async (updatedProduct: ProductUpdatedPayload) => {
+  await db
+    .update(product)
+    .set({
+      image: updatedProduct.image,
+      stock: updatedProduct.stock,
+      version: updatedProduct.version,
+      name: updatedProduct.name,
+    })
+    .where(eq(product.id, updatedProduct.id));
+
+  await db
+    .update(productPrice)
+    .set({
+      endDate: new Date(updatedProduct.startDate),
+    })
+    .where(eq(productPrice.productId, updatedProduct.priceId));
+
+  await db.insert(productPrice).values({
+    productId: updatedProduct.id,
+    price: updatedProduct.price,
+    startDate: new Date(updatedProduct.startDate),
+    endDate: new Date(updatedProduct.endDate),
+  });
+};
+
+const updateProductPrice = async (updatedPrice: ProductPriceUpdatedPayload) => {
+  await db
+    .update(productPrice)
+    .set({
+      endDate: new Date(updatedPrice.startDate),
+    })
+    .where(
+      and(
+        eq(productPrice.productId, updatedPrice.productId),
+        eq(productPrice.endDate, new Date('9999-12-31'))
+      )
+    );
+
+  await db.insert(productPrice).values({
+    productId: updatedPrice.productId,
+    price: updatedPrice.price,
+    startDate: new Date(updatedPrice.startDate),
+    endDate: new Date(updatedPrice.endDate),
+  });
+
+  await db.insert(productPrice).values({
+    productId: updatedPrice.productId,
+    price: updatedPrice.originalPrice,
+    startDate: new Date(updatedPrice.endDate),
+    endDate: new Date('9999-12-31'),
+  });
+};
+
+const deleteProduct = async (productId: number) => {
+  await db.delete(product).where(eq(product.id, productId));
+  await db.delete(productPrice).where(eq(productPrice.productId, productId));
+  await db.delete(cartItem).where(eq(cartItem.productId, productId));
+};
+
+const deleteProductPrice = async (priceId: number) => {
+  await db.delete(productPrice).where(eq(productPrice.id, priceId));
+};
+
+const reStockProducts = async (data: ProductStockUpdatedPayload) => {
+  await db.transaction(async (trx) => {
+    for (const item of data.products) {
+      await trx
+        .update(product)
+        .set({
+          stock: item.stock,
+        })
+        .where(eq(product.id, item.id));
+    }
+  });
+};
+
 export default Object.freeze({
   checkCartExistsBySession,
   checkProductExists,
@@ -139,4 +258,12 @@ export default Object.freeze({
   addUserToCart,
   removeFromCart,
   updateCart,
+  createProduct,
+  getProductById,
+  updateProduct,
+  deleteProduct,
+  getProductPriceById,
+  deleteProductPrice,
+  updateProductPrice,
+  reStockProducts,
 });

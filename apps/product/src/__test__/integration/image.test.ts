@@ -12,6 +12,27 @@ import {
   subCategory,
 } from '../../models/schema';
 
+jest.mock('@e-commerce-monorepo/event-bus', () => ({
+  ProductCreated: jest.fn().mockImplementation(() => ({
+    publish: jest.fn(),
+  })),
+  ProductUpdated: jest.fn().mockImplementation(() => ({
+    publish: jest.fn(),
+  })),
+  ProductDeleted: jest.fn().mockImplementation(() => ({
+    publish: jest.fn(),
+  })),
+  ProductPriceDeleted: jest.fn().mockImplementation(() => ({
+    publish: jest.fn(),
+  })),
+  ProductPriceUpdated: jest.fn().mockImplementation(() => ({
+    publish: jest.fn(),
+  })),
+  ProductStockUpdated: jest.fn().mockImplementation(() => ({
+    publish: jest.fn(),
+  })),
+}));
+
 describe('Image routes', () => {
   let key = '';
   let productId = 0;
