@@ -8,6 +8,8 @@ import {
   smallint,
   datetime,
   double,
+  char,
+  uniqueIndex,
 } from 'drizzle-orm/mysql-core';
 
 export const mysqlTable = mysqlTableCreator((name) => `shop_${name}`);
@@ -17,10 +19,12 @@ export const mysqlTable = mysqlTableCreator((name) => `shop_${name}`);
 export const product = mysqlTable('product', {
   id: int('id').primaryKey().autoincrement(),
   name: varchar('name', { length: 256 }).unique().notNull(),
-  version: smallint('version').notNull().default(0),
-  stock: smallint('stock').notNull().default(0),
-  createdAt: datetime('created_at').notNull(),
-  image: varchar('image', { length: 256 }),
+  version: smallint('version').notNull(),
+  stock: smallint('stock').notNull(),
+  createdAt: datetime('created_at')
+    .notNull()
+    .default(sql`CURRENT_TIMESTAMP`),
+  image: varchar('image', { length: 256 }).notNull(),
 });
 
 export const productPrice = mysqlTable(
@@ -44,7 +48,7 @@ export const cart = mysqlTable(
   'cart',
   {
     id: varchar('id', { length: 36 }).primaryKey().notNull(),
-    userId: int('user_id').unique(),
+    userId: char('user_id', { length: 12 }).unique(),
     createdAt: datetime('created_at')
       .notNull()
       .default(sql`CURRENT_TIMESTAMP`),
@@ -68,6 +72,7 @@ export const cartItem = mysqlTable(
   (table) => ({
     cartIdIdx: index('cart_id_idx').on(table.cartId),
     productIdIdx: index('product_id_idx').on(table.productId),
+    itemIdx: uniqueIndex('item_idx').on(table.cartId, table.productId),
   })
 );
 
