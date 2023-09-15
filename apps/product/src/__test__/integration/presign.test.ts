@@ -2,6 +2,27 @@ import app from '../../app';
 import request from 'supertest';
 import { signin } from './test-utils';
 
+jest.mock('@e-commerce-monorepo/event-bus', () => ({
+  ProductCreated: jest.fn().mockImplementation(() => ({
+    publish: jest.fn(),
+  })),
+  ProductUpdated: jest.fn().mockImplementation(() => ({
+    publish: jest.fn(),
+  })),
+  ProductDeleted: jest.fn().mockImplementation(() => ({
+    publish: jest.fn(),
+  })),
+  ProductPriceDeleted: jest.fn().mockImplementation(() => ({
+    publish: jest.fn(),
+  })),
+  ProductPriceUpdated: jest.fn().mockImplementation(() => ({
+    publish: jest.fn(),
+  })),
+  ProductStockUpdated: jest.fn().mockImplementation(() => ({
+    publish: jest.fn(),
+  })),
+}));
+
 describe('Image presign route', () => {
   it('should return 401 if user is not admin', async () => {
     const response = await request(app)

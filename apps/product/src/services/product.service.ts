@@ -17,6 +17,14 @@ import {
 import httpStatus from 'http-status';
 import productRepository from '../repository/product.repository';
 import productRedis from '../repository/product.redis';
+import {
+  ProductCreated,
+  ProductDeleted,
+  ProductPriceDeleted,
+  ProductPriceUpdated,
+  ProductStockUpdated,
+  ProductUpdated,
+} from '@e-commerce-monorepo/event-bus';
 
 const getPreSignedUrl = async (images: PreSignedUrlImage[]) => {
   const urls: Array<{ url: string; key: string }> = [];
@@ -68,6 +76,17 @@ const addProduct = async (product: AddProduct) => {
   const addedProduct = await productRepository.addProduct(product);
   await productRedis.invalidateProductsCache();
   await productRedis.invalidateTotalProductCountCache();
+  const ProductCreatedEvent = new ProductCreated();
+  await ProductCreatedEvent.publish({
+    endDate: new Date('9999-12-31').toISOString(),
+    id: addedProduct.id,
+    image: product.images.filter((image) => image.isFeatured)[0].key,
+    name: addedProduct.name,
+    price: product.price,
+    startDate: new Date().toISOString(),
+    stock: addedProduct.stock,
+    version: addedProduct.version,
+  });
   return addedProduct;
 };
 
@@ -163,7 +182,12 @@ const getProduct = async (productId: number) => {
 };
 
 const restockOnEvery24Hours = async () => {
-  await productRepository.restockAllProducts();
+  const products = await productRepository.restockAllProducts();
+  await productRedis.invalidateProductsCache();
+  const productStockUpdatedEvent = new ProductStockUpdated();
+  productStockUpdatedEvent.publish({
+    products,
+  });
 };
 
 const updateProduct = async (
@@ -217,6 +241,18 @@ const updateProduct = async (
     product
   );
   if (result) {
+    const ProductUpdatedEvent = new ProductUpdated();
+    await ProductUpdatedEvent.publish({
+      endDate: new Date('9999-12-31').toISOString(),
+      id: productId,
+      image: product.images.filter((image) => image.isFeatured)[0].key,
+      name: updatedProduct.name || product.name,
+      price: updatedProduct.price || product.price[0].price,
+      startDate: new Date().toISOString(),
+      stock: updatedProduct.stock || product.stock,
+      version: product.version + 1,
+      priceId: product.price[0].id,
+    });
     await productRedis.invalidateProductsCache();
     await productRedis.invalidateProductDetailsCache(productId);
   } else {
@@ -250,6 +286,14 @@ const addSale = async (productId: number, sale: Sale) => {
   }
 
   await productRepository.addSale(productId, sale);
+  const productPriceUpdatedEvent = new ProductPriceUpdated();
+  await productPriceUpdatedEvent.publish({
+    productId: productId,
+    price: sale.discountPrice,
+    originalPrice: sale.originalPrice,
+    startDate: new Date(sale.startDate).toISOString(),
+    endDate: new Date(sale.endDate).toISOString(),
+  });
   await productRedis.invalidateProductsCache();
   await productRedis.invalidateProductDetailsCache(productId);
 };
@@ -270,6 +314,10 @@ const deleteSale = async (productId: number, saleId: number) => {
     );
   }
   await productRepository.deleteSale(productId, saleId);
+  const productPriceDeletedEvent = new ProductPriceDeleted();
+  await productPriceDeletedEvent.publish({
+    id: saleId,
+  });
   await productRedis.invalidateProductsCache();
   await productRedis.invalidateProductDetailsCache(productId);
 };
@@ -280,6 +328,10 @@ const deleteProduct = async (productId: number) => {
     throw new ApiError(httpStatus.NOT_FOUND, 'Product not found');
   }
   await productRepository.deleteProduct(productId);
+  const productDeletedEvent = new ProductDeleted();
+  await productDeletedEvent.publish({
+    id: productId,
+  });
   await productRedis.invalidateProductsCache();
   await productRedis.invalidateTotalProductCountCache();
   await productRedis.invalidateProductDetailsCache(productId);

@@ -10,6 +10,27 @@ import {
   subCategory,
 } from '../../models/schema';
 
+jest.mock('@e-commerce-monorepo/event-bus', () => ({
+  ProductCreated: jest.fn().mockImplementation(() => ({
+    publish: jest.fn(),
+  })),
+  ProductUpdated: jest.fn().mockImplementation(() => ({
+    publish: jest.fn(),
+  })),
+  ProductDeleted: jest.fn().mockImplementation(() => ({
+    publish: jest.fn(),
+  })),
+  ProductPriceDeleted: jest.fn().mockImplementation(() => ({
+    publish: jest.fn(),
+  })),
+  ProductPriceUpdated: jest.fn().mockImplementation(() => ({
+    publish: jest.fn(),
+  })),
+  ProductStockUpdated: jest.fn().mockImplementation(() => ({
+    publish: jest.fn(),
+  })),
+}));
+
 describe('Get products route', () => {
   const validData = {
     name: 'test',
@@ -29,6 +50,7 @@ describe('Get products route', () => {
 
   beforeAll(async () => {
     await db.delete(category);
+    await db.delete(subCategory);
     await db.delete(product);
     await db.delete(productPrice);
     await db.delete(image);
@@ -60,6 +82,7 @@ describe('Get products route', () => {
   it('should return 200 with image urls signed', async () => {
     const response = await request(app).get('/product');
     expect(response.status).toBe(200);
+    console.log(response.body);
     expect(response.body.products[0].images[0].url).toBeDefined();
   });
 });

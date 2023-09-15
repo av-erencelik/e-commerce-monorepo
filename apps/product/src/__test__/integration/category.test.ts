@@ -5,9 +5,31 @@ import db from '../../database/sql';
 import { category, subCategory } from '../../models/schema';
 import { eq } from 'drizzle-orm';
 
+jest.mock('@e-commerce-monorepo/event-bus', () => ({
+  ProductCreated: jest.fn().mockImplementation(() => ({
+    publish: jest.fn(),
+  })),
+  ProductUpdated: jest.fn().mockImplementation(() => ({
+    publish: jest.fn(),
+  })),
+  ProductDeleted: jest.fn().mockImplementation(() => ({
+    publish: jest.fn(),
+  })),
+  ProductPriceDeleted: jest.fn().mockImplementation(() => ({
+    publish: jest.fn(),
+  })),
+  ProductPriceUpdated: jest.fn().mockImplementation(() => ({
+    publish: jest.fn(),
+  })),
+  ProductStockUpdated: jest.fn().mockImplementation(() => ({
+    publish: jest.fn(),
+  })),
+}));
+
 describe('Category route', () => {
   let categoryId: number;
   beforeAll(async () => {
+    await db.delete(subCategory);
     await db.insert(category).values({ name: 'test', description: 'test' });
     const result = await db
       .select()
