@@ -4,6 +4,7 @@ import { Request, Response } from 'express';
 import { ParamsDictionary } from 'express-serve-static-core';
 import {
   AddCart,
+  CheckCart,
   RemoveFromCart,
   UpdateCartParams,
   UpdateCartQuery,
@@ -96,9 +97,23 @@ const updateCart = async (
   });
 };
 
+const checkCart = async (
+  req: Request<ParamsDictionary, never, never, CheckCart>,
+  res: Response
+) => {
+  const total = req.query.total;
+  console.log('total', total);
+  const cartSession = req.cookies.cart_session;
+  const user = req.user;
+  await cartService.checkCart(parseFloat(total), cartSession, user);
+
+  res.status(httpStatus.OK).send();
+};
+
 export default Object.freeze({
   addToCart,
   getCart,
   removeFromCart,
   updateCart,
+  checkCart,
 });

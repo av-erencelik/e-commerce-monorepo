@@ -53,3 +53,20 @@ export const updateCartSchema = z.object({
     }),
   }),
 });
+
+export const checkCartSchema = z.object({
+  query: z.object({
+    total: z.string().superRefine((val, ctx) => {
+      console.log('total', val);
+      const number = parseFloat(val);
+
+      if (isNaN(number)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Total must be number',
+          path: [],
+        });
+      }
+    }),
+  }),
+});

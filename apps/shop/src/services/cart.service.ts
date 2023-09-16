@@ -152,9 +152,46 @@ const updateCart = async (
   }
   await cartRepository.updateCart(productId, quantity, cartSession);
 };
+
+const checkCart = async (
+  total: number,
+  cartSession?: string,
+  user?: AccessTokenPayload
+) => {
+  if (!cartSession) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Cart session is required');
+  }
+  if (!total) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Total is required');
+  }
+
+  if (!user) {
+    throw new ApiError(httpStatus.UNAUTHORIZED, 'You must be logged in');
+  }
+
+  const cart = await cartRepository.checkCartExistsBySession(cartSession);
+  if (!cart) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Cart not found');
+  }
+
+  if (cart.userId !== user.userId) {
+    throw new ApiError(httpStatus.FORBIDDEN, 'Cart does not belong to user');
+  }
+
+  const cartTotal = await cartRepository.getCartTotal(cartSession);
+
+  if (cartTotal !== total) {
+    throw new ApiError(
+      httpStatus.BAD_REQUEST,
+      'One of the products price changed'
+    );
+  }
+};
+
 export default Object.freeze({
   addToCart,
   getCart,
   removeFromCart,
   updateCart,
+  checkCart,
 });

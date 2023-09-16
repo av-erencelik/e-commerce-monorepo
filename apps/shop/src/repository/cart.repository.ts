@@ -247,6 +247,36 @@ const reStockProducts = async (data: ProductStockUpdatedPayload) => {
   });
 };
 
+const getCartTotal = async (cartId: string) => {
+  const cart = await db.query.cart.findFirst({
+    with: {
+      cartItems: {
+        with: {
+          product: {
+            with: {
+              price: true,
+            },
+          },
+        },
+      },
+    },
+    where(fields, { eq }) {
+      return eq(fields.id, cartId);
+    },
+  });
+
+  if (!cart) {
+    return null;
+  }
+
+  let total = 0;
+
+  for (const item of cart.cartItems) {
+    total += item.product.price[0].price * item.quantity;
+  }
+  return total;
+};
+
 export default Object.freeze({
   checkCartExistsBySession,
   checkProductExists,
@@ -266,4 +296,5 @@ export default Object.freeze({
   deleteProductPrice,
   updateProductPrice,
   reStockProducts,
+  getCartTotal,
 });

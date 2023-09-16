@@ -1,7 +1,8 @@
-import { validate } from '@e-commerce-monorepo/middlewares';
+import { requireAuth, validate } from '@e-commerce-monorepo/middlewares';
 import { Router } from 'express';
 import {
   addCartSchema,
+  checkCartSchema,
   removeFromCartSchema,
   updateCartSchema,
 } from '../schemas/cart';
@@ -17,6 +18,13 @@ cartRouter.delete(
   '/',
   validate(removeFromCartSchema),
   cartController.removeFromCart
+);
+
+cartRouter.get(
+  '/check',
+  validate(checkCartSchema),
+  requireAuth,
+  cartController.checkCart
 );
 
 cartRouter.get('/', cartController.getCart);
