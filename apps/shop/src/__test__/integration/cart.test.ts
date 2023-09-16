@@ -181,4 +181,46 @@ describe('Cart routes', () => {
       expect(res4.body.cart.cartItems.length).toBe(0);
     });
   });
+
+  describe('GET /cart/check', () => {
+    beforeAll(async () => {
+      await db.delete(cartItem);
+      await db.delete(cart);
+    });
+
+    it('should return 200 if order total not changed', async () => {
+      const accessToken = signin();
+      const res2 = await request(app)
+        .post('/shop/cart?product_id=1&quantity=4')
+        .set('Cookie', [`accessToken=${accessToken}`])
+        .send();
+      const cookies2 = res2.get('Set-Cookie');
+      const res = await request(app)
+        .get('/shop/cart')
+        .set('Cookie', [`accessToken=${accessToken}`, ...cookies2])
+        .send();
+
+      const cart = res.body.cart;
+      let total = 0;
+      for (const item of cart.cartItems) {
+        total += item.product.price[0].price * item.quantity;
+      }
+
+      const checkResponse = await request(app)
+        .get(`/shop/cart/check?total=${total}`)
+        .set('Cookie', [`accessToken=${accessToken}`, ...cookies2])
+        .send();
+
+      console.log(checkResponse.body);
+
+      expect(checkResponse.status).toBe(200);
+
+      const checkWrongTotalResponse = await request(app)
+        .get(`/shop/cart/check?total=${total + 1}`)
+        .set('Cookie', [`accessToken=${accessToken}`, ...cookies2])
+        .send();
+
+      expect(checkWrongTotalResponse.status).toBe(400);
+    });
+  });
 });
