@@ -26,6 +26,7 @@ jobs:
       CLOUDFRONT_URL: ${{ secrets.CLOUDFRONT_URL }}
       CLOUDFRONT_PRIVATE_KEY: ${{ secrets.CLOUDFRONT_PRIVATE_KEY }}
       CLOUDFRONT_KEY_PAIR_ID: ${{ secrets.CLOUDFRONT_KEY_PAIR_ID }}
+      STRIPE_KEY: ${{ secrets.STRIPE_KEY }}
     steps:
       - uses: actions/checkout@v2
       - run: npm install
