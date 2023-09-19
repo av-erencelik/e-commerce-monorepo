@@ -66,6 +66,11 @@ spec:
                 secretKeyRef:
                   name: cloudfront-key-pair-id
                   key: CLOUDFRONT_KEY_PAIR_ID
+            - name: STRIPE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: stripe-key
+                  key: STRIPE_KEY
             - name: CLOUDFRONT_PRIVATE_KEY
               valueFrom:
                 secretKeyRef:

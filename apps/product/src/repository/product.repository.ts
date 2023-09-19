@@ -15,7 +15,6 @@ import {
   UpdateCategory,
   UpdateProduct,
 } from '../interfaces/product';
-import { deleteImageFromS3 } from '../lib/s3';
 import { logger } from '@e-commerce-monorepo/configs';
 
 const addProduct = async (newProduct: AddProduct) => {
@@ -267,7 +266,6 @@ const updateProduct = async (
 
       // delete images that are not in updatedProduct images
       for (const imageToDelete of imagesToDelete) {
-        await deleteImageFromS3(imageToDelete.key);
         await db.delete(image).where(eq(image.key, imageToDelete.key));
       }
     }

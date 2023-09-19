@@ -11,6 +11,7 @@ const envVarsSchema = z.object({
   CLOUDFRONT_KEY_PAIR_ID: z.string().describe('Cloudfront key pair id'),
   CLOUDFRONT_PRIVATE_KEY: z.string().describe('Cloudfront private key'),
   CLOUDFRONT_URL: z.string().describe('Cloudfront url'),
+  STRIPE_KEY: z.string().describe('Stripe key'),
 });
 
 const envVars = envVarsSchema.parse(process.env);
@@ -33,6 +34,9 @@ const config = {
     keyPairId: envVars.CLOUDFRONT_KEY_PAIR_ID,
     privateKey: envVars.CLOUDFRONT_PRIVATE_KEY,
     url: envVars.CLOUDFRONT_URL,
+  },
+  stripe: {
+    key: envVars.STRIPE_KEY,
   },
 };
 

@@ -82,7 +82,7 @@ export const order = mysqlTable(
   'order',
   {
     id: varchar('id', { length: 36 }).primaryKey().notNull(),
-    userId: int('user_id').notNull(),
+    userId: char('user_id', { length: 12 }).notNull(),
     createdAt: datetime('created_at').default(sql`CURRENT_TIMESTAMP`),
     updatedAt: datetime('updated_at').default(sql`CURRENT_TIMESTAMP`),
     totalAmount: double('total_amount', { precision: 10, scale: 2 }).notNull(),
@@ -100,6 +100,7 @@ export const orderItem = mysqlTable(
     productId: int('product_id').notNull(),
     quantity: int('quantity').notNull(),
     price: double('price', { precision: 10, scale: 2 }).notNull(),
+    image: varchar('image', { length: 256 }).notNull(),
   },
   (table) => ({
     orderIdIdx: index('order_id_idx').on(table.orderId),
@@ -114,6 +115,7 @@ export const payment = mysqlTable(
   {
     id: varchar('id', { length: 36 }).primaryKey().notNull(),
     orderId: varchar('order_id', { length: 36 }).notNull(),
+    stripeId: varchar('stripe_id', { length: 36 }).notNull(),
     amount: double('amount', { precision: 10, scale: 2 }).notNull(),
     createdAt: datetime('created_at').default(sql`CURRENT_TIMESTAMP`),
   },
