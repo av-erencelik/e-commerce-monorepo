@@ -30,6 +30,7 @@ describe('Category route', () => {
   let categoryId: number;
   beforeAll(async () => {
     await db.delete(subCategory);
+    await db.delete(category);
     await db.insert(category).values({ name: 'test', description: 'test' });
     const result = await db
       .select()

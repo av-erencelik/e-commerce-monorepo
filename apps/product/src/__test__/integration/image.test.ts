@@ -11,6 +11,7 @@ import {
   productPrice,
   subCategory,
 } from '../../models/schema';
+import { deleteImageFromS3 } from '../../lib/s3';
 
 jest.mock('@e-commerce-monorepo/event-bus', () => ({
   ProductCreated: jest.fn().mockImplementation(() => ({
@@ -100,6 +101,7 @@ describe('Image routes', () => {
     await db.delete(image);
     await db.delete(category);
     await db.delete(subCategory);
+    await deleteImageFromS3(key);
   });
 
   it('should update image data', async () => {
