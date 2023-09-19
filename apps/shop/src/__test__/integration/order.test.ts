@@ -80,7 +80,8 @@ describe('Order routes', () => {
         .send();
 
       const cart = cartResponse.body.cart;
-      console.log(cart);
+      console.log('cartest', cart);
+      console.log('cartItemProduct', cart.cartItems[0].product);
       let total = 0;
       for (const item of cart.cartItems) {
         console.log(item.product.price[0]);
