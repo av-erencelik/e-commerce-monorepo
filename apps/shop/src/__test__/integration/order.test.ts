@@ -57,59 +57,57 @@ describe('Order routes', () => {
     });
   });
 
-  describe('order', () => {
-    it('should create order', async () => {
-      const accessToken = signin();
-      const res = await request(app)
-        .post('/shop/cart?product_id=2&quantity=1')
-        .set('Cookie', [`accessToken=${accessToken}`])
-        .send()
-        .expect(200);
+  it('should create order', async () => {
+    const accessToken = signin();
+    const res = await request(app)
+      .post('/shop/cart?product_id=2&quantity=1')
+      .set('Cookie', [`accessToken=${accessToken}`])
+      .send()
+      .expect(200);
 
-      const cookies = res.get('Set-Cookie');
+    const cookies = res.get('Set-Cookie');
 
-      await request(app)
-        .post('/shop/cart?product_id=1&quantity=1')
-        .set('Cookie', [`accessToken=${accessToken}`, ...cookies])
-        .send()
-        .expect(200);
+    await request(app)
+      .post('/shop/cart?product_id=1&quantity=1')
+      .set('Cookie', [`accessToken=${accessToken}`, ...cookies])
+      .send()
+      .expect(200);
 
-      const cartResponse = await request(app)
-        .get('/shop/cart')
-        .set('Cookie', [`accessToken=${accessToken}`, ...cookies])
-        .send();
+    const cartResponse = await request(app)
+      .get('/shop/cart')
+      .set('Cookie', [`accessToken=${accessToken}`, ...cookies])
+      .send();
 
-      const cart = cartResponse.body.cart;
-      console.log('cartest', cart);
-      console.log('cartItemProduct', cart.cartItems[0].product);
-      let total = 0;
-      for (const item of cart.cartItems) {
-        console.log(item.product.price[0]);
-        total += item.product.price[0].price * item.quantity;
-      }
+    const cart = cartResponse.body.cart;
+    console.log('cartest', cart);
+    console.log('cartItemProduct', cart.cartItems[1].product);
+    let total = 0;
+    for (const item of cart.cartItems) {
+      console.log(item.product.price[0]);
+      total += item.product.price[0].price * item.quantity;
+    }
 
-      const checkResponse = await request(app)
-        .get(`/shop/cart/check?total=${total}`)
-        .set('Cookie', [`accessToken=${accessToken}`, ...cookies])
-        .send();
+    const checkResponse = await request(app)
+      .get(`/shop/cart/check?total=${total}`)
+      .set('Cookie', [`accessToken=${accessToken}`, ...cookies])
+      .send();
 
-      expect(checkResponse.status).toBe(200);
-      const response = await request(app)
-        .post(`/shop/order?total=${total}&token=tok_visa`)
-        .set('Cookie', [`accessToken=${accessToken}`, ...cookies]);
+    expect(checkResponse.status).toBe(200);
+    const response = await request(app)
+      .post(`/shop/order?total=${total}&token=tok_visa`)
+      .set('Cookie', [`accessToken=${accessToken}`, ...cookies]);
 
-      expect(response.status).toBe(201);
-    });
+    expect(response.status).toBe(201);
+  });
 
-    it('should return all orders for user', async () => {
-      const accessToken = signin();
-      const res = await request(app)
-        .get('/shop/order')
-        .set('Cookie', [`accessToken=${accessToken}`])
-        .send()
-        .expect(200);
+  it('should return all orders for user', async () => {
+    const accessToken = signin();
+    const res = await request(app)
+      .get('/shop/order')
+      .set('Cookie', [`accessToken=${accessToken}`])
+      .send()
+      .expect(200);
 
-      expect(res.body.data.length).toBe(1);
-    });
+    expect(res.body.data.length).toBe(1);
   });
 });
