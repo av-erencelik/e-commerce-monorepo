@@ -2,6 +2,7 @@ import { mainNavigation } from '../../config/main-navigation';
 import MainNav from '../../components/main-nav';
 import React from 'react';
 import IconNav from '../../components/icon-nav';
+import MobileNav from '@client/components/mobile-nav';
 
 const HomeLayout = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -9,6 +10,7 @@ const HomeLayout = ({ children }: { children: React.ReactNode }) => {
       <header className="border-b">
         <div className="z-40 bg-background sm:container px-4">
           <div className="flex items-center justify-between py-4">
+            <MobileNav mobileNavItems={mainNavigation} isAdmin={false} />
             <MainNav navItems={mainNavigation} isAdmin={false} />
             <IconNav />
           </div>

@@ -18,4 +18,6 @@ export * from './components/ui/toaster';
 export * from './components/ui/use-toast';
 export * from './components/ui/popover';
 export * from './components/ui/calendar';
+export * from './components/ui/sheet';
+export * from './components/ui/scroll-area';
 export * from './utils';
