@@ -469,12 +469,27 @@ const getAllProductsIds = async () => {
 };
 
 const getNewestProducts = async () => {
-  const products = await productRepository.getNewestProducts();
+  let products: Product[];
+  const cachedProducts = await productRedis.getNewestProductsCache();
+  if (cachedProducts) {
+    products = cachedProducts;
+  } else {
+    products = (await productRepository.getNewestProducts()) as Product[];
+    await productRedis.setNewestProductsCache(products);
+  }
+
   return products;
 };
 
 const getMostSoldProducts = async () => {
-  const products = await productRepository.getMostSoldProducts();
+  let products: Product[];
+  const cachedProducts = await productRedis.getMostSoldProductsCache();
+  if (cachedProducts) {
+    products = cachedProducts;
+  } else {
+    products = (await productRepository.getMostSoldProducts()) as Product[];
+    await productRedis.setMostSoldProductsCache(products);
+  }
   return products;
 };
 
