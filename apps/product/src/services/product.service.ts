@@ -468,6 +468,31 @@ const getAllProductsIds = async () => {
   return products;
 };
 
+const getNewestProducts = async () => {
+  let products: Product[];
+  const cachedProducts = await productRedis.getNewestProductsCache();
+  if (cachedProducts) {
+    products = cachedProducts;
+  } else {
+    products = (await productRepository.getNewestProducts()) as Product[];
+    await productRedis.setNewestProductsCache(products);
+  }
+
+  return products;
+};
+
+const getMostSoldProducts = async () => {
+  let products: Product[];
+  const cachedProducts = await productRedis.getMostSoldProductsCache();
+  if (cachedProducts) {
+    products = cachedProducts;
+  } else {
+    products = (await productRepository.getMostSoldProducts()) as Product[];
+    await productRedis.setMostSoldProductsCache(products);
+  }
+  return products;
+};
+
 export default Object.freeze({
   getPreSignedUrl,
   addProduct,
@@ -489,4 +514,6 @@ export default Object.freeze({
   getSubcategory,
   getSales,
   getAllProductsIds,
+  getNewestProducts,
+  getMostSoldProducts,
 });

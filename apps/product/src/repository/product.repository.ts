@@ -98,6 +98,84 @@ const checkSubCategoryExistWithSameName = async (name: string) => {
   };
 };
 
+const getNewestProducts = async () => {
+  const products = await db.query.product.findMany({
+    columns: {
+      categoryId: true,
+      createdAt: true,
+      description: true,
+      id: true,
+      name: true,
+      weight: true,
+      stock: true,
+      dailySales: true,
+    },
+    with: {
+      images: {
+        where: (image, { eq }) => eq(image.isFeatured, true),
+      },
+      price: {
+        where: (price, { sql, and }) =>
+          and(
+            sql`${price.startDate} < ${new Date()}`,
+            sql`${price.endDate} > ${new Date()}`
+          ),
+        orderBy: (price, { desc }) => desc(price.startDate),
+        limit: 1,
+      },
+      category: true,
+      subCategory: true,
+    },
+    orderBy: (product, { desc }) => desc(product.createdAt),
+    limit: 4,
+  });
+  return products.map((product) => {
+    return {
+      ...product,
+      stock: product.stock - product.dailySales,
+    };
+  });
+};
+
+const getMostSoldProducts = async () => {
+  const products = await db.query.product.findMany({
+    columns: {
+      categoryId: true,
+      createdAt: true,
+      description: true,
+      id: true,
+      name: true,
+      weight: true,
+      stock: true,
+      dailySales: true,
+    },
+    with: {
+      images: {
+        where: (image, { eq }) => eq(image.isFeatured, true),
+      },
+      price: {
+        where: (price, { sql, and }) =>
+          and(
+            sql`${price.startDate} < ${new Date()}`,
+            sql`${price.endDate} > ${new Date()}`
+          ),
+        orderBy: (price, { desc }) => desc(price.startDate),
+        limit: 1,
+      },
+      category: true,
+      subCategory: true,
+    },
+    orderBy: (product, { desc }) => desc(product.dailySales),
+    limit: 4,
+  });
+  return products.map((product) => {
+    return {
+      ...product,
+      stock: product.stock - product.dailySales,
+    };
+  });
+};
+
 const getAllProducts = async (page = 1, subcategory_id?: number) => {
   const products = await db.query.product.findMany({
     columns: {
@@ -467,6 +545,8 @@ export default Object.freeze({
   checkSubCategoryExists,
   checkSubCategoryExistWithSameName,
   getAllProducts,
+  getNewestProducts,
+  getMostSoldProducts,
   getTotalProduct,
   restockAllProducts,
   getProduct,

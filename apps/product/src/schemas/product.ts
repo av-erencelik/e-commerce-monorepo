@@ -150,6 +150,13 @@ const updateSubCategorySchema = z.object({
   }),
 });
 
+const getFeaturedProductsSchema = z.object({
+  query: z.object({
+    most_sold: z.boolean().optional(),
+    newest: z.boolean().optional(),
+  }),
+});
+
 export {
   preSignedUrlSchema,
   addProductSchema,
@@ -165,4 +172,5 @@ export {
   updateSubCategorySchema,
   addImageSchema,
   getSubcategorySchema,
+  getFeaturedProductsSchema,
 };

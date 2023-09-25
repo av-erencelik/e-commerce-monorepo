@@ -14,6 +14,19 @@ const setProductsCache = async (
   ); // 1 hour
 };
 
+const setNewestProductsCache = async (products: Product[]) => {
+  await redis.set(`products/newest`, JSON.stringify(products), 'EX', 60 * 60); // 1 hour
+};
+
+const setMostSoldProductsCache = async (products: Product[]) => {
+  await redis.set(
+    `products/most-sold`,
+    JSON.stringify(products),
+    'EX',
+    60 * 60
+  ); // 1 hour
+};
+
 const setProductDetailsCache = async (product: Product) => {
   await redis.set(
     `product/${product.id}`,
@@ -76,6 +89,16 @@ const getProductsCache = async function (
   return products ? JSON.parse(products) : null;
 };
 
+const getNewestProductsCache = async function (): Promise<Product[] | null> {
+  const products = await redis.get(`products/newest`);
+  return products ? JSON.parse(products) : null;
+};
+
+const getMostSoldProductsCache = async function (): Promise<Product[] | null> {
+  const products = await redis.get(`products/most-sold`);
+  return products ? JSON.parse(products) : null;
+};
+
 const getProductDetailsCache = async function (
   productId: number
 ): Promise<Product | null> {
@@ -134,4 +157,8 @@ export default Object.freeze({
   getSubCategoriesCache,
   setSubCategoriesCache,
   invalidateSubCategoriesCache,
+  setNewestProductsCache,
+  getNewestProductsCache,
+  setMostSoldProductsCache,
+  getMostSoldProductsCache,
 });
