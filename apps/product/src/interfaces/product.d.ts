@@ -12,6 +12,7 @@ import {
   preSignedUrlSchema,
   updateSubCategorySchema,
   updateProductSchema,
+  getFeaturedProductsSchema,
 } from '../schemas/product';
 import { InferModel } from 'drizzle-orm';
 import {
@@ -39,6 +40,9 @@ type UpdateCategoryParams = z.infer<typeof updateSubCategorySchema>['params'];
 type UpdateCategory = z.infer<typeof updateSubCategorySchema>['body'];
 type AddImageParams = z.infer<typeof addImageSchema>['params'];
 type AddImage = z.infer<typeof addImageSchema>['body'];
+type GetFeaturedProductsQuery = z.infer<
+  typeof getFeaturedProductsSchema
+>['query'];
 
 type PreSignedUrlImage = PreSignedUrl['images'][number];
 
@@ -77,4 +81,5 @@ export {
   UpdateCategory,
   AddImageParams,
   AddImage,
+  GetFeaturedProductsQuery,
 };

@@ -14,6 +14,7 @@ import {
   preSignedUrlSchema,
   updateSubCategorySchema,
   updateProductSchema,
+  getFeaturedProductsSchema,
 } from '../schemas/product';
 import productController from '../controllers/product.controller';
 
@@ -123,6 +124,12 @@ productRouter.get(
   '/:productId',
   validate(getProductSchema),
   productController.getProduct
+);
+
+productRouter.get(
+  '/featured',
+  validate(getFeaturedProductsSchema),
+  productController.getFeaturedProducts
 );
 
 productRouter.get(

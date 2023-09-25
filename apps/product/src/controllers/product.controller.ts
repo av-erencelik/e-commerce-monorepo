@@ -16,6 +16,7 @@ import {
   UpdateCategory,
   AddImageParams,
   AddImage,
+  GetFeaturedProductsQuery,
 } from '../interfaces/product';
 import { Request, Response } from 'express';
 import { ParamsDictionary } from 'express-serve-static-core';
@@ -209,6 +210,28 @@ const getAllProductsIds = async (req: Request, res: Response) => {
   res.status(httpStatus.OK).json({ products });
 };
 
+const getFeaturedProducts = async (
+  req: Request<ParamsDictionary, unknown, unknown, GetFeaturedProductsQuery>,
+  res: Response
+) => {
+  const { newest, most_sold } = req.query;
+  if (newest) {
+    const products = await productService.getNewestProducts();
+    res
+      .status(httpStatus.OK)
+      .json({ products, success: true, message: 'Newest products' });
+  } else if (most_sold) {
+    const products = await productService.getMostSoldProducts();
+    res
+      .status(httpStatus.OK)
+      .json({ products, success: true, message: 'Most sold products' });
+  } else {
+    res
+      .status(httpStatus.BAD_REQUEST)
+      .json({ success: false, message: 'Invalid query parameters' });
+  }
+};
+
 export default Object.freeze({
   getPreSignedUrl,
   addProduct,
@@ -229,4 +252,5 @@ export default Object.freeze({
   getSubcategory,
   getSales,
   getAllProductsIds,
+  getFeaturedProducts,
 });

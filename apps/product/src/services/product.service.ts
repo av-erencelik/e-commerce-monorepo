@@ -468,6 +468,16 @@ const getAllProductsIds = async () => {
   return products;
 };
 
+const getNewestProducts = async () => {
+  const products = await productRepository.getNewestProducts();
+  return products;
+};
+
+const getMostSoldProducts = async () => {
+  const products = await productRepository.getMostSoldProducts();
+  return products;
+};
+
 export default Object.freeze({
   getPreSignedUrl,
   addProduct,
@@ -489,4 +499,6 @@ export default Object.freeze({
   getSubcategory,
   getSales,
   getAllProductsIds,
+  getNewestProducts,
+  getMostSoldProducts,
 });
