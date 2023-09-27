@@ -13,6 +13,8 @@ enum Subjects {
   productPriceUpdated = 'product:priceupdated',
   productPriceDeleted = 'product:pricedeleted',
   productStockUpdated = 'product:stockupdated',
+  // order
+  orderCreated = 'order:created',
 }
 
 export { Subjects };

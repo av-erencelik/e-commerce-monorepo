@@ -121,15 +121,15 @@ productRouter.post(
 productRouter.get('/ids', requireAdmin, productController.getAllProductsIds);
 
 productRouter.get(
-  '/:productId',
-  validate(getProductSchema),
-  productController.getProduct
-);
-
-productRouter.get(
   '/featured',
   validate(getFeaturedProductsSchema),
   productController.getFeaturedProducts
+);
+
+productRouter.get(
+  '/:productId',
+  validate(getProductSchema),
+  productController.getProduct
 );
 
 productRouter.get(

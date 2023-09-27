@@ -17,6 +17,7 @@ import httpStatus from 'http-status';
 import productRepository from '../repository/product.repository';
 import productRedis from '../repository/product.redis';
 import {
+  OrderCreatedPayload,
   ProductCreated,
   ProductDeleted,
   ProductPriceDeleted,
@@ -475,6 +476,20 @@ const getNewestProducts = async () => {
     products = cachedProducts;
   } else {
     products = (await productRepository.getNewestProducts()) as Product[];
+    products = products.map((product) => {
+      const { images } = product;
+      const imagesWithSignedUrl = images.map((image) => {
+        const url = createImageUrl(image.key);
+        return {
+          ...image,
+          url,
+        };
+      });
+      return {
+        ...product,
+        images: imagesWithSignedUrl,
+      };
+    });
     await productRedis.setNewestProductsCache(products);
   }
 
@@ -488,9 +503,30 @@ const getMostSoldProducts = async () => {
     products = cachedProducts;
   } else {
     products = (await productRepository.getMostSoldProducts()) as Product[];
+    products = products.map((product) => {
+      const { images } = product;
+      const imagesWithSignedUrl = images.map((image) => {
+        const url = createImageUrl(image.key);
+        return {
+          ...image,
+          url,
+        };
+      });
+      return {
+        ...product,
+        images: imagesWithSignedUrl,
+      };
+    });
     await productRedis.setMostSoldProductsCache(products);
   }
   return products;
+};
+
+const updateStock = async (order: OrderCreatedPayload) => {
+  for (const product of order.products) {
+    await productRepository.updateStock(product.id, product.quantity);
+  }
+  await productRedis.invalidateProductsCache();
 };
 
 export default Object.freeze({
@@ -516,4 +552,5 @@ export default Object.freeze({
   getAllProductsIds,
   getNewestProducts,
   getMostSoldProducts,
+  updateStock,
 });

@@ -152,8 +152,8 @@ const updateSubCategorySchema = z.object({
 
 const getFeaturedProductsSchema = z.object({
   query: z.object({
-    most_sold: z.boolean().optional(),
-    newest: z.boolean().optional(),
+    most_sold: z.enum(['true', 'false']).optional(),
+    newest: z.enum(['true', 'false']).optional(),
   }),
 });
 

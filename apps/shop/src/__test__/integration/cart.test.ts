@@ -4,6 +4,12 @@ import { signin } from './test-utils';
 import db from '../../database/sql';
 import { cart, cartItem, product, productPrice } from '../../models/schema';
 
+jest.mock('@e-commerce-monorepo/event-bus', () => ({
+  OrderCreated: jest.fn().mockImplementation(() => ({
+    publish: jest.fn(),
+  })),
+}));
+
 describe('Cart routes', () => {
   beforeAll(async () => {
     await db.delete(cartItem);
