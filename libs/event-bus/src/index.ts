@@ -15,3 +15,4 @@ export * from './lib/events/product.deleted';
 export * from './lib/events/product-price.updated';
 export * from './lib/events/product-price.deleted';
 export * from './lib/events/product-stock.updated';
+export * from './lib/events/order.created';
