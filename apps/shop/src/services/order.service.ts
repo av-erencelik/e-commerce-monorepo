@@ -3,6 +3,7 @@ import { AccessTokenPayload, createImageUrl } from '@e-commerce-monorepo/utils';
 import httpStatus from 'http-status';
 import cartRepository from '../repository/cart.repository';
 import orderRepository from '../repository/order.repository';
+import { OrderCreated } from '@e-commerce-monorepo/event-bus';
 
 const createOrder = async (
   total: number,
@@ -48,6 +49,18 @@ const createOrder = async (
   }
 
   if (result.status === true) {
+    const createdOrder = await orderRepository.getOrder(result.order!.id);
+    if (!createdOrder) {
+      throw new ApiError(httpStatus.NOT_FOUND, 'Order not found');
+    }
+    const orderCreatedEvent = new OrderCreated();
+    orderCreatedEvent.publish({
+      orderId: createdOrder.id,
+      products: createdOrder.orderItem.map((item) => ({
+        id: item.productId,
+        quantity: item.quantity,
+      })),
+    });
     return result.order;
   }
 };

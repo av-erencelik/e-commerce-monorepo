@@ -10,30 +10,20 @@ const setProductsCache = async (
     `products/${page}/${subcategory_id}`,
     JSON.stringify(products),
     'EX',
-    60 * 60
-  ); // 1 hour
+    60
+  ); // 1 minute
 };
 
 const setNewestProductsCache = async (products: Product[]) => {
-  await redis.set(`products/newest`, JSON.stringify(products), 'EX', 60 * 60); // 1 hour
+  await redis.set(`products/newest`, JSON.stringify(products), 'EX', 60); // 1 minute
 };
 
 const setMostSoldProductsCache = async (products: Product[]) => {
-  await redis.set(
-    `products/most-sold`,
-    JSON.stringify(products),
-    'EX',
-    60 * 60
-  ); // 1 hour
+  await redis.set(`products/most-sold`, JSON.stringify(products), 'EX', 60); // 1 minute
 };
 
 const setProductDetailsCache = async (product: Product) => {
-  await redis.set(
-    `product/${product.id}`,
-    JSON.stringify(product),
-    'EX',
-    60 * 60
-  ); // 1 hour
+  await redis.set(`product/${product.id}`, JSON.stringify(product), 'EX', 60); // 1 minute
 };
 
 const setTotalProductCountCache = async (count: number) => {
@@ -43,7 +33,7 @@ const setTotalProductCountCache = async (count: number) => {
 const setCategoriesCache = async (
   categories: Array<{ id: number; name: string; description: string }>
 ) => {
-  await redis.set(`categories`, JSON.stringify(categories), 'EX', 60 * 60 * 24); // 1 hour
+  await redis.set(`categories`, JSON.stringify(categories), 'EX', 60 * 60 * 24); // 1 day
 };
 
 const setSubCategoriesCache = async (

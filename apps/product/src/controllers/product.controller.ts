@@ -215,12 +215,12 @@ const getFeaturedProducts = async (
   res: Response
 ) => {
   const { newest, most_sold } = req.query;
-  if (newest) {
+  if (newest === 'true') {
     const products = await productService.getNewestProducts();
     res
       .status(httpStatus.OK)
       .json({ products, success: true, message: 'Newest products' });
-  } else if (most_sold) {
+  } else if (most_sold === 'true') {
     const products = await productService.getMostSoldProducts();
     res
       .status(httpStatus.OK)

@@ -153,7 +153,18 @@ const getOrders = async (user: AccessTokenPayload) => {
   return orders;
 };
 
+const getOrder = async (orderId: string) => {
+  const order = await db.query.order.findFirst({
+    where: (fields, { eq }) => eq(fields.id, orderId),
+    with: {
+      orderItem: true,
+    },
+  });
+  return order;
+};
+
 export default Object.freeze({
   createOrder,
   getOrders,
+  getOrder,
 });

@@ -127,7 +127,8 @@ const getNewestProducts = async () => {
       subCategory: true,
     },
     orderBy: (product, { desc }) => desc(product.createdAt),
-    limit: 4,
+    limit: 5,
+    offset: 0,
   });
   return products.map((product) => {
     return {
@@ -166,7 +167,8 @@ const getMostSoldProducts = async () => {
       subCategory: true,
     },
     orderBy: (product, { desc }) => desc(product.dailySales),
-    limit: 4,
+    limit: 5,
+    offset: 0,
   });
   return products.map((product) => {
     return {
@@ -538,6 +540,16 @@ const getAllProductsIds = async () => {
   return products;
 };
 
+const updateStock = async (productId: number, quantity: number) => {
+  await db
+    .update(product)
+    .set({
+      stock: sql<number>`stock - ${quantity}`,
+      dailySales: sql<number>`daily_sales + ${quantity}`,
+    })
+    .where(eq(product.id, productId));
+};
+
 export default Object.freeze({
   addProduct,
   addSubCategory,
@@ -566,4 +578,5 @@ export default Object.freeze({
   getSales,
   getAllProductsIds,
   getSale,
+  updateStock,
 });

@@ -15,6 +15,12 @@ jest.mock('../../libs/stripe', () => ({
   },
 }));
 
+jest.mock('@e-commerce-monorepo/event-bus', () => ({
+  OrderCreated: jest.fn().mockImplementation(() => ({
+    publish: jest.fn(),
+  })),
+}));
+
 describe('Order routes', () => {
   beforeAll(async () => {
     await db.delete(cartItem);
