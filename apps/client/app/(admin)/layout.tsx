@@ -1,5 +1,5 @@
 import MainNav from '@client/components/main-nav';
-import MobileNav from '@client/components/mobile-nav';
+import MobileNav from '@client/components/layouts/mobile-nav';
 import { adminNavigation } from '@client/config/admin-navigation';
 
 const AdminLayout = ({ children }: { children: React.ReactNode }) => {

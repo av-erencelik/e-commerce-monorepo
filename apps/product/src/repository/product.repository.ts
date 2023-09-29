@@ -127,7 +127,7 @@ const getNewestProducts = async () => {
       subCategory: true,
     },
     orderBy: (product, { desc }) => desc(product.createdAt),
-    limit: 5,
+    limit: 6,
     offset: 0,
   });
   return products.map((product) => {
@@ -167,7 +167,7 @@ const getMostSoldProducts = async () => {
       subCategory: true,
     },
     orderBy: (product, { desc }) => desc(product.dailySales),
-    limit: 5,
+    limit: 6,
     offset: 0,
   });
   return products.map((product) => {

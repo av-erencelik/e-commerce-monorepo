@@ -14,6 +14,7 @@ export type SiteConfig = {
   name: string;
   icon: string;
   description: string;
+  github: string;
 };
 
 export interface NavItem {
