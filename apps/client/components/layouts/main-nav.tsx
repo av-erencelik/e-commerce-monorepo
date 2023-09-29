@@ -2,8 +2,8 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
-import { siteConfig } from '../config/site';
-import { NavItem } from '../types';
+import { siteConfig } from '../../config/site';
+import { NavItem } from '../../types';
 import { cn, navigationMenuTriggerStyle } from '@e-commerce-monorepo/ui';
 import { usePathname } from 'next/navigation';
 

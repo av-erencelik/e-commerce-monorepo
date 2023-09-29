@@ -67,6 +67,7 @@
     "react-email": "^1.9.4",
     "react-hook-form": "^7.45.4",
     "react-stately": "^3.26.0",
+    "react-wrap-balancer": "^1.1.0",
     "resend": "^1.0.0",
     "stripe": "^13.6.0",
     "supertest": "^6.3.3",

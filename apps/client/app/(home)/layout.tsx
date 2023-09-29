@@ -1,8 +1,9 @@
 import { mainNavigation } from '../../config/main-navigation';
-import MainNav from '../../components/main-nav';
+import MainNav from '../../components/layouts/main-nav';
 import React from 'react';
-import IconNav from '../../components/icon-nav';
-import MobileNav from '@client/components/mobile-nav';
+import IconNav from '../../components/layouts/icon-nav';
+import MobileNav from '@client/components/layouts/mobile-nav';
+import SiteFooter from '@client/components/layouts/site-footer';
 
 const HomeLayout = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -17,6 +18,7 @@ const HomeLayout = ({ children }: { children: React.ReactNode }) => {
         </div>
       </header>
       <main className="flex-1">{children}</main>
+      <SiteFooter />
     </div>
   );
 };

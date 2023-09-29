@@ -4,7 +4,7 @@ import { Avatar, AvatarFallback } from '@e-commerce-monorepo/ui';
 import { Button } from '@e-commerce-monorepo/ui/server';
 import { ShoppingCartIcon } from 'lucide-react';
 import Link from 'next/link';
-import { useAuthStore } from '../stores/auth-state';
+import { useAuthStore } from '../../stores/auth-state';
 import {
   DropdownMenu,
   DropdownMenuContent,
