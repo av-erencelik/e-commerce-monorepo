@@ -23,7 +23,7 @@ const ProductCard = ({ product, className, ...props }: ProductCardProps) => {
   return (
     <Card
       className={cn(
-        'h-full overflow-hidden rounded-xl hover:shadow-xl transition-shadow group flex flex-col',
+        'h-full overflow-hidden rounded-xl hover:shadow-lg transition-shadow group flex flex-col',
         className
       )}
       {...props}
