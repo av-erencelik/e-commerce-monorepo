@@ -50,7 +50,7 @@ describe('Order routes', () => {
       id: 1,
       productId: 1,
       price: 10.6,
-      startDate: new Date(),
+      startDate: new Date(new Date().setFullYear(new Date().getFullYear() - 1)),
       endDate: new Date(new Date().setFullYear(new Date().getFullYear() + 1)),
     });
 
@@ -58,7 +58,7 @@ describe('Order routes', () => {
       id: 2,
       productId: 2,
       price: 12.6,
-      startDate: new Date(),
+      startDate: new Date(new Date().setFullYear(new Date().getFullYear() - 1)),
       endDate: new Date(new Date().setFullYear(new Date().getFullYear() + 1)),
     });
   });
@@ -113,6 +113,8 @@ describe('Order routes', () => {
       .set('Cookie', [`accessToken=${accessToken}`])
       .send()
       .expect(200);
+
+    console.log('res', res.body.data);
 
     expect(res.body.data.length).toBe(1);
   });
