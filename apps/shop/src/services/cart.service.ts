@@ -67,9 +67,20 @@ const getCart = async (cartSession?: string, user?: AccessTokenPayload) => {
       cartId = id;
     }
   } else {
-    const id = uuid();
-    await cartRepository.createCart(id, user);
-    cartId = id;
+    if (user) {
+      const cart = await cartRepository.getCartByUserId(user.userId);
+      if (cart) {
+        cartId = cart.id;
+      } else {
+        const id = uuid();
+        await cartRepository.createCart(id, user);
+        cartId = id;
+      }
+    } else {
+      const id = uuid();
+      await cartRepository.createCart(id, user);
+      cartId = id;
+    }
   }
 
   const cart = await cartRepository.getCart(cartId);

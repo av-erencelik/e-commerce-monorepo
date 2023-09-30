@@ -117,9 +117,9 @@ export default async function Index() {
         aria-labelledby="categories-heading"
         className="flex gap-5 md:flex-row flex-col"
       >
-        <Link className="flex flex-1" href="/products/chocolates">
-          <Card className="flex flex-1 xl:w-full overflow-hidden rounded-xl transition-all md:hover:scale-[1.01] md:hover:shadow-lg duration-200 xl:flex-row flex-col">
-            <CardHeader className="p-0 border-r xl:w-[35%] space-y-0">
+        <Card className="flex flex-1 xl:w-full overflow-hidden rounded-xl transition-all md:hover:scale-[1.01] md:hover:shadow-lg duration-200 xl:flex-row flex-col">
+          <CardHeader className="p-0 border-r xl:w-[35%] space-y-0">
+            <Link className="w-full" href="/products/chocolates">
               <div className="xl:block hidden">
                 <AspectRatio ratio={3 / 5}>
                   <Image
@@ -144,8 +144,10 @@ export default async function Index() {
                   />
                 </AspectRatio>
               </div>
-            </CardHeader>
-            <CardContent className="p-4 xl:w-[65%]">
+            </Link>
+          </CardHeader>
+          <CardContent className="p-4 xl:w-[65%]">
+            <Link className="w-full" href="/products/chocolates">
               <CardTitle className="text-xl font-bold leading-tight tracking-tighter">
                 Homemade Chocolates
               </CardTitle>
@@ -175,24 +177,22 @@ export default async function Index() {
                   Unwrap happiness with every indulgent bite.
                 </span>
               </CardDescription>
-            </CardContent>
-            <CardFooter className="md:hidden flex justify-center p-4 mt-auto">
-              <Link
-                href="/products/chocolates"
-                className={cn(
-                  buttonVariants({ size: 'lg', variant: 'outline' })
-                )}
-              >
-                Discover Now
-                <span className="sr-only">Discover</span>
-              </Link>
-            </CardFooter>
-          </Card>
-        </Link>
+            </Link>
+          </CardContent>
+          <CardFooter className="md:hidden flex justify-center p-4 mt-auto">
+            <Link
+              href="/products/chocolates"
+              className={cn(buttonVariants({ size: 'lg', variant: 'outline' }))}
+            >
+              Discover Now
+              <span className="sr-only">Discover</span>
+            </Link>
+          </CardFooter>
+        </Card>
 
-        <Link className="flex flex-1" href="/products/breads">
-          <Card className="flex flex-1 w-full overflow-hidden rounded-xl md:hover:scale-[1.01] md:hover:shadow-lg transition-all duration-300 xl:flex-row flex-col">
-            <CardHeader className="p-0 border-r xl:w-[35%] space-y-0">
+        <Card className="flex flex-1 w-full overflow-hidden rounded-xl md:hover:scale-[1.01] md:hover:shadow-lg transition-all duration-300 xl:flex-row flex-col">
+          <CardHeader className="p-0 border-r xl:w-[35%] space-y-0">
+            <Link className="w-full" href="/products/breads">
               <div className="xl:block hidden">
                 <AspectRatio ratio={3 / 5}>
                   <Image
@@ -217,8 +217,10 @@ export default async function Index() {
                   />
                 </AspectRatio>
               </div>
-            </CardHeader>
-            <CardContent className="p-4 xl:w-[65%]">
+            </Link>
+          </CardHeader>
+          <CardContent className="p-4 xl:w-[65%]">
+            <Link className="w-full" href="/products/breads">
               <CardTitle className="text-xl font-bold leading-tight tracking-tighter">
                 Homemade Sourdough Breads
               </CardTitle>
@@ -249,20 +251,18 @@ export default async function Index() {
                   to your home.
                 </span>
               </CardDescription>
-            </CardContent>
-            <CardFooter className="md:hidden flex justify-center p-4 mt-auto">
-              <Link
-                href="/products/breads"
-                className={cn(
-                  buttonVariants({ size: 'lg', variant: 'outline' })
-                )}
-              >
-                Discover Now
-                <span className="sr-only">Discover</span>
-              </Link>
-            </CardFooter>
-          </Card>
-        </Link>
+            </Link>
+          </CardContent>
+          <CardFooter className="md:hidden flex justify-center p-4 mt-auto">
+            <Link
+              href="/products/breads"
+              className={cn(buttonVariants({ size: 'lg', variant: 'outline' }))}
+            >
+              Discover Now
+              <span className="sr-only">Discover</span>
+            </Link>
+          </CardFooter>
+        </Card>
       </section>
     </Shell>
   );

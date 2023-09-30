@@ -3,6 +3,7 @@ import app from './app';
 import config from './config/config';
 import { RMQConnect } from '@e-commerce-monorepo/event-bus';
 import restock from './lib/restock';
+import { ShopListener } from './event-bus/listeners/shop.listener';
 
 const port = config.port;
 const connectionData = {
@@ -20,6 +21,8 @@ const server = app.listen(port, async () => {
     });
 
     restock.restockOnEvery24Hours;
+    const shopListener = new ShopListener();
+    shopListener.consume();
   } catch (err) {
     logger.error(err);
   }

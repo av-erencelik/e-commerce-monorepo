@@ -22,6 +22,11 @@ if (config.env !== 'test') {
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.get('/robots.txt', function (req, res) {
+  res.type('text/plain');
+  res.send('User-agent: *\nDisallow: /');
+});
 app.use(cookieParser());
 app.use(xssClean);
 app.use(currentUser);

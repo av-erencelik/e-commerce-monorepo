@@ -4,6 +4,8 @@ import {
   IAddProductResponse,
   ICreateSaleResponse,
   IEditProductResponse,
+  IGenericPostResponse,
+  IGetCart,
   IGetCategoriesResponse,
   IGetPreSignedUrlResponse,
   IGetProductsResponse,
@@ -121,4 +123,22 @@ export const deleteSale = async ({
     `/product/sale/${productId}?sale_id=${saleId}`
   );
   return response.data;
+};
+
+export const addToCart = async ({
+  quantity,
+  productId,
+}: {
+  quantity: number;
+  productId: number;
+}) => {
+  const response = await api.post(
+    `/shop/cart?product_id=${productId}&quantity=${quantity}`
+  );
+  return response.data as IGenericPostResponse;
+};
+
+export const getCart = async () => {
+  const response = await api.get('/shop/cart');
+  return response.data as IGetCart;
 };
