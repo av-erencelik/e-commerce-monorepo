@@ -70,6 +70,32 @@ export type ProductSubCategory = {
   categoryId: number;
 };
 
+export type CartItem = {
+  quantity: number;
+  id: number;
+  cartId: string;
+  productId: number;
+  product: Product;
+};
+
+export type Product = {
+  id: number;
+  name: string;
+  version: number;
+  stock: number;
+  createdAt: Date;
+  image: string;
+  productPrice: ProductPrice[];
+};
+
+export type ProductPrice = {
+  id: number;
+  productId: number;
+  price: number;
+  startDate: Date;
+  endDate: Date;
+};
+
 export type LoginData = z.infer<typeof loginSchema>;
 export type SignupData = Z.infer<typeof signupSchema>;
 export type ForgotPasswordData = z.infer<typeof forgotPasswordSchema>;

@@ -1,4 +1,4 @@
-import MainNav from '@client/components/main-nav';
+import MainNav from '@client/components/layouts/main-nav';
 import MobileNav from '@client/components/layouts/mobile-nav';
 import { adminNavigation } from '@client/config/admin-navigation';
 

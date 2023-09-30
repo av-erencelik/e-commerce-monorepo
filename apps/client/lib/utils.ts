@@ -1,3 +1,4 @@
+import { CartState } from '@client/stores/cart-state';
 import axios from 'axios';
 
 export function checkIfPathStartsWith(path: string, subpaths: string[]) {
@@ -28,4 +29,8 @@ export function formatPrice(
     currency,
     notation,
   }).format(Number(price));
+}
+
+export function getTotalCartItems(cart: CartState['cart']) {
+  return cart?.cartItems.reduce((acc, item) => acc + item.quantity, 0) || 0;
 }

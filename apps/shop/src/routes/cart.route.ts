@@ -10,6 +10,13 @@ import cartController from '../controllers/cart.controller';
 
 const cartRouter = Router();
 
+cartRouter.get(
+  '/check',
+  validate(checkCartSchema),
+  requireAuth,
+  cartController.checkCart
+);
+
 cartRouter.patch('/:id', validate(updateCartSchema), cartController.updateCart);
 
 cartRouter.post('/', validate(addCartSchema), cartController.addToCart);
@@ -18,13 +25,6 @@ cartRouter.delete(
   '/',
   validate(removeFromCartSchema),
   cartController.removeFromCart
-);
-
-cartRouter.get(
-  '/check',
-  validate(checkCartSchema),
-  requireAuth,
-  cartController.checkCart
 );
 
 cartRouter.get('/', cartController.getCart);

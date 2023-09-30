@@ -8,6 +8,7 @@ import { Toaster, cn } from '@e-commerce-monorepo/ui';
 import { TailwindIndicator } from '../components/tailwind-indicator';
 import { siteConfig } from '../config/site';
 import { env } from '../env.mjs';
+import CartStoreInitiliazer from '@client/components/cart-store-initiliazer';
 
 export const metadata = {
   title: `${siteConfig.name} - ${siteConfig.description}`,
@@ -61,7 +62,11 @@ export default async function RootLayout({
         )}
       >
         <AuthStoreInitializer user={user} />
-        <TanstackQueryProvider>{children}</TanstackQueryProvider>
+
+        <TanstackQueryProvider>
+          <CartStoreInitiliazer />
+          {children}
+        </TanstackQueryProvider>
         <TailwindIndicator />
         <Toaster />
       </body>

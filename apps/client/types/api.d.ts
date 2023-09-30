@@ -1,6 +1,7 @@
 import { UserPayload } from '@e-commerce-monorepo/global-types';
 import { AddedProduct, ProductCategory, ProductSubCategory } from '.';
 import { Product } from './column';
+import { CartState } from '@client/stores/cart-state';
 
 type IApiError = {
   errors?:
@@ -59,4 +60,15 @@ type IGetProductsResponse = {
 type ICreateSaleResponse = {
   message: string;
   product: number;
+};
+
+type IGetCart = {
+  cart: CartState['cart'];
+  message: string;
+  statusCode: number;
+};
+
+type IGenericPostResponse = {
+  message: string;
+  statusCode: number;
 };

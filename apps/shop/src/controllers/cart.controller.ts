@@ -49,6 +49,12 @@ const getCart = async (
   const cartSession = req.cookies.cart_session;
   const user = req.user;
   const { cart } = await cartService.getCart(cartSession, user);
+  res.cookie('cart_session', cart.id, {
+    httpOnly: true,
+    maxAge: 1000 * 60 * 60 * 24 * 365, // 1 year
+    secure: config.env === 'production',
+    domain: '.posts.com',
+  });
 
   res.status(httpStatus.OK).send({
     cart,
