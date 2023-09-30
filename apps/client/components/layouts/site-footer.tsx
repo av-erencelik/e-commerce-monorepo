@@ -26,7 +26,7 @@ const SiteFooter = () => {
                 height={30}
                 className="mt-[-5px]"
               />
-              <span className="hidden font-bold sm:inline-block text-lg font-heading text-primary">
+              <span className="font-bold inline-block text-lg font-heading text-primary">
                 {siteConfig.name}
               </span>
             </Link>
