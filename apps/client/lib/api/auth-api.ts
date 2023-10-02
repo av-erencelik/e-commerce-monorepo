@@ -9,7 +9,7 @@ const authApi = axios.create({
 
 authApi.defaults.headers.common['Content-Type'] = 'application/json';
 
-const refreshAccessTokenFn = async () => {
+export const refreshAccessTokenFn = async () => {
   return await authApi.post<GenericResponse | IApiError>('/auth/refresh-token');
 };
 
@@ -18,7 +18,6 @@ authApi.interceptors.response.use(
     return response;
   },
   async (error) => {
-    console.log(error);
     const originalRequest = error.config;
     const errMessage = error.response?.data.message as string;
     if (errMessage.includes('Not authorized') && !originalRequest._retry) {
