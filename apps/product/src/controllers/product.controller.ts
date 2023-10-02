@@ -55,13 +55,16 @@ const getAllProducts = async (
   req: Request<ParamsDictionary, unknown, unknown, Page>,
   res: Response
 ) => {
-  const { page, subcategory_id } = req.query;
+  const { page, subcategory_id, sort_by, order, category_id } = req.query;
   logger.info(
-    `Get all products with page: ${page} and subcategory: ${subcategory_id}`
+    `Get all products with page: ${page}, subcategory: ${subcategory_id} and sort_by: ${sort_by}`
   );
   const { products, totalCount } = await productService.getAllProducts(
     page,
-    subcategory_id
+    subcategory_id,
+    sort_by,
+    order,
+    category_id
   );
   res.status(httpStatus.OK).json({ products, totalCount });
 };

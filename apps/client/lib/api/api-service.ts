@@ -17,6 +17,7 @@ import {
   EditProductData,
   EditSubcategoryData,
 } from '@client/types';
+import { refreshAccessTokenFn } from './auth-api';
 
 export const getProduct = async (id: string) => {
   const response = await api.get<Product>(`/product/${id}`);
@@ -139,6 +140,26 @@ export const addToCart = async ({
 };
 
 export const getCart = async () => {
+  api.interceptors.response.use(
+    (response) => {
+      return response;
+    },
+    async (error) => {
+      const originalRequest = error.config;
+      const errMessage = error.response?.data.message as string;
+      if (
+        errMessage.includes('Cart does not belong to user') &&
+        !originalRequest._retry
+      ) {
+        const { data } = await refreshAccessTokenFn();
+        if (data.message === 'Tokens refreshed successfully') {
+          originalRequest._retry = true;
+          return api(originalRequest);
+        }
+      }
+      return Promise.reject(error);
+    }
+  );
   const response = await api.get('/shop/cart');
   return response.data as IGetCart;
 };

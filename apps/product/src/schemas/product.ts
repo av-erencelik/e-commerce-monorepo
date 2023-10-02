@@ -63,7 +63,10 @@ const getAllProductsSchema = z.object({
   query: z
     .object({
       page: z.string().regex(/^\d+$/).transform(Number).optional(),
+      category_id: z.string().regex(/^\d+$/).transform(Number).optional(),
       subcategory_id: z.string().regex(/^\d+$/).transform(Number).optional(),
+      sort_by: z.enum(['price', 'name', 'created_at']).optional(),
+      order: z.enum(['asc', 'desc']).optional(),
     })
     .strict(),
 });

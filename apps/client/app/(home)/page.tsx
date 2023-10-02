@@ -119,7 +119,7 @@ export default async function Index() {
       >
         <Card className="flex flex-1 xl:w-full overflow-hidden rounded-xl transition-all md:hover:scale-[1.01] md:hover:shadow-lg duration-200 xl:flex-row flex-col">
           <CardHeader className="p-0 border-r xl:w-[35%] space-y-0">
-            <Link className="w-full" href="/products/chocolates">
+            <Link className="w-full" href="/chocolates">
               <div className="xl:block hidden">
                 <AspectRatio ratio={3 / 5}>
                   <Image
@@ -147,7 +147,7 @@ export default async function Index() {
             </Link>
           </CardHeader>
           <CardContent className="p-4 xl:w-[65%]">
-            <Link className="w-full" href="/products/chocolates">
+            <Link className="w-full" href="/chocolates">
               <CardTitle className="text-xl font-bold leading-tight tracking-tighter">
                 Homemade Chocolates
               </CardTitle>
@@ -181,7 +181,7 @@ export default async function Index() {
           </CardContent>
           <CardFooter className="md:hidden flex justify-center p-4 mt-auto">
             <Link
-              href="/products/chocolates"
+              href="/chocolates"
               className={cn(buttonVariants({ size: 'lg', variant: 'outline' }))}
             >
               Discover Now
@@ -192,7 +192,7 @@ export default async function Index() {
 
         <Card className="flex flex-1 w-full overflow-hidden rounded-xl md:hover:scale-[1.01] md:hover:shadow-lg transition-all duration-300 xl:flex-row flex-col">
           <CardHeader className="p-0 border-r xl:w-[35%] space-y-0">
-            <Link className="w-full" href="/products/breads">
+            <Link className="w-full" href="/breads">
               <div className="xl:block hidden">
                 <AspectRatio ratio={3 / 5}>
                   <Image
@@ -220,7 +220,7 @@ export default async function Index() {
             </Link>
           </CardHeader>
           <CardContent className="p-4 xl:w-[65%]">
-            <Link className="w-full" href="/products/breads">
+            <Link className="w-full" href="/breads">
               <CardTitle className="text-xl font-bold leading-tight tracking-tighter">
                 Homemade Sourdough Breads
               </CardTitle>
@@ -255,7 +255,7 @@ export default async function Index() {
           </CardContent>
           <CardFooter className="md:hidden flex justify-center p-4 mt-auto">
             <Link
-              href="/products/breads"
+              href="/breads"
               className={cn(buttonVariants({ size: 'lg', variant: 'outline' }))}
             >
               Discover Now

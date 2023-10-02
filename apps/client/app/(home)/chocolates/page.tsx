@@ -6,7 +6,7 @@ import {
 import Products from '@client/components/products';
 import { env } from '@client/env.mjs';
 import { getCategories } from '@client/lib/api/api-service';
-import { getBreadsProducts } from '@client/lib/api/product';
+import { getChocolateProducts } from '@client/lib/api/product';
 import { Shell } from '@e-commerce-monorepo/ui';
 import { type Metadata } from 'next';
 import React from 'react';
@@ -23,9 +23,9 @@ interface ProductsPageProps {
   };
 }
 
-const BreadsProductsPage = async ({ searchParams }: ProductsPageProps) => {
+const ChocolatesProductsPage = async ({ searchParams }: ProductsPageProps) => {
   const { page, subcategory, sort_by, order } = searchParams ?? {};
-  const { products, totalCount } = await getBreadsProducts({
+  const { products, totalCount } = await getChocolateProducts({
     page,
     subcategory,
     sort_by,
@@ -33,7 +33,7 @@ const BreadsProductsPage = async ({ searchParams }: ProductsPageProps) => {
   });
   const totalPages = Math.ceil(totalCount / 12);
   const categories = await getCategories();
-  const breadCategory = categories.find((category) => category.id === 1);
+  const breadCategory = categories.find((category) => category.id === 2);
   const subcategories = breadCategory?.subCategories ?? [];
 
   return (
@@ -56,4 +56,4 @@ const BreadsProductsPage = async ({ searchParams }: ProductsPageProps) => {
   );
 };
 
-export default BreadsProductsPage;
+export default ChocolatesProductsPage;

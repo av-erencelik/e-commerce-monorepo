@@ -108,20 +108,29 @@ const addSubCategory = async (category: AddCategory) => {
 
 const getAllProducts = async (
   page: number | undefined,
-  subcategory_id: number | undefined
+  subcategory_id: number | undefined,
+  sort_by: string | undefined,
+  order: string | undefined,
+  category_id: number | undefined
 ) => {
   let products: Product[];
   let totalCount: number;
   const cachedProducts = await productRedis.getProductsCache(
     page,
-    subcategory_id
+    subcategory_id,
+    sort_by,
+    order,
+    category_id
   );
   if (cachedProducts) {
     products = cachedProducts;
   } else {
     products = (await productRepository.getAllProducts(
       page,
-      subcategory_id
+      subcategory_id,
+      sort_by,
+      order,
+      category_id
     )) as Product[];
     products = products.map((product) => {
       const { images } = product;
@@ -137,16 +146,33 @@ const getAllProducts = async (
         images: imagesWithSignedUrl,
       };
     });
-    await productRedis.setProductsCache(products, page, subcategory_id);
+    await productRedis.setProductsCache(
+      products,
+      page,
+      subcategory_id,
+      sort_by,
+      order,
+      category_id
+    );
   }
 
-  const cachedTotalCount = await productRedis.getTotalProductCountCache();
+  const cachedTotalCount = await productRedis.getTotalProductCountCache(
+    category_id,
+    subcategory_id
+  );
   if (cachedTotalCount) {
     totalCount = cachedTotalCount;
   } else {
-    const { count } = await productRepository.getTotalProduct();
+    const { count } = await productRepository.getTotalProduct(
+      category_id,
+      subcategory_id
+    );
     totalCount = count;
-    await productRedis.setTotalProductCountCache(totalCount);
+    await productRedis.setTotalProductCountCache(
+      totalCount,
+      category_id,
+      subcategory_id
+    );
   }
 
   return {

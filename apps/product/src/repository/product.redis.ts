@@ -4,10 +4,13 @@ import { Product } from '../interfaces/product';
 const setProductsCache = async (
   products: Product[],
   page = 1,
-  subcategory_id = 0
+  subcategory_id = 0,
+  sort_by = 'id',
+  order = 'desc',
+  category_id = 0
 ) => {
   await redis.set(
-    `products/${page}/${subcategory_id}`,
+    `products/${page}/${category_id}/${subcategory_id}/${sort_by}/${order}`,
     JSON.stringify(products),
     'EX',
     60
@@ -26,8 +29,17 @@ const setProductDetailsCache = async (product: Product) => {
   await redis.set(`product/${product.id}`, JSON.stringify(product), 'EX', 60); // 1 minute
 };
 
-const setTotalProductCountCache = async (count: number) => {
-  await redis.set('totalProductCount', count, 'EX', 60 * 60); // 1 hour
+const setTotalProductCountCache = async (
+  count: number,
+  category_id?: number,
+  subcategory_id?: number
+) => {
+  await redis.set(
+    `totalProductCount/${category_id}/${subcategory_id}`,
+    count,
+    'EX',
+    60 * 60
+  ); // 1 hour
 };
 
 const setCategoriesCache = async (
@@ -73,9 +85,14 @@ const getSubCategoriesCache = async function (): Promise<Array<{
 
 const getProductsCache = async function (
   page = 1,
-  subcategory_id = 0
+  subcategory_id = 0,
+  sort_by = 'id',
+  order = 'desc',
+  category_id = 0
 ): Promise<Product[] | null> {
-  const products = await redis.get(`products/${page}/${subcategory_id}}`);
+  const products = await redis.get(
+    `products/${page}/${category_id}/${subcategory_id}/${sort_by}/${order}`
+  );
   return products ? JSON.parse(products) : null;
 };
 
@@ -96,8 +113,13 @@ const getProductDetailsCache = async function (
   return product ? JSON.parse(product) : null;
 };
 
-const getTotalProductCountCache = async function (): Promise<number | null> {
-  const count = await redis.get('totalProductCount');
+const getTotalProductCountCache = async function (
+  category_id?: number,
+  subcategory_id?: number
+): Promise<number | null> {
+  const count = await redis.get(
+    `totalProductCount/${category_id}/${subcategory_id}`
+  );
   return count ? parseInt(count) : null;
 };
 
@@ -128,7 +150,16 @@ const invalidateProductDetailsCache = async (productId: number) => {
 };
 
 const invalidateTotalProductCountCache = async () => {
-  await redis.del('totalProductCount');
+  const pattern = 'totalProductCount/*';
+  let cursor = '0';
+  do {
+    const result = await redis.scan(cursor, 'MATCH', pattern);
+    cursor = result[0];
+    const keys = result[1];
+    if (keys.length) {
+      await redis.del(...keys);
+    }
+  } while (cursor !== '0');
 };
 
 export default Object.freeze({

@@ -178,7 +178,13 @@ const getMostSoldProducts = async () => {
   });
 };
 
-const getAllProducts = async (page = 1, subcategory_id?: number) => {
+const getAllProducts = async (
+  page = 1,
+  subcategory_id?: number,
+  sort_by?: string,
+  order?: string,
+  category_id?: number
+) => {
   const products = await db.query.product.findMany({
     columns: {
       categoryId: true,
@@ -190,13 +196,23 @@ const getAllProducts = async (page = 1, subcategory_id?: number) => {
       stock: true,
       dailySales: true,
     },
-    where: (product, { eq }) =>
-      subcategory_id
-        ? eq(product.subCategoryId, subcategory_id)
-        : eq(product.subCategoryId, product.subCategoryId),
+    where: (product, { eq, and }) =>
+      and(
+        subcategory_id
+          ? eq(product.subCategoryId, subcategory_id)
+          : eq(product.subCategoryId, product.subCategoryId),
+        category_id
+          ? eq(product.categoryId, category_id)
+          : eq(product.categoryId, product.categoryId)
+      ),
     limit: 12,
     offset: (page - 1) * 12,
-    orderBy: (product, { desc }) => desc(product.createdAt),
+    orderBy: (product, { desc, asc }) =>
+      sort_by === 'created_at'
+        ? order === 'asc'
+          ? asc(product.createdAt)
+          : desc(product.createdAt)
+        : desc(product.id),
     with: {
       images: {
         where: (image, { eq }) => eq(image.isFeatured, true),
@@ -214,6 +230,15 @@ const getAllProducts = async (page = 1, subcategory_id?: number) => {
       subCategory: true,
     },
   });
+
+  if (sort_by === 'price') {
+    if (order === 'asc') {
+      products.sort((a, b) => a.price[0].price - b.price[0].price);
+    } else {
+      products.sort((a, b) => b.price[0].price - a.price[0].price);
+    }
+  }
+
   return products.map((product) => {
     return {
       ...product,
@@ -248,10 +273,23 @@ const getProduct = async (productId: number) => {
   };
 };
 
-const getTotalProduct = async () => {
+const getTotalProduct = async (
+  category_id?: number,
+  subcategory_id?: number
+) => {
+  // enter different where clause depending on if category_id or subcategory_id is present
+  const where = and(
+    category_id
+      ? eq(product.categoryId, category_id)
+      : eq(product.categoryId, product.categoryId),
+    subcategory_id
+      ? eq(product.subCategoryId, subcategory_id)
+      : eq(product.subCategoryId, product.subCategoryId)
+  );
   const totalProduct = await db
     .select({ count: sql<number>`count(*)` })
-    .from(product);
+    .from(product)
+    .where(where);
   return totalProduct[0];
 };
 
