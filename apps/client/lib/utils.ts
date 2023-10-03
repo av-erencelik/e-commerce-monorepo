@@ -34,3 +34,7 @@ export function formatPrice(
 export function getTotalCartItems(cart: CartState['cart']) {
   return cart?.cartItems.reduce((acc, item) => acc + item.quantity, 0) || 0;
 }
+
+export function truncate(str: string, length: number) {
+  return str.length > length ? `${str.substring(0, length)}...` : str;
+}

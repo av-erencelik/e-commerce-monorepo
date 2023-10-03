@@ -20,8 +20,12 @@ import {
 import { refreshAccessTokenFn } from './auth-api';
 
 export const getProduct = async (id: string) => {
-  const response = await api.get<Product>(`/product/${id}`);
-  return response.data;
+  try {
+    const response = await api.get<Product>(`/product/${id}`);
+    return response.data;
+  } catch (error) {
+    return undefined;
+  }
 };
 
 export const getAllProducts = async (page = 1, subcategoryId?: number) => {
