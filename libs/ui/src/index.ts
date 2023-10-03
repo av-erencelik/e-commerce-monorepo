@@ -23,4 +23,5 @@ export * from './components/ui/scroll-area';
 export * from './components/ui/shell';
 export * from './components/ui/badge';
 export * from './components/ui/aspect-ratio';
+export * from './components/ui/accordion';
 export * from './utils';

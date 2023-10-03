@@ -3,7 +3,7 @@ import { Product } from '@client/types/column';
 import React from 'react';
 import ProductFilters from './products-filters';
 import ProductCard from './cards/product-card';
-import { PaginationButton } from './pagination';
+import { PaginationButton } from './navigation/pagination';
 import { Separator } from '@e-commerce-monorepo/ui';
 
 interface ProductsProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -21,6 +21,7 @@ const Products = ({
   return (
     <section className="flex flex-col space-y-6" {...props}>
       <ProductFilters subcategories={subcategories} />
+      <Separator className="my-3" />
       {products.length <= 0 ? (
         <div className="mx-auto flex max-w-xs flex-col space-y-1.5">
           <h1 className="text-center text-2xl font-bold">No products found</h1>
@@ -29,7 +30,6 @@ const Products = ({
           </p>
         </div>
       ) : null}
-      {<Separator className="my-3" />}
       <div className="grid xl:grid-cols-6 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-3">
         {products.map((product) => (
           <ProductCard key={product.id} product={product} />
