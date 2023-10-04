@@ -75,7 +75,15 @@ export type CartItem = {
   id: number;
   cartId: string;
   productId: number;
-  product: Product;
+  product: {
+    id: number;
+    name: string;
+    version: number;
+    stock: number;
+    createdAt: Date;
+    image: string;
+    price: ProductPrice[];
+  };
 };
 
 export type Product = {

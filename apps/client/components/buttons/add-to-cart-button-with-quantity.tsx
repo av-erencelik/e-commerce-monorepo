@@ -38,11 +38,11 @@ const AddToCartWithQuantity = ({
   });
   return (
     <div className="flex gap-1 items-center">
-      <div className="rounded-lg border bg-white p-1 flex w-[80px] gap-2 items-center flex-shrink-0 flex-grow-0">
+      <div className="rounded-lg border bg-white flex w-fit gap-2 items-center flex-shrink-0 flex-grow-0">
         <Button
-          variant="ghost"
+          variant="outline"
           size="sm"
-          className="h-6 w-6 p-0 hover:text-foreground focus:text-foreground"
+          className="h-8 w-8 p-0 hover:text-foreground focus:text-foreground"
           onClick={() => quantity > 1 && setQuantity((prev) => prev - 1)}
         >
           <MinusIcon className="h-4 w-4" />
@@ -51,9 +51,9 @@ const AddToCartWithQuantity = ({
           <span>{quantity}</span>
         </p>
         <Button
-          variant="ghost"
+          variant="outline"
           size="sm"
-          className="h-6 w-6 p-0 hover:text-foreground focus:text-foreground"
+          className="h-8 w-8 p-0 hover:text-foreground focus:text-foreground"
           onClick={() => quantity < 10 && setQuantity((prev) => prev + 1)}
         >
           <PlusIcon className="h-4 w-4" />

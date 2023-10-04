@@ -38,3 +38,11 @@ export function getTotalCartItems(cart: CartState['cart']) {
 export function truncate(str: string, length: number) {
   return str.length > length ? `${str.substring(0, length)}...` : str;
 }
+
+export function getCartTotalPrice(cart: CartState['cart']) {
+  if (!cart) return 0;
+  return cart.cartItems.reduce(
+    (acc, item) => acc + item.quantity * item.product.price[0].price,
+    0
+  );
+}
