@@ -2,7 +2,7 @@ import httpStatus from 'http-status';
 import { ApiError } from '@e-commerce-monorepo/errors';
 import cartRepository from '../repository/cart.repository';
 import { v4 as uuid } from 'uuid';
-import { AccessTokenPayload } from '@e-commerce-monorepo/utils';
+import { AccessTokenPayload, createImageUrl } from '@e-commerce-monorepo/utils';
 const addToCart = async (
   productId: number,
   quantity: number,
@@ -100,8 +100,23 @@ const getCart = async (cartSession?: string, user?: AccessTokenPayload) => {
     throw new ApiError(httpStatus.FORBIDDEN, 'Cart does not belong to user');
   }
 
+  // presign cart items images
+  const cartItems = cart.cartItems.map((item) => {
+    const url = createImageUrl(item.product.image);
+    return {
+      ...item,
+      product: {
+        ...item.product,
+        image: url,
+      },
+    };
+  });
+
   return {
-    cart,
+    cart: {
+      ...cart,
+      cartItems,
+    },
   };
 };
 

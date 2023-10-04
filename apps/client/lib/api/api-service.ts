@@ -143,6 +143,24 @@ export const addToCart = async ({
   return response.data as IGenericPostResponse;
 };
 
+export const updateQuantityOfProductInCart = async ({
+  quantity,
+  productId,
+}: {
+  quantity: number;
+  productId: number;
+}) => {
+  const response = await api.patch(
+    `/shop/cart/${productId}?quantity=${quantity}`
+  );
+  return response.data as IGenericPostResponse;
+};
+
+export const removeFromCart = async (productId: number) => {
+  const response = await api.delete(`/shop/cart?product_id=${productId}`);
+  return response.data as IGenericPostResponse;
+};
+
 export const getCart = async () => {
   api.interceptors.response.use(
     (response) => {
