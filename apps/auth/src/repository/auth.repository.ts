@@ -94,6 +94,18 @@ const deleteResetPasswordToken = async (userId: string) => {
   await db.delete(passwordReset).where(eq(passwordReset.userId, userId));
 };
 
+const updateUser = async (
+  userId: string,
+  fullName: string,
+  phoneNumber: string,
+  countryCode: string
+) => {
+  await db
+    .update(users)
+    .set({ fullName, phoneNumber, countryCode })
+    .where(eq(users.userId, userId));
+};
+
 export default Object.freeze({
   checkUserExists,
   createUser,
@@ -105,4 +117,5 @@ export default Object.freeze({
   updatePassword,
   deleteResetPasswordToken,
   getResetPasswordTokenWithUser,
+  updateUser,
 });

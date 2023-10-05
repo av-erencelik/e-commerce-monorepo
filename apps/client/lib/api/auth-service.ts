@@ -1,4 +1,9 @@
-import { GenericResponse, ILoginResponse } from '../../types/api';
+import {
+  GenericResponse,
+  IGenericPostResponse,
+  IGetUserResponse,
+  ILoginResponse,
+} from '../../types/api';
 import {
   ForgotPasswordData,
   LoginData,
@@ -53,6 +58,23 @@ export const resetPasswordFn = async ({
 }) => {
   const response = await authApi.put<GenericResponse>(
     `/auth/reset-password?token=${token}&id=${userId}`,
+    data
+  );
+  return response.data;
+};
+
+export const getUserDetails = async () => {
+  const response = await authApi.get<IGetUserResponse>('/auth/get-user');
+  return response.data;
+};
+
+export const updateUserFn = async (data: {
+  fullName: string;
+  countryCode: string;
+  phoneNumber: string;
+}) => {
+  const response = await authApi.put<IGenericPostResponse>(
+    '/auth/update-user',
     data
   );
   return response.data;

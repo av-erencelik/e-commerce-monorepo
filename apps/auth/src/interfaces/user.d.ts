@@ -4,6 +4,7 @@ import {
   loginSchema,
   forgotPasswordSchema,
   resetPasswordSchema,
+  updateUserSchema,
 } from '../schemas/user';
 import { InferModel } from 'drizzle-orm';
 import { users } from '../models/schema';
@@ -13,6 +14,7 @@ type Signup = z.infer<typeof signupSchema>['body'];
 type Login = z.infer<typeof loginSchema>['body'];
 type User = InferModel<typeof users, 'select'>;
 type Token = z.infer<typeof verifyTokenSchema>['query'];
+type UpdateUser = z.infer<typeof updateUserSchema>['body'];
 
 interface NewUser {
   email: string;
@@ -39,4 +41,5 @@ export {
   Token,
   ForgotPassword,
   ResetPassword,
+  UpdateUser,
 };
