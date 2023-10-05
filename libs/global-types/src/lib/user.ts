@@ -122,3 +122,52 @@ export const resetPasswordSchema = z
       return z.NEVER;
     }
   });
+
+export const updateUserSchema = z
+  .object({
+    fullName: z
+      .string()
+      .trim()
+      .min(2, "Your full name can't be shorter than two letters")
+      .max(256, "Your full name can't be longer than 256 letters"),
+    countryCode: z
+      .string()
+      .trim()
+      .min(2, 'Please select valid country')
+      .max(2, 'Please select valid country'),
+    phoneNumber: z.string().trim(),
+    email: z
+      .string()
+      .trim()
+      .email('Please enter a valid email address.')
+      .optional(),
+  })
+  .superRefine(({ phoneNumber, countryCode }, ctx) => {
+    if (!isSupportedCountry(countryCode)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Invalid country code',
+        path: ['countryCode'],
+      });
+      return z.NEVER;
+    }
+    const number = parsePhoneNumber(phoneNumber, countryCode as CountryCode);
+    if (number === undefined || !number.isValid()) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Invalid phone number',
+        path: ['phoneNumber'],
+      });
+      return z.NEVER;
+    }
+  })
+  .transform(({ phoneNumber, countryCode, fullName, email }) => ({
+    fullName,
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    phoneNumber: parsePhoneNumber(
+      phoneNumber,
+      countryCode as CountryCode
+    )!.formatNational(),
+    countryCode,
+    email,
+  }));

@@ -223,6 +223,37 @@ const resetPassword = async (
   return passwordReset.userId;
 };
 
+const updateUser = async (
+  user: AccessTokenPayload | undefined,
+  fullName: string,
+  phoneNumber: string,
+  countryCode: string
+) => {
+  if (!user) {
+    throw new ApiError(httpStatus.UNAUTHORIZED, 'Not authorized');
+  }
+  await authRepository.updateUser(
+    user.userId,
+    fullName,
+    phoneNumber,
+    countryCode
+  );
+};
+
+const getUser = async (user: AccessTokenPayload | undefined) => {
+  if (!user) {
+    throw new ApiError(httpStatus.UNAUTHORIZED, 'Not authorized');
+  }
+  const currentUser = await authRepository.getCurrentUser(user.userId);
+  return {
+    email: currentUser.email,
+    userId: currentUser.userId,
+    fullName: currentUser.fullName,
+    countryCode: currentUser.countryCode,
+    phoneNumber: currentUser.phoneNumber,
+  };
+};
+
 export default Object.freeze({
   signupWithEmailAndPassword,
   loginWithEmailAndPassword,
@@ -233,4 +264,6 @@ export default Object.freeze({
   resendVerificationEmail,
   forgotPassword,
   resetPassword,
+  updateUser,
+  getUser,
 });

@@ -8,6 +8,7 @@ import {
   Token,
   ForgotPassword,
   ResetPassword,
+  UpdateUser,
 } from '../interfaces/user';
 import { logger } from '@e-commerce-monorepo/configs';
 import httpStatus from 'http-status';
@@ -76,6 +77,17 @@ const login = async (
   });
   logger.info(`Login successful with email: ${user.email}`);
   res.send({ user });
+};
+
+const updateUser = async (
+  req: Request<ParamsDictionary, never, UpdateUser>,
+  res: Response
+) => {
+  const payload = req.user;
+  const { fullName, phoneNumber, countryCode } = req.body;
+  await authService.updateUser(payload, fullName, phoneNumber, countryCode);
+
+  res.send({ message: 'User updated successfully', statusCode: httpStatus.OK });
 };
 
 const logout = async (req: Request, res: Response) => {
@@ -183,6 +195,12 @@ const resetPassword = async (
   res.send({ message: `Password reset successfully` });
 };
 
+const getUser = async (req: Request, res: Response) => {
+  const payload = req.user;
+  const user = await authService.getUser(payload);
+  res.send({ user });
+};
+
 export default Object.freeze({
   signup,
   login,
@@ -193,4 +211,6 @@ export default Object.freeze({
   resendVerificationEmail,
   forgotPassword,
   resetPassword,
+  updateUser,
+  getUser,
 });

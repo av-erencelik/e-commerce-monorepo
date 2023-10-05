@@ -72,3 +72,13 @@ type IGenericPostResponse = {
   message: string;
   statusCode: number;
 };
+
+type IGetUserResponse = {
+  user: {
+    userId: string;
+    fullName: string;
+    email: string;
+    phoneNumber: string;
+    countryCode: string;
+  };
+};

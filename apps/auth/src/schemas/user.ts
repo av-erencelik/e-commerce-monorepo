@@ -103,4 +103,47 @@ const resetPasswordSchema = z.object({
   }),
 });
 
-export { signupSchema, loginSchema, forgotPasswordSchema, resetPasswordSchema };
+const updateUserSchema = z.object({
+  body: z
+    .object({
+      fullName: z.string().trim().min(2).max(256),
+      phoneNumber: z.string().trim(),
+      countryCode: z.string().trim().min(2).max(2),
+    })
+    .superRefine(({ phoneNumber, countryCode }, ctx) => {
+      if (!isSupportedCountry(countryCode)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Invalid country code',
+          path: ['countryCode'],
+        });
+        return z.NEVER;
+      }
+      const number = parsePhoneNumber(phoneNumber, countryCode as CountryCode);
+      if (number === undefined || !number.isValid()) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Invalid phone number',
+          path: ['phoneNumber'],
+        });
+        return z.NEVER;
+      }
+    })
+    .transform(({ phoneNumber, countryCode, fullName }) => ({
+      fullName,
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      phoneNumber: parsePhoneNumber(
+        phoneNumber,
+        countryCode as CountryCode
+      )!.formatNational(),
+      countryCode,
+    })),
+});
+
+export {
+  signupSchema,
+  loginSchema,
+  forgotPasswordSchema,
+  resetPasswordSchema,
+  updateUserSchema,
+};
