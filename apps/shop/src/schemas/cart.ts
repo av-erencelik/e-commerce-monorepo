@@ -88,3 +88,9 @@ export const createOrderSchema = z.object({
     token: z.string(),
   }),
 });
+
+export const getOrderSchema = z.object({
+  params: z.object({
+    id: z.string(),
+  }),
+});

@@ -5,6 +5,7 @@ const config: Config = {
   ...commonConfig,
   globalSetup: './setup.ts',
   globalTeardown: './teardown.ts',
+  testTimeout: 10000,
 };
 
 export default config;

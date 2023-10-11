@@ -2,6 +2,7 @@ import {
   addCartSchema,
   checkCartSchema,
   createOrderSchema,
+  getOrderSchema,
   removeFromCartSchema,
   updateCartSchema,
 } from './../schemas/cart';
@@ -14,6 +15,7 @@ type UpdateCartParams = z.infer<typeof updateCartSchema>['params'];
 type UpdateCartQuery = z.infer<typeof updateCartSchema>['query'];
 type CheckCart = z.infer<typeof checkCartSchema>['query'];
 type CreateOrder = z.infer<typeof createOrderSchema>['query'];
+type GetOrder = z.infer<typeof getOrderSchema>['params'];
 
 export {
   AddCart,
@@ -22,4 +24,5 @@ export {
   UpdateCartQuery,
   CheckCart,
   CreateOrder,
+  GetOrder,
 };

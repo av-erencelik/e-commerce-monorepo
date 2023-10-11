@@ -1,4 +1,5 @@
 import {
+  OrderCancelledPayload,
   OrderCreatedPayload,
   RMQListener,
   RMQMessage,
@@ -11,7 +12,7 @@ import productService from '../../services/product.service';
 
 export class ShopListener extends RMQListener {
   public queue = queueName;
-  public events = [Subjects.orderCreated];
+  public events = [Subjects.orderCreated, Subjects.orderCancelled];
 
   public async consume() {
     const channel = await this.getChannel();
@@ -20,8 +21,13 @@ export class ShopListener extends RMQListener {
       const messageReceived = new RMQMessage(consumeMessage);
       const event = messageReceived.event();
       logger.info(`Received event ${event}`);
-      const payload = messageReceived.payload() as OrderCreatedPayload;
-      await productService.updateStock(payload);
+      if (event === Subjects.orderCreated) {
+        const payload = messageReceived.payload() as OrderCreatedPayload;
+        await productService.updateStock(payload);
+      } else if (event === Subjects.orderCancelled) {
+        const payload = messageReceived.payload() as OrderCancelledPayload;
+        await productService.updateStockAfterCancel(payload);
+      }
       channel.ack(consumeMessage);
     });
   }

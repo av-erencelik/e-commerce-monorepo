@@ -1,6 +1,6 @@
 import { ParamsDictionary } from 'express-serve-static-core';
 import { Request, Response } from 'express';
-import { CreateOrder } from '../interfaces/cart';
+import { CreateOrder, GetOrder } from '../interfaces/cart';
 import { logger } from '@e-commerce-monorepo/configs';
 import httpStatus from 'http-status';
 import orderService from '../services/order.service';
@@ -14,19 +14,20 @@ const createOrder = async (
   const user = req.user;
   const total = req.query.total;
   const token = req.query.token;
-  const order = await orderService.createOrder(
+  const { clientSecret, orderId } = await orderService.createOrder(
     parseFloat(total),
     token,
     cartSession,
     user
   );
-  if (!order) {
+  if (!clientSecret) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Order could not be created');
   }
-  logger.info(`Order ${order.id} created`);
+  logger.info(`Order with ${clientSecret} created`);
   res.status(httpStatus.CREATED).send({
     message: 'Order created',
     statusCode: httpStatus.CREATED,
+    data: { clientSecret, orderId },
   });
 };
 
@@ -40,7 +41,22 @@ const getOrders = async (req: Request, res: Response) => {
   });
 };
 
+const getOrder = async (
+  req: Request<ParamsDictionary & GetOrder>,
+  res: Response
+) => {
+  const orderId = req.params.id;
+  const user = req.user;
+  const order = await orderService.getOrder(orderId, user);
+  res.status(httpStatus.OK).send({
+    message: 'Order retrieved',
+    statusCode: httpStatus.OK,
+    data: { order },
+  });
+};
+
 export default Object.freeze({
   createOrder,
   getOrders,
+  getOrder,
 });

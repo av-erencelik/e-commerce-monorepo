@@ -104,6 +104,28 @@ export type ProductPrice = {
   endDate: Date;
 };
 
+export type Order = {
+  status: 'pending' | 'paid' | 'not confirmed';
+  id: string;
+  createdAt: Date | null;
+  userId: string;
+  updatedAt: Date | null;
+  totalAmount: number;
+  paymentIntentId: string | null;
+  clientSecret: string | null;
+  orderItem: OrderItem[];
+};
+
+export type OrderItem = {
+  id: number;
+  orderId: string;
+  productId: number;
+  quantity: number;
+  price: number;
+  image: string;
+  productName: string;
+};
+
 export type LoginData = z.infer<typeof loginSchema>;
 export type SignupData = Z.infer<typeof signupSchema>;
 export type ForgotPasswordData = z.infer<typeof forgotPasswordSchema>;

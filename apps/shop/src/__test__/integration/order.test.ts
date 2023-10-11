@@ -7,9 +7,10 @@ import { cart, cartItem, product, productPrice } from '../../models/schema';
 jest.mock('../../libs/stripe', () => ({
   __esModule: true,
   default: {
-    charges: {
+    paymentIntents: {
       create: jest.fn().mockImplementation(() => ({
-        id: 'test',
+        client_secret: 'test',
+        id: 'idtest',
       })),
     },
   },

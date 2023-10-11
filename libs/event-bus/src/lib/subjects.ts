@@ -15,6 +15,7 @@ enum Subjects {
   productStockUpdated = 'product:stockupdated',
   // order
   orderCreated = 'order:created',
+  orderCancelled = 'order:cancelled',
 }
 
 export { Subjects };

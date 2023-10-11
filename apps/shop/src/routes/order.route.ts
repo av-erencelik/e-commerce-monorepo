@@ -1,9 +1,16 @@
 import { Router } from 'express';
-import { checkCartSchema } from '../schemas/cart';
+import { checkCartSchema, getOrderSchema } from '../schemas/cart';
 import { requireAuth, validate } from '@e-commerce-monorepo/middlewares';
 import orderController from '../controllers/order.controller';
 
 const orderRouter = Router();
+
+orderRouter.get(
+  '/:id',
+  validate(getOrderSchema),
+  requireAuth,
+  orderController.getOrder
+);
 
 orderRouter.post(
   '/',
