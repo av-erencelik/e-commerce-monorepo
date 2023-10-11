@@ -2,16 +2,14 @@ import { AccessTokenPayload } from '@e-commerce-monorepo/utils';
 import db from '../database/sql';
 import httpStatus from 'http-status';
 import { ApiError } from '@e-commerce-monorepo/errors';
-import { cartItem, order, orderItem, payment, product } from '../models/schema';
+import { cartItem, order, orderItem, product } from '../models/schema';
 import { v4 as uuid } from 'uuid';
-import { and, eq } from 'drizzle-orm';
+import { and, eq, sql } from 'drizzle-orm';
 import stripe from '../libs/stripe';
+import { expirationQueue } from '../event-bus/bull-queue/expiration-queue';
+import { OrderCancelled } from '@e-commerce-monorepo/event-bus';
 
-const createOrder = async (
-  cartId: string,
-  user: AccessTokenPayload,
-  token: string
-) => {
+const createOrder = async (cartId: string, user: AccessTokenPayload) => {
   const result = await db.transaction(async (trx) => {
     const cart = await trx.query.cart.findFirst({
       with: {
@@ -52,6 +50,7 @@ const createOrder = async (
       id: orderId,
       userId: user.userId,
       totalAmount: total,
+      status: 'not confirmed',
     });
 
     // check if product is still available on stock cart.cartItems
@@ -71,6 +70,7 @@ const createOrder = async (
         quantity: cartItem.quantity,
         price: cartItem.product.price[0].price,
         image: cartItem.product.image,
+        productName: cartItem.product.name,
       });
 
       await trx
@@ -89,34 +89,40 @@ const createOrder = async (
       };
     }
 
-    try {
-      const charge = await stripe.charges.create({
-        amount: total * 100,
-        currency: 'usd',
-        source: token,
-        description: `Order ${orderId}`,
-      });
-      await trx.insert(payment).values({
-        id: uuid(),
+    const intent = await stripe.paymentIntents.create({
+      amount: total * 100,
+      currency: 'usd',
+      description: `Order ${orderId} by ${user.userId}`,
+      payment_method_types: ['card'],
+      metadata: {
         orderId,
-        stripeId: charge.id,
-        amount: total,
-      });
-    } catch (e) {
-      await trx.rollback();
-      return {
-        status: false,
-        outOfStockItems,
-      };
-    }
+      },
+    });
+
+    await trx
+      .update(order)
+      .set({
+        paymentIntentId: intent.id,
+      })
+      .where(eq(order.id, orderId));
 
     const createdOrder = await trx
       .select()
       .from(order)
       .where(eq(order.id, orderId));
 
+    expirationQueue.add(
+      {
+        orderId: orderId,
+      },
+      {
+        delay: 1000 * 60 * 15,
+      }
+    );
+
     return {
       status: true,
+      clientSecret: intent.client_secret,
       order: createdOrder[0],
     };
   });
@@ -163,8 +169,55 @@ const getOrder = async (orderId: string) => {
   return order;
 };
 
+const deleteOrder = async (orderId: string) => {
+  const existingOrder = await db.query.order.findFirst({
+    where: (fields, { eq }) => eq(fields.id, orderId),
+    with: {
+      orderItem: true,
+    },
+  });
+  if (existingOrder && existingOrder.status === 'not confirmed') {
+    // all order items stock must be restored
+    for (const orderItem of existingOrder.orderItem) {
+      await db
+        .update(product)
+        .set({
+          stock: sql`${product.stock} + ${orderItem.quantity}`,
+        })
+        .where(eq(product.id, orderItem.productId));
+    }
+    if (existingOrder.paymentIntentId) {
+      await stripe.paymentIntents.cancel(existingOrder.paymentIntentId);
+    }
+  } else {
+    return;
+  }
+  await db.delete(order).where(eq(order.id, orderId));
+  await db.delete(orderItem).where(eq(orderItem.orderId, orderId));
+
+  const orderCancelledEvent = new OrderCancelled();
+  orderCancelledEvent.publish({
+    orderId: orderId,
+    products: existingOrder.orderItem.map((item) => ({
+      id: item.productId,
+      quantity: item.quantity,
+    })),
+  });
+};
+
+const makeOrderStatusPending = async (orderId: string) => {
+  await db
+    .update(order)
+    .set({
+      status: 'pending',
+    })
+    .where(eq(order.id, orderId));
+};
+
 export default Object.freeze({
   createOrder,
   getOrders,
   getOrder,
+  deleteOrder,
+  makeOrderStatusPending,
 });

@@ -588,6 +588,16 @@ const updateStock = async (productId: number, quantity: number) => {
     .where(eq(product.id, productId));
 };
 
+const updateStockAfterCancel = async (productId: number, quantity: number) => {
+  await db
+    .update(product)
+    .set({
+      stock: sql<number>`stock + ${quantity}`,
+      dailySales: sql<number>`daily_sales - ${quantity}`,
+    })
+    .where(eq(product.id, productId));
+};
+
 export default Object.freeze({
   addProduct,
   addSubCategory,
@@ -617,4 +627,5 @@ export default Object.freeze({
   getAllProductsIds,
   getSale,
   updateStock,
+  updateStockAfterCancel,
 });

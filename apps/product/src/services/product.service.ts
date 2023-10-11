@@ -17,6 +17,7 @@ import httpStatus from 'http-status';
 import productRepository from '../repository/product.repository';
 import productRedis from '../repository/product.redis';
 import {
+  OrderCancelledPayload,
   OrderCreatedPayload,
   ProductCreated,
   ProductDeleted,
@@ -555,6 +556,16 @@ const updateStock = async (order: OrderCreatedPayload) => {
   await productRedis.invalidateProductsCache();
 };
 
+const updateStockAfterCancel = async (order: OrderCancelledPayload) => {
+  for (const product of order.products) {
+    await productRepository.updateStockAfterCancel(
+      product.id,
+      product.quantity
+    );
+  }
+  await productRedis.invalidateProductsCache();
+};
+
 export default Object.freeze({
   getPreSignedUrl,
   addProduct,
@@ -579,4 +590,5 @@ export default Object.freeze({
   getNewestProducts,
   getMostSoldProducts,
   updateStock,
+  updateStockAfterCancel,
 });

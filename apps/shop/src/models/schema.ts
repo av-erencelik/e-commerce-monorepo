@@ -10,6 +10,7 @@ import {
   double,
   char,
   uniqueIndex,
+  mysqlEnum,
 } from 'drizzle-orm/mysql-core';
 
 export const mysqlTable = mysqlTableCreator((name) => `shop_${name}`);
@@ -86,6 +87,8 @@ export const order = mysqlTable(
     createdAt: datetime('created_at').default(sql`CURRENT_TIMESTAMP`),
     updatedAt: datetime('updated_at').default(sql`CURRENT_TIMESTAMP`),
     totalAmount: double('total_amount', { precision: 10, scale: 2 }).notNull(),
+    status: mysqlEnum('status', ['pending', 'paid', 'not confirmed']).notNull(),
+    paymentIntentId: varchar('payment_intent_id', { length: 36 }),
   },
   (table) => ({
     userIdIdx: index('user_id_idx').on(table.userId),
@@ -98,6 +101,7 @@ export const orderItem = mysqlTable(
     id: int('id').primaryKey().autoincrement(),
     orderId: varchar('order_id', { length: 36 }).notNull(),
     productId: int('product_id').notNull(),
+    productName: varchar('product_name', { length: 256 }).notNull(),
     quantity: int('quantity').notNull(),
     price: double('price', { precision: 10, scale: 2 }).notNull(),
     image: varchar('image', { length: 256 }).notNull(),

@@ -19,6 +19,9 @@ import {
 } from '@client/types';
 import { refreshAccessTokenFn } from './auth-api';
 
+const MAX_RETRY = 3;
+let currentRetry = 0;
+
 export const getProduct = async (id: string) => {
   try {
     const response = await api.get<Product>(`/product/${id}`);
@@ -171,12 +174,18 @@ export const getCart = async () => {
       const errMessage = error.response?.data.message as string;
       if (
         errMessage.includes('Cart does not belong to user') &&
-        !originalRequest._retry
+        currentRetry < MAX_RETRY
       ) {
-        const { data } = await refreshAccessTokenFn();
-        if (data.message === 'Tokens refreshed successfully') {
-          originalRequest._retry = true;
-          return api(originalRequest);
+        try {
+          const { data } = await refreshAccessTokenFn();
+          if (data.message === 'Tokens refreshed successfully') {
+            currentRetry = 0;
+            return api(originalRequest);
+          } else {
+            currentRetry++;
+          }
+        } catch (error) {
+          currentRetry++;
         }
       }
       return Promise.reject(error);

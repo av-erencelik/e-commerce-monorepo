@@ -10,6 +10,7 @@ const signedInPaths = [
   '/logout',
   '/verify-email',
   '/admin',
+  '/cart',
 ];
 // list of paths that require the user to be signed out
 const signedOutPaths = ['/login', '/register', '/forgot-password'];

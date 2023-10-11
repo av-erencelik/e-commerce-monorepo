@@ -4,6 +4,7 @@ import httpStatus from 'http-status';
 import cartRepository from '../repository/cart.repository';
 import orderRepository from '../repository/order.repository';
 import { OrderCreated } from '@e-commerce-monorepo/event-bus';
+import stripe from '../libs/stripe';
 
 const createOrder = async (
   total: number,
@@ -39,16 +40,14 @@ const createOrder = async (
     );
   }
 
-  const result = await orderRepository.createOrder(cartSession, user, token);
+  const result = await orderRepository.createOrder(cartSession, user);
 
-  if (result.status === false) {
+  if (!result.status) {
     throw new ApiError(
       httpStatus.BAD_REQUEST,
       'Something went wrong while creating order'
     );
-  }
-
-  if (result.status === true) {
+  } else {
     const createdOrder = await orderRepository.getOrder(result.order!.id);
     if (!createdOrder) {
       throw new ApiError(httpStatus.NOT_FOUND, 'Order not found');
@@ -61,7 +60,10 @@ const createOrder = async (
         quantity: item.quantity,
       })),
     });
-    return result.order;
+    return {
+      clientSecret: result.clientSecret,
+      orderId: createdOrder.id,
+    };
   }
 };
 
@@ -83,7 +85,36 @@ const getOrders = async (user?: AccessTokenPayload) => {
   return orders;
 };
 
+const getOrder = async (orderId: string, user?: AccessTokenPayload) => {
+  if (!user) {
+    throw new ApiError(
+      httpStatus.BAD_REQUEST,
+      'You must be logged in to get orders'
+    );
+  }
+  const order = await orderRepository.getOrder(orderId);
+  if (!order) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Order not found');
+  }
+  if (order.userId !== user.userId) {
+    throw new ApiError(httpStatus.FORBIDDEN, 'Order does not belong to user');
+  }
+  // sign images url
+  for (const item of order.orderItem) {
+    item.image = createImageUrl(item.image);
+  }
+
+  const clientSecret = await stripe.paymentIntents.retrieve(
+    order.paymentIntentId!
+  );
+  return {
+    ...order,
+    clientSecret: clientSecret.client_secret,
+  };
+};
+
 export default Object.freeze({
   createOrder,
   getOrders,
+  getOrder,
 });
