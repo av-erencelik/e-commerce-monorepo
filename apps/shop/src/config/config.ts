@@ -12,7 +12,7 @@ const envVarsSchema = z.object({
   CLOUDFRONT_PRIVATE_KEY: z.string().describe('Cloudfront private key'),
   CLOUDFRONT_URL: z.string().describe('Cloudfront url'),
   STRIPE_KEY: z.string().describe('Stripe key'),
-  WEBHOOK_SECRET: z.string().describe('Stripe webhook secret'),
+  STRIPE_WEBHOOK_SECRET: z.string().describe('Stripe webhook secret'),
 });
 
 const envVars = envVarsSchema.parse(process.env);
@@ -38,7 +38,7 @@ const config = {
   },
   stripe: {
     key: envVars.STRIPE_KEY,
-    webhookSecret: envVars.WEBHOOK_SECRET,
+    webhookSecret: envVars.STRIPE_WEBHOOK_SECRET,
   },
 };
 
