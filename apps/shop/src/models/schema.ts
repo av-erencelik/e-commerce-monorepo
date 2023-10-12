@@ -117,7 +117,7 @@ export const orderItem = mysqlTable(
 export const payment = mysqlTable(
   'payment',
   {
-    id: varchar('id', { length: 36 }).primaryKey().notNull(),
+    id: int('id').primaryKey().autoincrement(),
     orderId: varchar('order_id', { length: 36 }).notNull(),
     stripeId: varchar('stripe_id', { length: 36 }).notNull(),
     amount: double('amount', { precision: 10, scale: 2 }).notNull(),
