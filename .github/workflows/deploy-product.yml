@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - 'apps/product'
+      - 'apps/product/**'
 
 jobs:
   build:
