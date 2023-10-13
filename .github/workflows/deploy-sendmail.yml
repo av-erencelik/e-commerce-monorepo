@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - 'apps/sendmail'
+      - 'apps/sendmail/**'
 
 jobs:
   build:
