@@ -15,6 +15,7 @@ const envVarsSchema = z.object({
   VERIFICATION_TOKEN_EXPIRES_IN: z
     .string()
     .describe('Verification token expiration in milliseconds'),
+  DOMAIN: z.string().describe('Domain'),
 });
 
 const envVars = envVarsSchema.parse(process.env);
@@ -40,6 +41,7 @@ const config = {
   verificationToken: {
     expiresIn: parseInt(envVars.VERIFICATION_TOKEN_EXPIRES_IN),
   },
+  domain: envVars.DOMAIN,
 };
 
 export default config;

@@ -71,6 +71,11 @@ spec:
                 secretKeyRef:
                   name: verification-token-expires-in
                   key: VERIFICATION_TOKEN_EXPIRES_IN
+            - name: DOMAIN
+              valueFrom:
+                secretKeyRef:
+                  name: domain
+                  key: DOMAIN
             - name: NODE_ENV
               value: development
 ---
