@@ -43,6 +43,7 @@ Thumbs.db
 
 # private-key
 private-key.yaml
+issuer.yaml
 private_key.pem
 public_key.pem
 
