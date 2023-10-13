@@ -33,13 +33,13 @@ const signup = async (
     httpOnly: true,
     secure: config.env === 'production',
     maxAge: config.refreshToken.expiresIn,
-    domain: '.posts.com', // two weeks
+    domain: config.domain, // two weeks
   });
   res.cookie('accessToken', accessToken, {
     httpOnly: true,
     secure: config.env === 'production',
     maxAge: config.jwt.expiresIn, // ten minutes
-    domain: '.posts.com',
+    domain: config.domain,
   });
   logger.info(`Signup successful with email: ${user.email}`);
   res.status(httpStatus.CREATED).send({
@@ -67,13 +67,13 @@ const login = async (
     httpOnly: true,
     secure: config.env === 'production',
     maxAge: config.refreshToken.expiresIn, // two weeks
-    domain: '.posts.com',
+    domain: config.domain,
   });
   res.cookie('accessToken', accessToken, {
     httpOnly: true,
     secure: config.env === 'production',
     maxAge: config.jwt.expiresIn, // ten minutes
-    domain: '.posts.com',
+    domain: config.domain,
   });
   logger.info(`Login successful with email: ${user.email}`);
   res.send({ user });
@@ -97,13 +97,13 @@ const logout = async (req: Request, res: Response) => {
     httpOnly: true,
     secure: config.env === 'production',
     maxAge: 0, // two weeks
-    domain: '.posts.com',
+    domain: config.domain,
   });
   res.clearCookie('accessToken', {
     httpOnly: true,
     secure: config.env === 'production',
     maxAge: 0, // ten minutes
-    domain: '.posts.com',
+    domain: config.domain,
   });
   res.status(httpStatus.OK).send({ message: 'Logout successful' });
 };
@@ -123,14 +123,14 @@ const refreshTokens = async (req: Request, res: Response) => {
     httpOnly: true,
     secure: config.env === 'production',
     maxAge: config.jwt.expiresIn, // ten minutes
-    domain: '.posts.com',
+    domain: config.domain,
   });
 
   res.cookie('refreshToken', refreshToken, {
     httpOnly: true,
     secure: config.env === 'production',
     maxAge: config.refreshToken.expiresIn, // two weeks
-    domain: '.posts.com',
+    domain: config.domain,
   });
 
   res.send({ message: 'Tokens refreshed successfully' });
@@ -148,14 +148,14 @@ const verifyEmail = async (
     httpOnly: true,
     secure: config.env === 'production',
     maxAge: config.jwt.expiresIn, // ten minutes
-    domain: '.posts.com',
+    domain: config.domain,
   });
 
   res.cookie('refreshToken', refreshToken, {
     httpOnly: true,
     secure: config.env === 'production',
     maxAge: config.refreshToken.expiresIn, // two weeks
-    domain: '.posts.com',
+    domain: config.domain,
   });
 
   logger.info(`Email verified: ${updatedUser.email}`);
