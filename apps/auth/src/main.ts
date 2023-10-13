@@ -20,6 +20,6 @@ const server = app.listen(port, async () => {
   } catch (err) {
     logger.error(err);
   }
-  logger.info(`Auth service listening at http://localhost:${port}.`);
+  logger.info(`Auth service listening at http://localhost:${port}..`);
 });
 server.on('error', console.error);
