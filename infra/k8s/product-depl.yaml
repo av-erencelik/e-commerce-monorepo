@@ -92,7 +92,10 @@ spec:
                   name: cloudfront-private-key
                   key: private-key.pem
             - name: NODE_ENV
-              value: development
+              valueFrom:
+                secretKeyRef:
+                  name: node-env
+                  key: NODE_ENV
 ---
 apiVersion: v1
 kind: Service
