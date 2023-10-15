@@ -1,6 +1,6 @@
-import { NavItem, ProductNavItem } from '../types';
+import { NavItem } from '../types';
 
-export const adminNavigation: Array<NavItem | ProductNavItem> = [
+export const adminNavigation: Array<NavItem> = [
   {
     title: 'Home',
     href: '/admin',

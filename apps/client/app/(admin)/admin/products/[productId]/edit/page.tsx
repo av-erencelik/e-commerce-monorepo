@@ -17,7 +17,32 @@ const EditProduct = ({ params }: { params: { productId: string } }) => {
     retry: false,
   });
 
-  if (isError) {
+  if (isLoading) {
+    return (
+      <>
+        <div className="rounded-lg border border-border p-10 pb-16 shadow-md w-full">
+          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between md:gap-0">
+            <div className="space-y-1">
+              <Skeleton className="h-4 w-40" />
+              <Skeleton className="h-7 w-36" />
+              <Skeleton className="h-5 w-52" />
+            </div>
+            <Skeleton className="h-10 w-32" />
+          </div>
+        </div>
+        <div className="mt-6">
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <Skeleton className="h-28 w-full rounded-lg" />
+            <Skeleton className="h-28 w-full rounded-lg" />
+            <Skeleton className="h-28 w-full rounded-lg" />
+            <Skeleton className="h-28 w-full rounded-lg" />
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  if (isError || !data) {
     return (
       <section className="items-center gap-8 pb-8 pt-6 md:py-8 container flex h-[calc(100dvh-124px)] flex-col justify-center max-w-md">
         <div
@@ -49,31 +74,6 @@ const EditProduct = ({ params }: { params: { productId: string } }) => {
           </div>
         </div>
       </section>
-    );
-  }
-
-  if (isLoading) {
-    return (
-      <>
-        <div className="rounded-lg border border-border p-10 pb-16 shadow-md w-full">
-          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between md:gap-0">
-            <div className="space-y-1">
-              <Skeleton className="h-4 w-40" />
-              <Skeleton className="h-7 w-36" />
-              <Skeleton className="h-5 w-52" />
-            </div>
-            <Skeleton className="h-10 w-32" />
-          </div>
-        </div>
-        <div className="mt-6">
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            <Skeleton className="h-28 w-full rounded-lg" />
-            <Skeleton className="h-28 w-full rounded-lg" />
-            <Skeleton className="h-28 w-full rounded-lg" />
-            <Skeleton className="h-28 w-full rounded-lg" />
-          </div>
-        </div>
-      </>
     );
   }
 
