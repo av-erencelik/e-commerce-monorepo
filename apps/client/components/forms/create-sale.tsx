@@ -32,7 +32,7 @@ import { createSale, getAllProductsIds } from '@client/lib/api/api-service';
 import { Loader2 } from 'lucide-react';
 import { getErrorMessage } from '@client/lib/utils';
 
-const CreateSaleForm = ({ productId }: { productId: string }) => {
+const CreateSaleForm = () => {
   const { toast } = useToast();
   const {
     data,
