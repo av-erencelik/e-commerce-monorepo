@@ -33,7 +33,7 @@ const addToCart = async (
     httpOnly: true,
     maxAge: 1000 * 60 * 60 * 24 * 365, // 1 year
     secure: config.env === 'production',
-    domain: '.posts.com',
+    domain: '.webdeveren.com',
   });
 
   res.status(httpStatus.OK).send({
@@ -53,7 +53,7 @@ const getCart = async (
     httpOnly: true,
     maxAge: 1000 * 60 * 60 * 24 * 365, // 1 year
     secure: config.env === 'production',
-    domain: '.posts.com',
+    domain: '.webdeveren.com',
   });
 
   res.status(httpStatus.OK).send({
