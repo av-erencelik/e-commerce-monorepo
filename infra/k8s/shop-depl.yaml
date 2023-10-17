@@ -81,6 +81,11 @@ spec:
                 secretKeyRef:
                   name: cloudfront-private-key
                   key: private-key.pem
+            - name: DOMAIN
+              valueFrom:
+                secretKeyRef:
+                  name: domain
+                  key: DOMAIN
             - name: NODE_ENV
               valueFrom:
                 secretKeyRef:

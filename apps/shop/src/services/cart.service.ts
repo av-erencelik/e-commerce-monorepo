@@ -90,7 +90,12 @@ const getCart = async (cartSession?: string, user?: AccessTokenPayload) => {
   }
 
   if (user && !cart.userId) {
-    await cartRepository.addUserToCart(cartId, user);
+    const usersCart = await cartRepository.getCartByUserId(user.userId);
+    if (usersCart) {
+      cartId = usersCart.id;
+    } else {
+      await cartRepository.addUserToCart(cartId, user);
+    }
   }
 
   if (user && cart.userId !== user.userId) {
