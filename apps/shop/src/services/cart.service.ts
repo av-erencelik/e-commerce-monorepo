@@ -83,7 +83,7 @@ const getCart = async (cartSession?: string, user?: AccessTokenPayload) => {
     }
   }
 
-  const cart = await cartRepository.getCart(cartId);
+  let cart = await cartRepository.getCart(cartId);
 
   if (!cart) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Cart not found');
@@ -98,11 +98,17 @@ const getCart = async (cartSession?: string, user?: AccessTokenPayload) => {
     }
   }
 
-  if (user && cart.userId !== user.userId) {
+  if (user && cart.userId && cart.userId !== user.userId) {
     throw new ApiError(httpStatus.FORBIDDEN, 'Cart does not belong to user');
   }
   if (cart.userId && !user) {
     throw new ApiError(httpStatus.FORBIDDEN, 'Cart does not belong to user');
+  }
+
+  cart = await cartRepository.getCart(cartId);
+
+  if (!cart) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Cart not found');
   }
 
   // presign cart items images
