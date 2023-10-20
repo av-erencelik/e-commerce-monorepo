@@ -25,6 +25,7 @@ jobs:
       AMQP_URL: ${{ secrets.AMQP_URL }}
       CLIENT_URL: ${{ secrets.CLIENT_URL }}
       VERIFICATION_TOKEN_EXPIRES_IN: ${{ secrets.VERIFICATION_TOKEN_EXPIRES_IN }}
+      DOMAIN: ${{ secrets.DOMAIN }}
     steps:
       - uses: actions/checkout@v2
       - run: npm install

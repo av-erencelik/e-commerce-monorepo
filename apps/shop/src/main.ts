@@ -24,6 +24,6 @@ const server = app.listen(port, async () => {
   } catch (err) {
     logger.error(err);
   }
-  logger.info(`Shop service listening at http://localhost:${port}..`);
+  logger.info(`Shop service listening at http://localhost:${port}....`);
 });
 server.on('error', console.error);

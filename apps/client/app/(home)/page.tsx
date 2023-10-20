@@ -61,7 +61,10 @@ export default async function Index() {
           breads and chocolates, made with love.
         </Balancer>
         <div className="flex flex-wrap items-center justify-center gap-4">
-          <Link href="/products" className={cn(buttonVariants({ size: 'lg' }))}>
+          <Link
+            href="#categories"
+            className={cn(buttonVariants({ size: 'lg' }))}
+          >
             Buy now
             <span className="sr-only">Buy now</span>
           </Link>

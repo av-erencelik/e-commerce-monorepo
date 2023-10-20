@@ -53,7 +53,7 @@ export default async function RootLayout({
   }
   const user = await getCurrentUser();
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning className="scroll-smooth">
       <body
         className={cn(
           'min-h-screen bg-background font-sans antialiased',

@@ -9,7 +9,7 @@ metadata:
     nginx.ingress.kubernetes.io/limit-connections: '5'
     nginx.ingress.kubernetes.io/limit-rps: '5'
     nginx.ingress.kubernetes.io/enable-cors: 'true'
-    nginx.ingress.kubernetes.io/cors-allow-origin: 'https://www.webdeveren.com'
+    nginx.ingress.kubernetes.io/cors-allow-origin: 'https://e-commerce-monorepo.vercel.app, https://www.webdeveren.com'
     nginx.ingress.kubernetes.io/cors-allow-methods: 'PUT, GET, POST, OPTIONS, DELETE, PATCH'
     nginx.ingress.kubernetes.io/cors-allow-headers: 'DNT,X-CustomHeader,X-LANG,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,X-Api-Key,X-Device-Id,Access-Control-Allow-Origin'
 spec:
