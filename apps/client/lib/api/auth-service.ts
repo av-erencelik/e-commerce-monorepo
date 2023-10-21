@@ -1,6 +1,7 @@
 import {
   GenericResponse,
   IGenericPostResponse,
+  IGetOrdersResponse,
   IGetUserResponse,
   ILoginResponse,
 } from '../../types/api';
@@ -77,5 +78,10 @@ export const updateUserFn = async (data: {
     '/auth/update-user',
     data
   );
+  return response.data;
+};
+
+export const getOrders = async () => {
+  const response = await authApi.get<IGetOrdersResponse>('/shop/order');
   return response.data;
 };

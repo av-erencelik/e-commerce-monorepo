@@ -5,6 +5,7 @@ import { logger } from '@e-commerce-monorepo/configs';
 import httpStatus from 'http-status';
 import orderService from '../services/order.service';
 import { ApiError } from '@e-commerce-monorepo/errors';
+import { CheckPayment } from '../interfaces/order';
 
 const createOrder = async (
   req: Request<ParamsDictionary, never, never, CreateOrder>,
@@ -55,8 +56,22 @@ const getOrder = async (
   });
 };
 
+const checkPayment = async (
+  req: Request<ParamsDictionary, never, never, CheckPayment>,
+  res: Response
+) => {
+  const paymentIntent = req.query.payment_intent;
+  const payment = await orderService.checkPayment(paymentIntent);
+  res.status(httpStatus.OK).send({
+    message: 'Payment checked',
+    statusCode: httpStatus.OK,
+    data: { payment_status: payment.status },
+  });
+};
+
 export default Object.freeze({
   createOrder,
   getOrders,
   getOrder,
+  checkPayment,
 });

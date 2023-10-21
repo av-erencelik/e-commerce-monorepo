@@ -1,5 +1,6 @@
 import { CartState } from '@client/stores/cart-state';
 import axios from 'axios';
+import { DateFormatter } from '@internationalized/date';
 
 export function checkIfPathStartsWith(path: string, subpaths: string[]) {
   return subpaths.some((subpath) => path.startsWith(subpath));
@@ -45,4 +46,14 @@ export function getCartTotalPrice(cart: CartState['cart']) {
     (acc, item) => acc + item.quantity * item.product.price[0].price,
     0
   );
+}
+
+export function formatDate(date: Date) {
+  return new DateFormatter('en-US', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+  }).format(new Date(date));
 }

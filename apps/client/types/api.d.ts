@@ -1,5 +1,5 @@
 import { UserPayload } from '@e-commerce-monorepo/global-types';
-import { AddedProduct, ProductCategory, ProductSubCategory } from '.';
+import { AddedProduct, Order, ProductCategory, ProductSubCategory } from '.';
 import { Product } from './column';
 import { CartState } from '@client/stores/cart-state';
 
@@ -80,5 +80,19 @@ type IGetUserResponse = {
     email: string;
     phoneNumber: string;
     countryCode: string;
+  };
+};
+
+type IGetOrdersResponse = {
+  message: string;
+  statusCode: number;
+  data: Order[];
+};
+
+type ICheckPaymentResponse = {
+  message: string;
+  statusCode: number;
+  data: {
+    payment_status: string;
   };
 };

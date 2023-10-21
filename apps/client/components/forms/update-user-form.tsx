@@ -64,7 +64,7 @@ const UpdateUserForm = ({ user }: { user: IGetUserResponse['user'] }) => {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <div className="md:flex gap-2 block">
+        <div className="md:flex gap-2 block space-y-2 md:space-y-0">
           <FormField
             control={form.control}
             name="fullName"

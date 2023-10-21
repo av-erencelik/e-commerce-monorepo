@@ -5,12 +5,15 @@ import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
 import { useAuthStore } from '@client/stores/auth-state';
+import { useCartStore } from '@client/stores/cart-state';
 const LogoutPage = () => {
   const { logout } = useAuthStore();
+  const { setCart } = useCartStore();
   const router = useRouter();
   const { mutate, isLoading, isError } = useMutation(logoutUserFn, {
     onSuccess: () => {
       logout();
+      setCart(null);
       router.push('/');
       router.refresh();
     },

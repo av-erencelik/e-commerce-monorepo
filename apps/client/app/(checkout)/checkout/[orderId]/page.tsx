@@ -88,7 +88,7 @@ const CheckoutPage = async ({ params }: CheckoutPageProps) => {
         </div>
         <CheckoutItems items={data.order.orderItem} />
       </div>
-      <Checkout clientSecret={data.order.clientSecret} />
+      <Checkout clientSecret={data.order.clientSecret} orderId={orderId} />
     </section>
   );
 };
