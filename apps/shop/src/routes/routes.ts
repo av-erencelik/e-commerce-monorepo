@@ -2,7 +2,6 @@ require('express-async-errors');
 import { Router } from 'express';
 import orderRouter from './order.route';
 import cartRouter from './cart.route';
-import webhookRouter from './webhook.route';
 
 const router = Router();
 
@@ -14,10 +13,6 @@ const routes = [
   {
     path: '/shop/cart',
     router: cartRouter,
-  },
-  {
-    path: '/shop/webhook',
-    router: webhookRouter,
   },
 ];
 

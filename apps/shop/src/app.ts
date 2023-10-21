@@ -12,6 +12,7 @@ import { currentUser, xssClean } from '@e-commerce-monorepo/middlewares';
 import router from './routes/routes';
 import cookieParser from 'cookie-parser';
 import config from './config/config';
+import webhookRouter from './routes/webhook.route';
 
 const app = express();
 
@@ -19,6 +20,8 @@ if (config.env !== 'test') {
   app.use(successHandlerLogger);
   app.use(errorHandlerLogger);
 }
+
+app.use(webhookRouter);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
