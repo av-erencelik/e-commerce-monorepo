@@ -3,6 +3,6 @@ import webhookController from '../controllers/webhook.controller';
 
 const webhookRouter = Router();
 
-webhookRouter.post('/', webhookController.handleEvent);
+webhookRouter.post('/shop/webhook', webhookController.handleEvent);
 
 export default webhookRouter;
