@@ -277,6 +277,10 @@ const getCartTotal = async (cartId: string) => {
   return total;
 };
 
+const deleteCart = async (cartId: string) => {
+  await db.delete(cartItem).where(eq(cartItem.cartId, cartId));
+};
+
 export default Object.freeze({
   checkCartExistsBySession,
   checkProductExists,
@@ -297,4 +301,5 @@ export default Object.freeze({
   updateProductPrice,
   reStockProducts,
   getCartTotal,
+  deleteCart,
 });

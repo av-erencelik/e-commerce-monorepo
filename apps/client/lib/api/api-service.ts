@@ -2,6 +2,7 @@ import { Product } from '@client/types/column';
 import api from './api';
 import {
   IAddProductResponse,
+  ICheckPaymentResponse,
   ICreateSaleResponse,
   IEditProductResponse,
   IGenericPostResponse,
@@ -193,4 +194,15 @@ export const getCart = async () => {
   );
   const response = await api.get('/shop/cart');
   return response.data as IGetCart;
+};
+
+export const checkPayment = async (paymentIntent: string) => {
+  try {
+    const response = await api.get<ICheckPaymentResponse>(
+      `/shop/order/check?payment_intent=${paymentIntent}`
+    );
+    return response.data;
+  } catch (error) {
+    return undefined;
+  }
 };

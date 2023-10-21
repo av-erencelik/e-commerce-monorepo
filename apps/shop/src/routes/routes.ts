@@ -16,7 +16,7 @@ const routes = [
     router: cartRouter,
   },
   {
-    path: 'shop/webhook',
+    path: '/shop/webhook',
     router: webhookRouter,
   },
 ];

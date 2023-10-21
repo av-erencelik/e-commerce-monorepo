@@ -8,11 +8,12 @@ import { Separator } from '@e-commerce-monorepo/ui';
 
 type CheckoutProps = {
   clientSecret: string;
+  orderId: string;
 };
 
 const stripePromise = loadStripe(env.NEXT_PUBLIC_NX_STRIPE_PUBLIC_KEY);
 
-const Checkout = ({ clientSecret }: CheckoutProps) => {
+const Checkout = ({ clientSecret, orderId }: CheckoutProps) => {
   return (
     <section className="h-full w-full flex-1 bg-white pb-12 pt-10 lg:flex-initial lg:pl-12 lg:pt-16">
       <div className="w-full p-7 container max-w-xl lg:ml-0 lg:mr-auto">
@@ -48,7 +49,7 @@ const Checkout = ({ clientSecret }: CheckoutProps) => {
             },
           }}
         >
-          <CheckoutForm />
+          <CheckoutForm orderId={orderId} />
         </Elements>
       )}
     </section>

@@ -16,6 +16,13 @@ jest.mock('../../libs/stripe', () => ({
   },
 }));
 
+// mock expiration queue
+jest.mock('../../event-bus/bull-queue/expiration-queue', () => ({
+  expirationQueue: {
+    add: jest.fn(),
+  },
+}));
+
 jest.mock('@e-commerce-monorepo/event-bus', () => ({
   OrderCreated: jest.fn().mockImplementation(() => ({
     publish: jest.fn(),

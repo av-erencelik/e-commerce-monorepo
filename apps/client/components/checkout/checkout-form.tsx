@@ -9,7 +9,7 @@ import { env } from '@client/env.mjs';
 import { Button, toast } from '@e-commerce-monorepo/ui';
 import { Loader2 } from 'lucide-react';
 
-export default function CheckoutForm() {
+export default function CheckoutForm({ orderId }: { orderId: string }) {
   const stripe = useStripe();
   const elements = useElements();
   const id = useId();
@@ -64,7 +64,7 @@ export default function CheckoutForm() {
     const { error } = await stripe.confirmPayment({
       elements,
       confirmParams: {
-        return_url: `${env.NEXT_PUBLIC_NX_CLIENT_URL}/shop/checkout/success`,
+        return_url: `${env.NEXT_PUBLIC_NX_CLIENT_URL}/checkout/${orderId}/success`,
       },
     });
 

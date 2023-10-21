@@ -152,6 +152,7 @@ const getOrders = async (user: AccessTokenPayload) => {
           new Date().getTime() - 30 * 24 * 60 * 60 * 1000
         )}`
       ),
+    orderBy: (fields, { desc }) => desc(fields.createdAt),
     with: {
       orderItem: true,
     },
@@ -176,7 +177,19 @@ const deleteOrder = async (orderId: string) => {
       orderItem: true,
     },
   });
-  if (existingOrder && existingOrder.status === 'not confirmed') {
+  if (
+    existingOrder &&
+    existingOrder.status === 'not confirmed' &&
+    existingOrder.paymentIntentId
+  ) {
+    const paymentIntent = await stripe.paymentIntents.retrieve(
+      existingOrder.paymentIntentId
+    );
+    if (paymentIntent.status === 'succeeded') {
+      return;
+    }
+    await stripe.paymentIntents.cancel(existingOrder.paymentIntentId);
+
     // all order items stock must be restored
     for (const orderItem of existingOrder.orderItem) {
       await db
@@ -185,9 +198,6 @@ const deleteOrder = async (orderId: string) => {
           stock: sql`${product.stock} + ${orderItem.quantity}`,
         })
         .where(eq(product.id, orderItem.productId));
-    }
-    if (existingOrder.paymentIntentId) {
-      await stripe.paymentIntents.cancel(existingOrder.paymentIntentId);
     }
   } else {
     return;

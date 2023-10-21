@@ -105,6 +105,13 @@ const logout = async (req: Request, res: Response) => {
     maxAge: 0, // ten minutes
     domain: config.domain,
   });
+
+  res.clearCookie('cart_session', {
+    httpOnly: true,
+    secure: config.env === 'production',
+    maxAge: 0, // ten minutes
+    domain: config.domain,
+  });
   res.status(httpStatus.OK).send({ message: 'Logout successful' });
 };
 

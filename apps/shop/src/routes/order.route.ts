@@ -2,8 +2,15 @@ import { Router } from 'express';
 import { checkCartSchema, getOrderSchema } from '../schemas/cart';
 import { requireAuth, validate } from '@e-commerce-monorepo/middlewares';
 import orderController from '../controllers/order.controller';
+import checkPaymentSchema from '../schemas/order';
 
 const orderRouter = Router();
+
+orderRouter.get(
+  '/check',
+  validate(checkPaymentSchema),
+  orderController.checkPayment
+);
 
 orderRouter.get(
   '/:id',

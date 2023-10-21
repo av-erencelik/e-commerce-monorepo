@@ -14,14 +14,25 @@ const AccountInfo = () => {
 
   if (isLoading) {
     return (
-      <div className="h-60 w-full flex items-center justify-center">
-        <Loader2 size={48} className="animate-spin text-primary" />
+      <div>
+        <h3 className="text-lg font-semibold mb-2">Account Info</h3>
+        <div className="h-60 w-full flex items-center justify-center">
+          <Loader2 size={48} className="animate-spin text-primary" />
+        </div>
       </div>
     );
   }
 
   if (isError) {
-    return <div>Error</div>;
+    return (
+      <div>
+        <h3 className="text-lg font-semibold mb-2">Account Info</h3>
+        <p className="text-foreground text-sm">
+          An error occurred while trying to fetch your account info. Please try
+          again later.
+        </p>
+      </div>
+    );
   }
 
   return (

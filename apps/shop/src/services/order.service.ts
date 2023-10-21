@@ -5,6 +5,7 @@ import cartRepository from '../repository/cart.repository';
 import orderRepository from '../repository/order.repository';
 import { OrderCreated } from '@e-commerce-monorepo/event-bus';
 import stripe from '../libs/stripe';
+import { expirationQueue } from '../event-bus/bull-queue/expiration-queue';
 
 const createOrder = async (
   total: number,
@@ -60,6 +61,15 @@ const createOrder = async (
         quantity: item.quantity,
       })),
     });
+    await expirationQueue.add(
+      {
+        orderId: createdOrder.id,
+      },
+      {
+        delay: 1000 * 60 * 15, // 15 minutes
+      }
+    );
+    await cartRepository.deleteCart(cartSession);
     return {
       clientSecret: result.clientSecret,
       orderId: createdOrder.id,
@@ -113,8 +123,20 @@ const getOrder = async (orderId: string, user?: AccessTokenPayload) => {
   };
 };
 
+const checkPayment = async (paymentIntent: string) => {
+  const payment = await stripe.paymentIntents.retrieve(paymentIntent);
+  if (!payment) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Payment not found');
+  }
+  if (payment.status !== 'succeeded') {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Payment not succeeded');
+  }
+  return payment;
+};
+
 export default Object.freeze({
   createOrder,
   getOrders,
   getOrder,
+  checkPayment,
 });

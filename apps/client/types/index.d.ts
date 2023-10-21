@@ -107,9 +107,9 @@ export type ProductPrice = {
 export type Order = {
   status: 'pending' | 'paid' | 'not confirmed';
   id: string;
-  createdAt: Date | null;
+  createdAt: Datel;
   userId: string;
-  updatedAt: Date | null;
+  updatedAt: Date;
   totalAmount: number;
   paymentIntentId: string | null;
   clientSecret: string | null;

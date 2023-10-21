@@ -84,8 +84,12 @@ export const order = mysqlTable(
   {
     id: varchar('id', { length: 36 }).primaryKey().notNull(),
     userId: char('user_id', { length: 12 }).notNull(),
-    createdAt: datetime('created_at').default(sql`CURRENT_TIMESTAMP`),
-    updatedAt: datetime('updated_at').default(sql`CURRENT_TIMESTAMP`),
+    createdAt: datetime('created_at')
+      .notNull()
+      .default(sql`CURRENT_TIMESTAMP`),
+    updatedAt: datetime('updated_at')
+      .notNull()
+      .default(sql`CURRENT_TIMESTAMP`),
     totalAmount: double('total_amount', { precision: 10, scale: 2 }).notNull(),
     status: mysqlEnum('status', ['pending', 'paid', 'not confirmed']).notNull(),
     paymentIntentId: varchar('payment_intent_id', { length: 36 }),
