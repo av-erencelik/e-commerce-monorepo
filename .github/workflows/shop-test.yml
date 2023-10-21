@@ -28,6 +28,7 @@ jobs:
       CLOUDFRONT_KEY_PAIR_ID: ${{ secrets.CLOUDFRONT_KEY_PAIR_ID }}
       STRIPE_KEY: ${{ secrets.STRIPE_KEY }}
       STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET }}
+      DOMAIN: ${{ secrets.DOMAIN }}
     steps:
       - uses: actions/checkout@v2
       - run: npm install
