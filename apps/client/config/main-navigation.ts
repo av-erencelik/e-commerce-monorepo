@@ -14,7 +14,7 @@ export const mainNavigation: Array<NavItem> = [
     href: '/chocolates',
   },
   {
-    title: 'About Us',
+    title: 'About',
     href: '/about',
   },
   {

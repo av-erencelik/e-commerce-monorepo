@@ -22,6 +22,10 @@ export interface NavItem {
   href: string;
 }
 
+export interface AboutCredits extends NavItem {
+  description: string;
+}
+
 export type Category = {
   title: string;
   href: string;
