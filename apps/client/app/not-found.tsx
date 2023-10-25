@@ -2,6 +2,11 @@ import { Shell, buttonVariants } from '@e-commerce-monorepo/ui';
 import Link from 'next/link';
 import React from 'react';
 
+export const metadata = {
+  title: '404 - Page Not Found',
+  description: 'Page Not Found',
+};
+
 const NotFoundPage = () => {
   return (
     <Shell className="text-center mx-auto my-auto h-[500px]">
