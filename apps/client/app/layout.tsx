@@ -9,10 +9,14 @@ import { TailwindIndicator } from '../components/tailwind-indicator';
 import { siteConfig } from '../config/site';
 import { env } from '../env.mjs';
 import CartStoreInitiliazer from '@client/components/cart-store-initiliazer';
+import { Metadata } from 'next';
 
-export const metadata = {
+export const metadata: Metadata = {
   title: `${siteConfig.name} - ${siteConfig.description}`,
   description: 'Developed for learning purposes',
+  other: {
+    'google-site-verification': 'dXQ55giVy7l2I-W7sVfBXPp4X1go0DwFixGvl4hrgC8',
+  },
 };
 
 const fontSans = FontSans({
