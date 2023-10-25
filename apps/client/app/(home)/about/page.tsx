@@ -10,9 +10,15 @@ import {
   frontendTechnos,
   socials,
 } from '@client/config/about-config';
+import { siteConfig } from '@client/config/site';
 import { Separator, Shell } from '@e-commerce-monorepo/ui';
 import Link from 'next/link';
 import React from 'react';
+
+export const metadata = {
+  title: `${siteConfig.name} - About`,
+  description: 'About the purpose and creator of the project',
+};
 
 const AboutPage = () => {
   return (

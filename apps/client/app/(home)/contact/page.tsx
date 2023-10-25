@@ -6,6 +6,13 @@ import {
 } from '@client/components/page-header';
 import React from 'react';
 import Link from 'next/link';
+import { siteConfig } from '@client/config/site';
+
+export const metadata = {
+  title: `${siteConfig.name} - Contact`,
+  description:
+    'Contact the creator of the project for any questions or suggestions',
+};
 
 const ContactPage = () => {
   return (
