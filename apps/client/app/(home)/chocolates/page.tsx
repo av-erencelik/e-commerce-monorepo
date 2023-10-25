@@ -13,8 +13,8 @@ import React from 'react';
 
 export const metadata: Metadata = {
   metadataBase: new URL(env.NEXT_PUBLIC_NX_CLIENT_URL),
-  title: 'Sourdough Breads',
-  description: 'Buy from our selection of sourdough breads',
+  title: 'Sourdough Chocolates',
+  description: 'Buy from our selection of chocolates',
 };
 
 interface ProductsPageProps {
