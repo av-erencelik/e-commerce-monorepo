@@ -82,7 +82,7 @@ export async function middleware(request: NextRequest) {
         response.cookies.set('refreshToken', '', {
           expires: new Date(),
           path: '/',
-          domain: '.posts.com',
+          domain: process.env.NX_DOMAIN,
           sameSite: 'strict',
         });
         return response;
