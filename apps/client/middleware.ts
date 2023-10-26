@@ -69,6 +69,7 @@ export async function middleware(request: NextRequest) {
       console.log('response', JSON.stringify(response));
       const cookies = response.headers.get('set-cookie');
       // if the tokens were refreshed, give the user access to the page
+      console.log('cookies', cookies);
       if (cookies) {
         const responseNext = NextResponse.next();
         responseNext.headers.set('set-cookie', cookies);
