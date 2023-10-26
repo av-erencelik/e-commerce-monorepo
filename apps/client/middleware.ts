@@ -105,10 +105,10 @@ export const config = {
     '/account',
     '/logout',
     '/contact',
-    'about',
+    '/about',
     '/breads',
     '/chocolates',
-    'product/:path*',
+    '/product/:path*',
     '/admin/:path*',
   ],
 };
