@@ -6,11 +6,12 @@ import { useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
 import { useAuthStore } from '@client/stores/auth-state';
 import { useCartStore } from '@client/stores/cart-state';
+import { getErrorMessage } from '@client/lib/utils';
 const LogoutPage = () => {
   const { logout } = useAuthStore();
   const { setCart } = useCartStore();
   const router = useRouter();
-  const { mutate, isLoading, isError } = useMutation(logoutUserFn, {
+  const { mutate, isLoading, error, isError } = useMutation(logoutUserFn, {
     onSuccess: () => {
       logout();
       setCart(null);
@@ -33,7 +34,7 @@ const LogoutPage = () => {
       )}
       {isError && (
         <p className="text-sm text-center text-destructive">
-          Something went wrong...
+          {getErrorMessage(error)}
         </p>
       )}
     </div>
