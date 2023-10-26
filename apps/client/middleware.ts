@@ -50,6 +50,12 @@ export async function middleware(request: NextRequest) {
           domain: process.env.NX_DOMAIN,
           sameSite: 'strict',
         });
+        response.cookies.set('accessToken', '', {
+          expires: new Date(),
+          path: '/',
+          domain: process.env.NX_DOMAIN,
+          sameSite: 'strict',
+        });
         return response;
       }
       const { user } = await response.json();
