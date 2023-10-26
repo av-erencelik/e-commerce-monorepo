@@ -65,9 +65,8 @@ export default async function RootLayout({
           fontHeading.variable
         )}
       >
-        <AuthStoreInitializer user={user} />
-
         <TanstackQueryProvider>
+          <AuthStoreInitializer user={user} />
           <CartStoreInitiliazer />
           {children}
         </TanstackQueryProvider>

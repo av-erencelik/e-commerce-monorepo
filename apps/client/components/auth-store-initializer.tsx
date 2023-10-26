@@ -1,20 +1,26 @@
 'use client';
 
 import { UserPayload } from '@e-commerce-monorepo/global-types';
-import { useRef } from 'react';
+import { useEffect } from 'react';
 import { useAuthStore } from '../stores/auth-state';
+import { useQuery } from '@tanstack/react-query';
+import { getCurrentUser } from '@client/lib/api/api-service';
 
 type AuthStoreInitializerProps = {
   user: UserPayload | null;
 };
 
 const AuthStoreInitializer = ({ user }: AuthStoreInitializerProps) => {
-  const initialized = useRef(false);
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ['user'],
+    queryFn: getCurrentUser,
+  });
 
-  if (!initialized.current) {
-    useAuthStore.setState({ user: user });
-    initialized.current = true;
-  }
+  useEffect(() => {
+    if (!isLoading && !isError && data) {
+      useAuthStore.setState({ user: data.user });
+    }
+  }, [data, isLoading, isError]);
   return null;
 };
 

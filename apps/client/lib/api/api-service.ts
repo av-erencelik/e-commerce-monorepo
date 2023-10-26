@@ -19,6 +19,7 @@ import {
   EditSubcategoryData,
 } from '@client/types';
 import { refreshAccessTokenFn } from './auth-api';
+import { UserPayload } from '@e-commerce-monorepo/global-types';
 
 const MAX_RETRY = 3;
 let currentRetry = 0;
@@ -29,6 +30,15 @@ export const getProduct = async (id: string) => {
     return response.data;
   } catch (error) {
     return undefined;
+  }
+};
+
+export const getCurrentUser = async () => {
+  try {
+    const response = await api.get<{ user: UserPayload }>('/auth/current-user');
+    return response.data;
+  } catch (error) {
+    return null;
   }
 };
 
