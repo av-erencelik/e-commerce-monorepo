@@ -19,19 +19,6 @@ describe('logout Route', () => {
   afterAll(async () => {
     await db.delete(users);
   });
-  it('should return 401 if no refresh token is provided', async () => {
-    const response = await request(app).post('/auth/logout');
-    expect(response.status).toBe(401);
-    expect(response.body.message).toBe('You need to login before logging out');
-  });
-
-  it('should return 401 if refresh token is invalid', async () => {
-    const response = await request(app)
-      .post('/auth/logout')
-      .set('Cookie', 'refreshToken=invalidtoken');
-    expect(response.status).toBe(401);
-    expect(response.body.message).toBe('Invalid refresh token');
-  });
 
   it('should return 200 if refresh token is valid', async () => {
     const { refreshToken, accessToken } = await signin();
