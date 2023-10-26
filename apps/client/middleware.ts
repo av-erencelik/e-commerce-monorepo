@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { applySetCookie } from './lib/server-utils';
 import { checkIfPathStartsWith } from './lib/utils';
 
 // list of paths that require the user to be signed in
@@ -72,7 +71,6 @@ export async function middleware(request: NextRequest) {
       if (cookies) {
         const responseNext = NextResponse.next();
         responseNext.headers.set('set-cookie', cookies);
-        applySetCookie(request, responseNext);
         return responseNext;
       } else {
         // if the tokens were not refreshed, redirect the user to the login page and clear the refresh token
