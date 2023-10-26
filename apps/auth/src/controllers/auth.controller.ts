@@ -126,17 +126,17 @@ const refreshTokens = async (req: Request, res: Response) => {
   const { accessToken, refreshToken } = await authService.refreshTokens(
     currentRefreshToken
   );
-  res.cookie('accessToken', accessToken, {
-    httpOnly: true,
-    secure: config.env === 'production',
-    maxAge: config.jwt.expiresIn, // ten minutes
-    domain: config.domain,
-  });
-
   res.cookie('refreshToken', refreshToken, {
     httpOnly: true,
     secure: config.env === 'production',
     maxAge: config.refreshToken.expiresIn, // two weeks
+    domain: config.domain,
+  });
+
+  res.cookie('accessToken', accessToken, {
+    httpOnly: true,
+    secure: config.env === 'production',
+    maxAge: config.jwt.expiresIn, // ten minutes
     domain: config.domain,
   });
 
