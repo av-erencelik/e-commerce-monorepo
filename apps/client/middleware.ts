@@ -79,12 +79,6 @@ export async function middleware(request: NextRequest) {
         const response = NextResponse.redirect(
           new URL('/login', request.nextUrl)
         );
-        response.cookies.set('refreshToken', '', {
-          expires: new Date(),
-          path: '/',
-          domain: process.env.NX_DOMAIN,
-          sameSite: 'strict',
-        });
         return response;
       }
     } catch (error) {
