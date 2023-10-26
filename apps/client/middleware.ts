@@ -12,7 +12,7 @@ const signedInPaths = [
   '/cart',
 ];
 // list of paths that require the user to be signed out
-const signedOutPaths = ['/login', '/register', '/forgot-password'];
+const signedOutPaths = ['/login', '/signup', '/login/forgot-password'];
 
 export async function middleware(request: NextRequest) {
   // get the access and refresh tokens from the cookies
@@ -66,7 +66,7 @@ export async function middleware(request: NextRequest) {
           },
         }
       );
-      console.log('response', response);
+      console.log('response', JSON.stringify(response));
       const cookies = response.headers.get('set-cookie');
       // if the tokens were refreshed, give the user access to the page
       if (cookies) {
@@ -92,5 +92,23 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: '/((?!api|_next/static|_next/image|favicon.ico).*)',
+  matcher: [
+    '/',
+    '/login',
+    '/signup',
+    '/login/forgot-password',
+    '/login/reset-password/:path*',
+    '/verify-email',
+    '/admin',
+    '/cart',
+    '/checkout/:path*',
+    '/account',
+    '/logout',
+    '/contact',
+    'about',
+    '/breads',
+    '/chocolates',
+    'product/:path*',
+    '/admin/:path*',
+  ],
 };
