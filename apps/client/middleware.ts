@@ -42,6 +42,16 @@ export async function middleware(request: NextRequest) {
           },
         }
       );
+      if (!response.ok) {
+        const response = NextResponse.next();
+        response.cookies.set('refreshToken', '', {
+          expires: new Date(),
+          path: '/',
+          domain: process.env.NX_DOMAIN,
+          sameSite: 'strict',
+        });
+        return response;
+      }
       const { user } = await response.json();
       if (user.verificated === false) {
         return NextResponse.redirect(new URL('/verify-email', request.nextUrl));
