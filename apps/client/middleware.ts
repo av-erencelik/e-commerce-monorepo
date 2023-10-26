@@ -89,6 +89,16 @@ export async function middleware(request: NextRequest) {
       }
     } catch (error) {
       console.log('error', error);
+      const response = NextResponse.redirect(
+        new URL('/login', request.nextUrl)
+      );
+      response.cookies.set('refreshToken', '', {
+        expires: new Date(),
+        path: '/',
+        domain: process.env.NX_DOMAIN,
+        sameSite: 'strict',
+      });
+      return response;
     }
   } else {
     // if the user is not signed in, redirect them to the login page
