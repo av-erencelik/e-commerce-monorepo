@@ -85,14 +85,13 @@ const loginWithEmailAndPassword = async (email: string, password: string) => {
 
 const logout = async (refreshToken: string) => {
   if (refreshToken === undefined) {
-    throw new ApiError(
-      httpStatus.UNAUTHORIZED,
-      'You need to login before logging out'
-    );
+    logger.info('No refresh token');
+    return;
   }
   const response = await authRedis.deleteRefreshToken(refreshToken);
   if (response === 0) {
-    throw new ApiError(httpStatus.UNAUTHORIZED, 'Invalid refresh token');
+    logger.info('Refresh token not found');
+    return;
   }
 };
 
