@@ -67,13 +67,11 @@ export async function middleware(request: NextRequest) {
         }
       );
       console.log('response', JSON.stringify(await response.json()));
-      if (response.ok) {
-        const cookies = response.headers.getSetCookie();
+      const cookies = response.headers.get('set-cookie');
+      if (response.ok && cookies) {
         // if the tokens were refreshed, give the user access to the page
-        console.log('refreshToken', cookies[0] + ', ' + cookies[1]);
-        console.log('accessToken', cookies[2] + ', ' + cookies[3]);
         const responseNext = NextResponse.next();
-        responseNext.headers.set('set-cookie', cookies[0]);
+        responseNext.headers.set('set-cookie', cookies);
         return responseNext;
       } else {
         // if the tokens were not refreshed, redirect the user to the login page and clear the refresh token
