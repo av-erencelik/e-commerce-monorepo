@@ -69,15 +69,32 @@ export async function middleware(request: NextRequest) {
       console.log('response', JSON.stringify(await response.json()));
       const cookies = response.headers.get('set-cookie');
       if (response.ok && cookies) {
+        const splittedCookies = cookies.split(', ');
+        const refreshToken = splittedCookies[0] + ', ' + splittedCookies[1];
+        const accessToken = splittedCookies[2] + ', ' + splittedCookies[3];
+        console.log('refreshToken', refreshToken);
+        console.log('accessToken', accessToken);
+        console.log('cookies', cookies);
         // if the tokens were refreshed, give the user access to the page
         const responseNext = NextResponse.next();
-        responseNext.headers.set('set-cookie', cookies);
+        responseNext.headers.append('set-cookie', refreshToken);
+        responseNext.headers.append('set-cookie', accessToken);
         return responseNext;
       } else {
         // if the tokens were not refreshed, redirect the user to the login page and clear the refresh token
         const response = NextResponse.redirect(
           new URL('/login', request.nextUrl)
         );
+        response.cookies.set('refreshToken', '', {
+          path: '/',
+          maxAge: 0,
+          domain: process.env.NX_DOMAIN,
+        });
+        response.cookies.set('cart_session', '', {
+          path: '/',
+          maxAge: 0,
+          domain: process.env.NX_DOMAIN,
+        });
         return response;
       }
     } catch (error) {
