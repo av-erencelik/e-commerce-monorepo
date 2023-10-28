@@ -66,13 +66,14 @@ export async function middleware(request: NextRequest) {
           },
         }
       );
-      console.log('response', JSON.stringify(response));
-      const cookies = response.headers.get('set-cookie');
-      // if the tokens were refreshed, give the user access to the page
-      console.log('cookies', cookies);
-      if (cookies) {
+      console.log('response', JSON.stringify(await response.json()));
+      if (response.ok) {
+        const cookies = response.headers.getSetCookie();
+        // if the tokens were refreshed, give the user access to the page
+        console.log('refreshToken', cookies[0] + ', ' + cookies[1]);
+        console.log('accessToken', cookies[2] + ', ' + cookies[3]);
         const responseNext = NextResponse.next();
-        responseNext.headers.set('set-cookie', cookies);
+        responseNext.headers.set('set-cookie', cookies[0]);
         return responseNext;
       } else {
         // if the tokens were not refreshed, redirect the user to the login page and clear the refresh token
@@ -86,8 +87,10 @@ export async function middleware(request: NextRequest) {
     }
   } else {
     // if the user is not signed in, redirect them to the login page
-    if (signedInPaths.includes(request.nextUrl.pathname))
+    if (signedInPaths.includes(request.nextUrl.pathname)) {
+      console.log('redirect to login');
       return NextResponse.redirect(new URL('/login', request.nextUrl));
+    }
   }
   return NextResponse.next();
 }
