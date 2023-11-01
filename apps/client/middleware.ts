@@ -82,9 +82,9 @@ export async function middleware(request: NextRequest) {
         return responseNext;
       } else {
         // if the tokens were not refreshed, redirect the user to the login page and clear the refresh token
-        const response = NextResponse.redirect(
-          new URL('/login', request.nextUrl)
-        );
+        const response = signedInPaths.includes(request.nextUrl.pathname)
+          ? NextResponse.redirect(new URL('/login', request.nextUrl))
+          : NextResponse.next();
         response.cookies.set('refreshToken', '', {
           path: '/',
           maxAge: 0,
