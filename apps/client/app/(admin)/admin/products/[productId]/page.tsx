@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import { Button, Skeleton, buttonVariants } from '@e-commerce-monorepo/ui';
+import { Button, Skeleton, buttonVariants, cn } from '@e-commerce-monorepo/ui';
 import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
 import { getProduct } from '@client/lib/api/api-service';
@@ -79,9 +79,9 @@ const ProductDetailsPage = ({ params }: { params: { productId: string } }) => {
     <>
       <div className="rounded-lg border border-border p-10 pb-16 shadow-md w-full">
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between md:gap-0">
-          <div className="space-y-0.5">
+          <div className="space-y-0.5 max-w-xl">
             <Link
-              href={`/admin/categories/${data.categoryId}`}
+              href={`/admin/categories/${data.subCategory.id}`}
               className="text-xs hover:underline text-primary"
             >
               {capitalizeFirstLetter(data.subCategory.name)}
@@ -94,7 +94,13 @@ const ProductDetailsPage = ({ params }: { params: { productId: string } }) => {
               {capitalizeFirstLetter(data.description)}
             </p>
           </div>
-          <Link href={`${productId}/edit`} className={buttonVariants()}>
+          <Link
+            href={`${productId}/edit`}
+            className={cn(
+              buttonVariants(),
+              'self-start md:flex-shrink-0 w-full md:w-auto'
+            )}
+          >
             Edit Product
           </Link>
         </div>
