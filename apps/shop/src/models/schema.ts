@@ -11,6 +11,7 @@ import {
   char,
   uniqueIndex,
   mysqlEnum,
+  text,
 } from 'drizzle-orm/mysql-core';
 
 export const mysqlTable = mysqlTableCreator((name) => `shop_${name}`);
@@ -26,6 +27,7 @@ export const product = mysqlTable('product', {
     .notNull()
     .default(sql`CURRENT_TIMESTAMP`),
   image: varchar('image', { length: 256 }).notNull(),
+  imageUrl: text('image_url'),
 });
 
 export const productPrice = mysqlTable(
@@ -109,6 +111,7 @@ export const orderItem = mysqlTable(
     quantity: int('quantity').notNull(),
     price: double('price', { precision: 10, scale: 2 }).notNull(),
     image: varchar('image', { length: 256 }).notNull(),
+    imageUrl: text('image_url'),
   },
   (table) => ({
     orderIdIdx: index('order_id_idx').on(table.orderId),

@@ -112,16 +112,23 @@ const getCart = async (cartSession?: string, user?: AccessTokenPayload) => {
   }
 
   // presign cart items images
-  const cartItems = cart.cartItems.map((item) => {
-    const url = createImageUrl(item.product.image);
-    return {
-      ...item,
-      product: {
-        ...item.product,
-        image: url,
-      },
-    };
-  });
+  const cartItems = await Promise.all(
+    cart.cartItems.map(async (item) => {
+      if (item.product.imageUrl === null) {
+        const url = createImageUrl(item.product.image);
+        await cartRepository.addImageUrlToProduct(item.product.id, url);
+        return {
+          ...item,
+          product: {
+            ...item.product,
+            imageUrl: url,
+          },
+        };
+      } else {
+        return item;
+      }
+    })
+  );
 
   return {
     cart: {

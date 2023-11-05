@@ -116,25 +116,10 @@ const OrderItem = ({ order }: OrderItemProps) => {
             className="flex flex-1 items-center"
           >
             {order.orderItem.map((item, index) => {
-              if (index > 3) return null;
-              if (index === 2)
+              if (index > 4) return null;
+              if (index === 3)
                 return (
                   <div>
-                    <div
-                      key={item.id}
-                      aria-label="order-item-image"
-                      className="p-1 overflow-hidden border rounded-sm mr-4"
-                      title={item.productName}
-                    >
-                      <div className="relative w-9 h-12 flex justify-center items-center">
-                        <Image
-                          src={item.image}
-                          alt={item.productName}
-                          fill
-                          className="object-cover"
-                        />
-                      </div>
-                    </div>
                     <div className="p-1 overflow-hidden border rounded-sm mr-4">
                       <div className="relative w-9 h-12 flex justify-center items-center bg-primary/50">
                         <p className="text-foreground text-xs font-bold">
@@ -153,7 +138,7 @@ const OrderItem = ({ order }: OrderItemProps) => {
                 >
                   <div className="relative w-9 h-12 flex justify-center items-center">
                     <Image
-                      src={item.image}
+                      src={item.imageUrl}
                       alt={item.productName}
                       fill
                       className="object-cover"
@@ -194,7 +179,7 @@ const OrderItem = ({ order }: OrderItemProps) => {
                     <Link href={`/products/${item.productId}`}>
                       <div className="relative w-16 h-24 flex justify-center items-center">
                         <Image
-                          src={item.image}
+                          src={item.imageUrl}
                           alt={item.productName}
                           fill
                           className="object-cover rounded-sm"

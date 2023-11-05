@@ -19,7 +19,7 @@ const CheckoutItems = ({ items }: CheckoutItemsProps) => {
                 <div className="flex items-center space-x-4">
                   <div className="relative aspect-square h-16 w-16 min-w-fit overflow-hidden rounded">
                     <Image
-                      src={item.image}
+                      src={item.imageUrl}
                       alt={item.productName}
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                       fill

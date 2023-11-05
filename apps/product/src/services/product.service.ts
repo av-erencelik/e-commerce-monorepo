@@ -133,20 +133,31 @@ const getAllProducts = async (
       order,
       category_id
     )) as Product[];
-    products = products.map((product) => {
-      const { images } = product;
-      const imagesWithSignedUrl = images.map((image) => {
-        const url = createImageUrl(image.key);
+    products = await Promise.all(
+      products.map(async (product) => {
+        const { images } = product;
+        const imagesWithSignedUrl = await Promise.all(
+          images.map(async (image) => {
+            if (image.url === null) {
+              const url = createImageUrl(image.key);
+              await productRepository.addUrlToImage(image.key, url);
+              return {
+                ...image,
+                url,
+              };
+            } else {
+              return {
+                ...image,
+              };
+            }
+          })
+        );
         return {
-          ...image,
-          url,
+          ...product,
+          images: imagesWithSignedUrl,
         };
-      });
-      return {
-        ...product,
-        images: imagesWithSignedUrl,
-      };
-    });
+      })
+    );
     await productRedis.setProductsCache(
       products,
       page,
@@ -192,13 +203,22 @@ const getProduct = async (productId: number) => {
     if (!product) {
       throw new ApiError(httpStatus.NOT_FOUND, 'Product not found');
     }
-    const images = product.images.map((image) => {
-      const url = createImageUrl(image.key);
-      return {
-        ...image,
-        url,
-      };
-    });
+    const images = await Promise.all(
+      product.images.map(async (image) => {
+        if (image.url === null) {
+          const url = createImageUrl(image.key);
+          await productRepository.addUrlToImage(image.key, url);
+          return {
+            ...image,
+            url,
+          };
+        } else {
+          return {
+            ...image,
+          };
+        }
+      })
+    );
     product = {
       ...product,
       images,
@@ -272,7 +292,7 @@ const updateProduct = async (
     await ProductUpdatedEvent.publish({
       endDate: new Date('9999-12-31').toISOString(),
       id: productId,
-      image: product.images.filter((image) => image.isFeatured)[0].key,
+      image: updatedProduct.images.filter((image) => image.isFeatured)[0].key,
       name: updatedProduct.name || product.name,
       price: updatedProduct.price || product.price[0].price,
       startDate: new Date().toISOString(),
@@ -503,20 +523,31 @@ const getNewestProducts = async () => {
     products = cachedProducts;
   } else {
     products = (await productRepository.getNewestProducts()) as Product[];
-    products = products.map((product) => {
-      const { images } = product;
-      const imagesWithSignedUrl = images.map((image) => {
-        const url = createImageUrl(image.key);
+    products = await Promise.all(
+      products.map(async (product) => {
+        const { images } = product;
+        const imagesWithSignedUrl = await Promise.all(
+          images.map(async (image) => {
+            if (image.url === null) {
+              const url = createImageUrl(image.key);
+              await productRepository.addUrlToImage(image.key, url);
+              return {
+                ...image,
+                url,
+              };
+            } else {
+              return {
+                ...image,
+              };
+            }
+          })
+        );
         return {
-          ...image,
-          url,
+          ...product,
+          images: imagesWithSignedUrl,
         };
-      });
-      return {
-        ...product,
-        images: imagesWithSignedUrl,
-      };
-    });
+      })
+    );
     await productRedis.setNewestProductsCache(products);
   }
 
@@ -530,20 +561,31 @@ const getMostSoldProducts = async () => {
     products = cachedProducts;
   } else {
     products = (await productRepository.getMostSoldProducts()) as Product[];
-    products = products.map((product) => {
-      const { images } = product;
-      const imagesWithSignedUrl = images.map((image) => {
-        const url = createImageUrl(image.key);
+    products = await Promise.all(
+      products.map(async (product) => {
+        const { images } = product;
+        const imagesWithSignedUrl = await Promise.all(
+          images.map(async (image) => {
+            if (image.url === null) {
+              const url = createImageUrl(image.key);
+              await productRepository.addUrlToImage(image.key, url);
+              return {
+                ...image,
+                url,
+              };
+            } else {
+              return {
+                ...image,
+              };
+            }
+          })
+        );
         return {
-          ...image,
-          url,
+          ...product,
+          images: imagesWithSignedUrl,
         };
-      });
-      return {
-        ...product,
-        images: imagesWithSignedUrl,
-      };
-    });
+      })
+    );
     await productRedis.setMostSoldProductsCache(products);
   }
   return products;

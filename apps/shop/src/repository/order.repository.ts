@@ -224,10 +224,20 @@ const makeOrderStatusPending = async (orderId: string) => {
     .where(eq(order.id, orderId));
 };
 
+const addImageUrlToOrderItem = async (productId: number, url: string) => {
+  await db
+    .update(orderItem)
+    .set({
+      imageUrl: url,
+    })
+    .where(eq(orderItem.productId, productId));
+};
+
 export default Object.freeze({
   createOrder,
   getOrders,
   getOrder,
   deleteOrder,
   makeOrderStatusPending,
+  addImageUrlToOrderItem,
 });

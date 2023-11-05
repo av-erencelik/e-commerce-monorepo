@@ -89,7 +89,10 @@ const getOrders = async (user?: AccessTokenPayload) => {
   // sign images url
   for (const order of orders) {
     for (const item of order.orderItem) {
-      item.image = createImageUrl(item.image);
+      if (item.imageUrl === null) {
+        item.imageUrl = createImageUrl(item.image);
+        await orderRepository.addImageUrlToOrderItem(item.id, item.imageUrl);
+      }
     }
   }
   return orders;
@@ -111,7 +114,10 @@ const getOrder = async (orderId: string, user?: AccessTokenPayload) => {
   }
   // sign images url
   for (const item of order.orderItem) {
-    item.image = createImageUrl(item.image);
+    if (item.imageUrl === null) {
+      item.imageUrl = createImageUrl(item.image);
+      await orderRepository.addImageUrlToOrderItem(item.id, item.imageUrl);
+    }
   }
 
   const clientSecret = await stripe.paymentIntents.retrieve(
