@@ -86,6 +86,7 @@ export type CartItem = {
     stock: number;
     createdAt: Date;
     image: string;
+    imageUrl: string;
     price: ProductPrice[];
   };
 };
@@ -97,6 +98,7 @@ export type Product = {
   stock: number;
   createdAt: Date;
   image: string;
+  imageUrl: string;
   productPrice: ProductPrice[];
 };
 
@@ -127,6 +129,7 @@ export type OrderItem = {
   quantity: number;
   price: number;
   image: string;
+  imageUrl: string;
   productName: string;
 };
 

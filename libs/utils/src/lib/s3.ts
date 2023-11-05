@@ -68,7 +68,7 @@ const deleteImageFromS3 = async (key: string) => {
 const createImageUrl = (key: string) => {
   return cloudfrontGetSignedUrl({
     url: `https://${process.env.CLOUDFRONT_URL!}/${key}`,
-    dateLessThan: new Date(Date.now() + 60 * 60 * 1000).toISOString(),
+    dateLessThan: new Date(Date.now() + 60 * 60 * 1000 * 10000).toISOString(),
     keyPairId: process.env.CLOUDFRONT_KEY_PAIR_ID!,
     privateKey:
       process.env.NODE_ENV === 'test'

@@ -377,10 +377,13 @@ const updateProduct = async (
       if (imagesToAdd.length > 0) await db.insert(image).values(imagesToAdd);
 
       // take currentProduct images that are not in updatedProduct images
-      const imagesToDelete = currentProduct.images.filter(
-        (image) =>
-          !images.some((updatedImage) => updatedImage.key === image.key)
-      );
+      const imagesToDelete =
+        currentProduct.images.length > 0
+          ? currentProduct.images.filter(
+              (image) =>
+                !images.some((updatedImage) => updatedImage.key === image.key)
+            )
+          : [];
 
       // delete images that are not in updatedProduct images
       for (const imageToDelete of imagesToDelete) {
@@ -598,6 +601,15 @@ const updateStockAfterCancel = async (productId: number, quantity: number) => {
     .where(eq(product.id, productId));
 };
 
+const addUrlToImage = async (key: string, url: string) => {
+  await db
+    .update(image)
+    .set({
+      url: url,
+    })
+    .where(eq(image.key, key));
+};
+
 export default Object.freeze({
   addProduct,
   addSubCategory,
@@ -628,4 +640,5 @@ export default Object.freeze({
   getSale,
   updateStock,
   updateStockAfterCancel,
+  addUrlToImage,
 });

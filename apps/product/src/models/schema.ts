@@ -81,6 +81,7 @@ export const image = mysqlTable(
     id: int('id').primaryKey().autoincrement(),
     productId: int('product_id').notNull(),
     key: varchar('key', { length: 255 }).unique().notNull(),
+    url: text('url'),
     createdAt: datetime('created_at').default(sql`CURRENT_TIMESTAMP`),
     isFeatured: boolean('is_featured').notNull().default(false),
   },

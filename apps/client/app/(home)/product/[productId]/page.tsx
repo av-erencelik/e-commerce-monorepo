@@ -69,8 +69,8 @@ const ProductPage = async ({ params }: ProductPageProps) => {
             title: product.subCategory.name,
             href:
               product.categoryId === 1
-                ? `/breads?subcategory_id=${product.subCategory.id}`
-                : `/chocolates?subcategory_id=${product.subCategory.id}`,
+                ? `/breads?subcategory=${product.subCategory.id}`
+                : `/chocolates?subcategory=${product.subCategory.id}`,
           },
           {
             title: product.name,

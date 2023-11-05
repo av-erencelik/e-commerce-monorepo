@@ -281,6 +281,15 @@ const deleteCart = async (cartId: string) => {
   await db.delete(cartItem).where(eq(cartItem.cartId, cartId));
 };
 
+const addImageUrlToProduct = async (productId: number, imageUrl: string) => {
+  await db
+    .update(product)
+    .set({
+      imageUrl,
+    })
+    .where(eq(product.id, productId));
+};
+
 export default Object.freeze({
   checkCartExistsBySession,
   checkProductExists,
@@ -302,4 +311,5 @@ export default Object.freeze({
   reStockProducts,
   getCartTotal,
   deleteCart,
+  addImageUrlToProduct,
 });
