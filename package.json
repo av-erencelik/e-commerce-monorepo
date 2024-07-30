@@ -9,7 +9,7 @@
   },
   "private": true,
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.405.0",
+    "@aws-sdk/client-s3": "^3.529.0",
     "@aws-sdk/cloudfront-signer": "^3.398.0",
     "@aws-sdk/s3-request-presigner": "^3.405.0",
     "@hookform/resolvers": "^3.3.0",
